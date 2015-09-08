@@ -9,7 +9,7 @@ import (
 )
 
 type Org struct {
-	Id   int
+	Id   int64
 	Name string
 }
 
