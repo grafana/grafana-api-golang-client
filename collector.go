@@ -4,7 +4,23 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"time"
 )
+
+type Collector struct {
+	Id             int
+	Org_id         int
+	Slug           string
+	Name           string
+	Tags           []string
+	Public         bool
+	Latitude       int
+	Longitude      int
+	Enabled        bool
+	Online         bool
+	Enabled_change time.Time
+	Online_change  time.Time
+}
 
 func (c *Client) Collectors() ([]Collector, error) {
 	collectors := make([]Collector, 0)
