@@ -7,6 +7,11 @@ import (
 	"io/ioutil"
 )
 
+type Org struct {
+	Id   int
+	Name string
+}
+
 func (c *Client) Orgs() ([]Org, error) {
 	orgs := make([]Org, 0)
 
