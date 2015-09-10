@@ -1,10 +1,13 @@
 package gapi
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"time"
+
+	m "github.com/grafana/grafana/pkg/models"
 )
 
 type Collector struct {
@@ -22,10 +25,11 @@ type Collector struct {
 	Online_change  time.Time
 }
 
-func (c *Client) Collectors() ([]Collector, error) {
+func (c *Client) Collectors(settings m.GetCollectorsQuery) ([]Collector, error) {
+	data, _ := json.Marshal(settings)
 	collectors := make([]Collector, 0)
 
-	req, err := c.newRequest("GET", "/api/collectors/", nil)
+	req, err := c.newRequest("GET", "/api/collectors/", bytes.NewBuffer(data))
 	if err != nil {
 		return collectors, err
 	}
@@ -36,7 +40,7 @@ func (c *Client) Collectors() ([]Collector, error) {
 	if resp.StatusCode != 200 {
 		return collectors, errors.New(resp.Status)
 	}
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return collectors, err
 	}
