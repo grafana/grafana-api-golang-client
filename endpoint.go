@@ -56,7 +56,7 @@ func (c *Client) NewEndpoint(settings m.AddEndpointCommand) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("response BODY", string(data))
+	//fmt.Println("response BODY", string(data))
 	if resp.StatusCode != 200 {
 		return errors.New(resp.Status)
 	}
