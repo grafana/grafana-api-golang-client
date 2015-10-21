@@ -1,7 +1,6 @@
 package gapi
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -47,9 +46,9 @@ func (c *Client) newRequest(method, path string, body io.Reader) (*http.Request,
 		req.Header.Add("Authorization", c.key)
 	}
 	if body == nil {
-		fmt.Println("request to ", url.String(), "with no body data")
+		//fmt.Println("request to ", url.String(), "with no body data")
 	} else {
-		fmt.Println("request to ", url.String(), "with body data", body.(*bytes.Buffer).String())
+		//fmt.Println("request to ", url.String(), "with body data", body.(*bytes.Buffer).String())
 	}
 	req.Header.Add("Content-Type", "application/json")
 	return req, err
