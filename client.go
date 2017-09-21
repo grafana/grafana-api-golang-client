@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -46,11 +47,15 @@ func (c *Client) newRequest(method, path string, body io.Reader) (*http.Request,
 	if c.key != "" {
 		req.Header.Add("Authorization", c.key)
 	}
-	if body == nil {
-		fmt.Println("request to ", url.String(), "with no body data")
-	} else {
-		fmt.Println("request to ", url.String(), "with body data", body.(*bytes.Buffer).String())
+
+	if os.Getenv("GF_LOG") != "" {
+		if body == nil {
+			fmt.Println("request to ", url.String(), "with no body data")
+		} else {
+			fmt.Println("request to ", url.String(), "with body data", body.(*bytes.Buffer).String())
+		}
 	}
+
 	req.Header.Add("Content-Type", "application/json")
 	return req, err
 }
