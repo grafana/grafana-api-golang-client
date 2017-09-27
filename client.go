@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -50,9 +51,9 @@ func (c *Client) newRequest(method, path string, body io.Reader) (*http.Request,
 
 	if os.Getenv("GF_LOG") != "" {
 		if body == nil {
-			fmt.Println("request to ", url.String(), "with no body data")
+			log.Println("request to ", url.String(), "with no body data")
 		} else {
-			fmt.Println("request to ", url.String(), "with body data", body.(*bytes.Buffer).String())
+			log.Println("request to ", url.String(), "with body data", body.(*bytes.Buffer).String())
 		}
 	}
 
