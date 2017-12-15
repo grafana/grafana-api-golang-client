@@ -32,6 +32,7 @@ type DataSource struct {
 
 // JSONData is a representation of the datasource `jsonData` property
 type JSONData struct {
+	AssumeRoleArn string `json:"assumeRoleArn,omitempty"`
 	AuthType      string `json:"authType,omitempty"`
 	DefaultRegion string `json:"defaultRegion,omitempty"`
 }
