@@ -29,4 +29,5 @@ const (
 			"id": 1,
 			"endId": 2
 	}`
+	deleteAnnotationJSON = `{"message":"Annotation deleted"}`
 )

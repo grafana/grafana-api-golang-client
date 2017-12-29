@@ -51,3 +51,19 @@ func TestNewAnnotation(t *testing.T) {
 		t.Error("new annotation response should contain the ID of the new annotation")
 	}
 }
+
+func TestDeleteAnnotation(t *testing.T) {
+	server, client := gapiTestTools(200, deleteAnnotationJSON)
+	defer server.Close()
+
+	res, err := client.DeleteAnnotation(1)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(res))
+
+	if res != "Annotation deleted" {
+		t.Error("delete annotation response should contain the correct response message")
+	}
+}

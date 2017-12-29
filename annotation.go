@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 )
 
@@ -82,4 +83,64 @@ func (c *Client) NewAnnotation(a *Annotation) (int64, error) {
 	}{}
 	err = json.Unmarshal(data, &result)
 	return result.ID, err
+}
+
+// UpdateAnnotation updates an existing annotation with the Annotation it is passed
+func (c *Client) UpdateAnnotation(a *Annotation) (int64, error) {
+	path := fmt.Sprintf("/api/annotations/%d", a.ID)
+	data, err := json.Marshal(a)
+	if err != nil {
+		return 0, err
+	}
+	req, err := c.newRequest("PUT", path, bytes.NewBuffer(data))
+	if err != nil {
+		return 0, err
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	if resp.StatusCode != 200 {
+		return 0, errors.New(resp.Status)
+	}
+
+	data, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return 0, err
+	}
+
+	result := struct {
+		ID int64 `json:"id"`
+	}{}
+	err = json.Unmarshal(data, &result)
+	return result.ID, err
+}
+
+// DeleteAnnotation deletes the annotation of the ID it is passed
+func (c *Client) DeleteAnnotation(id int64) (string, error) {
+	path := fmt.Sprintf("/api/annotations/%d", id)
+	req, err := c.newRequest("DELETE", path, bytes.NewBuffer(nil))
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != 200 {
+		return "", errors.New(resp.Status)
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	result := struct {
+		Message string `json:"message"`
+	}{}
+	err = json.Unmarshal(data, &result)
+	return result.Message, err
 }
