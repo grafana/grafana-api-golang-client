@@ -29,5 +29,9 @@ const (
 			"id": 1,
 			"endId": 2
 	}`
+	newGraphiteAnnotationJSON = `{
+			"message":"Annotation added",
+			"id": 1
+	}`
 	deleteAnnotationJSON = `{"message":"Annotation deleted"}`
 )

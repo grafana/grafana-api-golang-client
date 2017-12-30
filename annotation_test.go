@@ -52,6 +52,28 @@ func TestNewAnnotation(t *testing.T) {
 	}
 }
 
+func TestNewGraphiteAnnotation(t *testing.T) {
+	server, client := gapiTestTools(200, newGraphiteAnnotationJSON)
+	defer server.Close()
+
+	a := GraphiteAnnotation{
+		What: "what",
+		When: 1507180805056,
+		Tags: []string{"tag1", "tag2"},
+		Data: "data",
+	}
+	res, err := client.NewGraphiteAnnotation(&a)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(res))
+
+	if res != 1 {
+		t.Error("new annotation response should contain the ID of the new annotation")
+	}
+}
+
 func TestDeleteAnnotation(t *testing.T) {
 	server, client := gapiTestTools(200, deleteAnnotationJSON)
 	defer server.Close()

@@ -28,6 +28,14 @@ type Annotation struct {
 	IsRegion    bool     `json:"isRegion,omitempty"`
 }
 
+// GraphiteAnnotation represents a Grafana API annotation in Graphite format
+type GraphiteAnnotation struct {
+	What string   `json:"what"`
+	When int64    `json:"when"`
+	Data string   `json:"data"`
+	Tags []string `json:"tags,omitempty"`
+}
+
 // Annotations fetches the annotations queried with the params it's passed
 func (c *Client) Annotations(params map[string]string) ([]Annotation, error) {
 	pathAndQuery := buildPathAndQuery("/api/annotations", params)
@@ -61,6 +69,37 @@ func (c *Client) NewAnnotation(a *Annotation) (int64, error) {
 		return 0, err
 	}
 	req, err := c.newRequest("POST", "/api/annotations", bytes.NewBuffer(data))
+	if err != nil {
+		return 0, err
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	if resp.StatusCode != 200 {
+		return 0, errors.New(resp.Status)
+	}
+
+	data, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return 0, err
+	}
+
+	result := struct {
+		ID int64 `json:"id"`
+	}{}
+	err = json.Unmarshal(data, &result)
+	return result.ID, err
+}
+
+// NewGraphiteAnnotation creates a new annotation with the GraphiteAnnotation it is passed
+func (c *Client) NewGraphiteAnnotation(gfa *GraphiteAnnotation) (int64, error) {
+	data, err := json.Marshal(gfa)
+	if err != nil {
+		return 0, err
+	}
+	req, err := c.newRequest("POST", "/api/annotations/graphite", bytes.NewBuffer(data))
 	if err != nil {
 		return 0, err
 	}
