@@ -67,3 +67,19 @@ func TestDeleteAnnotation(t *testing.T) {
 		t.Error("delete annotation response should contain the correct response message")
 	}
 }
+
+func TestDeleteAnnotationByRegionID(t *testing.T) {
+	server, client := gapiTestTools(200, deleteAnnotationJSON)
+	defer server.Close()
+
+	res, err := client.DeleteAnnotationByRegionID(1)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(res))
+
+	if res != "Annotation deleted" {
+		t.Error("delete annotation by region ID response should contain the correct response message")
+	}
+}

@@ -144,3 +144,31 @@ func (c *Client) DeleteAnnotation(id int64) (string, error) {
 	err = json.Unmarshal(data, &result)
 	return result.Message, err
 }
+
+// DeleteAnnotationByRegionID deletes the annotation corresponding to the region ID it is passed
+func (c *Client) DeleteAnnotationByRegionID(id int64) (string, error) {
+	path := fmt.Sprintf("/api/annotations/region/%d", id)
+	req, err := c.newRequest("DELETE", path, bytes.NewBuffer(nil))
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != 200 {
+		return "", errors.New(resp.Status)
+	}
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	result := struct {
+		Message string `json:"message"`
+	}{}
+	err = json.Unmarshal(data, &result)
+	return result.Message, err
+}
