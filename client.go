@@ -39,9 +39,13 @@ func New(auth, baseURL string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) newRequest(method, requestPath string, body io.Reader) (*http.Request, error) {
+func (c *Client) newRequest(method, requestPathAndQuery string, body io.Reader) (*http.Request, error) {
 	url := c.baseURL
-	url.Path = path.Join(url.Path, requestPath)
+	pathAndQuery := strings.Split(requestPathAndQuery, "?")
+	url.Path = path.Join(url.Path, pathAndQuery[0])
+	if len(pathAndQuery) > 1 {
+		url.RawQuery = pathAndQuery[1]
+	}
 	req, err := http.NewRequest(method, url.String(), body)
 	if err != nil {
 		return req, err
