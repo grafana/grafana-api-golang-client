@@ -13,6 +13,14 @@ type Org struct {
 	Name string
 }
 
+type OrgUser struct {
+	OrgId   int64
+	UserId  int64
+	Email   string
+	Login   string
+	Role    string
+}
+
 func (c *Client) Orgs() ([]Org, error) {
 	orgs := make([]Org, 0)
 
@@ -67,4 +75,28 @@ func (c *Client) DeleteOrg(id int64) error {
 		return errors.New(resp.Status)
 	}
 	return err
+}
+
+func (c *Client) OrgUsers(id int64) ([]OrgUser, error) {
+	users := make([]OrgUser, 0)
+	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/%d/users", id), nil)
+	if err != nil {
+		return users, err
+	}
+	resp, err := c.Do(req)
+	if err != nil {
+		return users, err
+	}
+	if resp.StatusCode != 200 {
+		return users, errors.New(resp.Status)
+	}
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return users, err
+	}
+	err = json.Unmarshal(data, &users)
+	if err != nil {
+		return users, err
+	}
+	return users, err
 }
