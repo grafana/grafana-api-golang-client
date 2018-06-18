@@ -41,23 +41,23 @@ func (c *Client) OrgUsers(id int64) ([]OrgUser, error) {
 }
 
 func (c *Client) AddOrgUser(orgId int64, user, role string) error {
-		dataMap := map[string]string{
-			"loginOrEmail": user,
-			"role": role,
-		}
-		data, err := json.Marshal(dataMap)
-		req, err := c.newRequest("POST", fmt.Sprintf("/api/orgs/%d/users", orgId), bytes.NewBuffer(data))
-		if err != nil {
-			return err
-		}
-		resp, err := c.Do(req)
-		if err != nil {
-			return err
-		}
-		if resp.StatusCode != 200 {
-			return errors.New(resp.Status)
-		}
+	dataMap := map[string]string{
+		"loginOrEmail": user,
+		"role": role,
+	}
+	data, err := json.Marshal(dataMap)
+	req, err := c.newRequest("POST", fmt.Sprintf("/api/orgs/%d/users", orgId), bytes.NewBuffer(data))
+	if err != nil {
 		return err
+	}
+	resp, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != 200 {
+		return errors.New(resp.Status)
+	}
+	return err
 }
 
 func (c *Client) UpdateOrgUser(orgId, userId int64, role string) error {
