@@ -57,10 +57,10 @@ func (c *Client) OrgByName(name string) (Org, error) {
 }
 
 func (c *Client) NewOrg(name string) error {
-	settings := map[string]string{
+	dataMap := map[string]string{
 		"name": name,
 	}
-	data, err := json.Marshal(settings)
+	data, err := json.Marshal(dataMap)
 	req, err := c.newRequest("POST", "/api/orgs", bytes.NewBuffer(data))
 	if err != nil {
 		return err
