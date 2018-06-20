@@ -56,7 +56,7 @@ func (c *Client) OrgByName(name string) (Org, error) {
 	return org, err
 }
 
-func (c *Client) Org(id int) (Org, error) {
+func (c *Client) Org(id int64) (Org, error) {
 	org := Org{}
 	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/%d",  id), nil)
 	if err != nil {
