@@ -75,6 +75,25 @@ func (c *Client) NewOrg(name string) error {
 	return err
 }
 
+func (c *Client) UpdateOrg(id int64, name string) error {
+	dataMap := map[string]string{
+		"name": name,
+	}
+	data, err := json.Marshal(dataMap)
+	req, err := c.newRequest("PUT", fmt.Sprintf("/api/orgs/%d", id), bytes.NewBuffer(data))
+	if err != nil {
+		return err
+	}
+	resp, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != 200 {
+		return errors.New(resp.Status)
+	}
+	return err
+}
+
 func (c *Client) DeleteOrg(id int64) error {
 	req, err := c.newRequest("DELETE", fmt.Sprintf("/api/orgs/%d", id), nil)
 	if err != nil {
