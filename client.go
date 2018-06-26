@@ -73,6 +73,15 @@ func (c *Client) newQueryRequest(method, requestPath string, query string) (*htt
 	if c.key != "" {
 		req.Header.Add("Authorization", c.key)
 	}
+
+	if os.Getenv("GF_LOG") != "" {
+		if body == nil {
+			log.Println("request to ", url.String(), "with no query data")
+		} else {
+			log.Println("request to ", url.String(), "with query data", query)
+		}
+	}
+
 	req.Header.Add("Content-Type", "application/json")
 	return req, err
 }
