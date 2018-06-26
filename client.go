@@ -75,7 +75,7 @@ func (c *Client) newQueryRequest(method, requestPath string, query string) (*htt
 	}
 
 	if os.Getenv("GF_LOG") != "" {
-		if body == nil {
+		if query == "" {
 			log.Println("request to ", url.String(), "with no query data")
 		} else {
 			log.Println("request to ", url.String(), "with query data", query)
