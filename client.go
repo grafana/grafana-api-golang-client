@@ -61,3 +61,18 @@ func (c *Client) newRequest(method, requestPath string, body io.Reader) (*http.R
 	req.Header.Add("Content-Type", "application/json")
 	return req, err
 }
+
+func (c *Client) newQueryRequest(method, requestPath string, query string) (*http.Request, error) {
+	url := c.baseURL
+	url.Path = path.Join(url.Path, requestPath)
+	url.RawQuery = query
+	req, err := http.NewRequest(method, url.String(), nil)
+	if err != nil {
+		return req, err
+	}
+	if c.key != "" {
+		req.Header.Add("Authorization", c.key)
+	}
+	req.Header.Add("Content-Type", "application/json")
+	return req, err
+}
