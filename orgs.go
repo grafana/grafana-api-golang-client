@@ -91,7 +91,11 @@ func (c *Client) NewOrg(name string) error {
 		return err
 	}
 	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
+		data, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.New(resp.Status)
+		}
+		return errors.New(string(data[:len(data)]))
 	}
 	return err
 }
