@@ -30,6 +30,10 @@ func (c *Client) CreateUserForm(settings dtos.AdminCreateUserForm) error {
 	return err
 }
 
+func (c *Client) CreateUser(email, login, name, password string) error {
+	return c.CreateUserForm(dtos.AdminCreateUserForm{email, login, name, password})
+}
+
 func (c *Client) DeleteUser(id int64) error {
 	req, err := c.newRequest("DELETE", fmt.Sprintf("/api/admin/users/%d", id), nil)
 	if err != nil {
