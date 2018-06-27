@@ -46,9 +46,10 @@ func TestNewDataSource(t *testing.T) {
 		Access:    "access",
 		IsDefault: true,
 		JSONData: JSONData{
-			AssumeRoleArn: "arn:aws:iam::123:role/some-role",
-			AuthType:      "keys",
-			DefaultRegion: "us-east-1",
+			AssumeRoleArn:           "arn:aws:iam::123:role/some-role",
+			AuthType:                "keys",
+			CustomMetricsNamespaces: "SomeNamespace",
+			DefaultRegion:           "us-east-1",
 		},
 		SecureJSONData: SecureJSONData{
 			AccessKey: "123",
