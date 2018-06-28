@@ -1,11 +1,7 @@
 package gapi
 
 import (
-	// "net/http"
-	// "net/http/httptest"
-	// "net/url"
 	"testing"
-
 	"github.com/gobs/pretty"
 )
 

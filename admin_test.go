@@ -2,7 +2,6 @@ package gapi
 
 import (
 	"testing"
-	// "github.com/gobs/pretty"
     "github.com/grafana/grafana/pkg/api/dtos"
 )
 
