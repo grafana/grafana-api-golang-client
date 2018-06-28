@@ -9,4 +9,8 @@ const (
 	updatedOrgJSON = `{"message":"Organization updated"}`
 	deletedOrgJSON = `{"message":"Organization deleted"}`
 
+	getOrgUsersJSON = `[{"orgId":1,"userId":1,"email":"admin@localhost","avatarUrl":"/avatar/46d229b033af06a191ff2267bca9ae56","login":"admin","role":"Admin","lastSeenAt":"2018-06-28T14:16:11Z","lastSeenAtAge":"\u003c 1m"}]`
+	addOrgUserJSON = `{"message":"User added to organization"}`
+	updateOrgUserJSON = `{"message":"Organization user updated"}`
+	removeOrgUserJSON = `{"message":"User removed from organization"}`
 )
