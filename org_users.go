@@ -9,11 +9,11 @@ import (
 )
 
 type OrgUser struct {
-	OrgId   int64
-	UserId  int64
-	Email   string
-	Login   string
-	Role    string
+	OrgId   int64  `json:"orgId"`
+	UserId  int64  `json:"userId"`
+	Email   string `json:"email"`
+	Login   string `json:"login"`
+	Role    string `json:"role"`
 }
 
 func (c *Client) OrgUsers(id int64) ([]OrgUser, error) {
