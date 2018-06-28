@@ -10,27 +10,35 @@ import (
 	"github.com/grafana/grafana/pkg/api/dtos"
 )
 
-func (c *Client) CreateUserForm(settings dtos.AdminCreateUserForm) error {
+func (c *Client) CreateUserForm(settings dtos.AdminCreateUserForm) (int64, error) {
+	id := int64(0)
 	data, err := json.Marshal(settings)
 	req, err := c.newRequest("POST", "/api/admin/users", bytes.NewBuffer(data))
 	if err != nil {
-		return err
+		return id, err
 	}
 	resp, err := c.Do(req)
 	if err != nil {
-		return err
+		return id, err
+	}
+	if resp.StatusCode != 200 {
+		return id, errors.New(resp.Status)
 	}
 	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return id, err
 	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
+	user := struct {
+		Id int64 `json:"id"`
+	}{}
+	err = json.Unmarshal(data, &user)
+	if err != nil {
+		return id, err
 	}
-	return err
+	return user.Id, err
 }
 
-func (c *Client) CreateUser(email, login, name, password string) error {
+func (c *Client) CreateUser(email, login, name, password string) (int64, error) {
 	return c.CreateUserForm(dtos.AdminCreateUserForm{email, login, name, password})
 }
 
