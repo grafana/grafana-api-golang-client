@@ -13,10 +13,6 @@ type Org struct {
 	Name string
 }
 
-type NewOrg struct {
-	OrgId int64
-}
-
 func (c *Client) Orgs() ([]Org, error) {
 	orgs := make([]Org, 0)
 
@@ -81,29 +77,36 @@ func (c *Client) Org(id int64) (Org, error) {
 	return org, err
 }
 
-func (c *Client) NewOrg(name string) (NewOrg, error) {
+func (c *Client) NewOrg(name string) (int64, error) {
 	dataMap := map[string]string{
 		"name": name,
 	}
 	data, err := json.Marshal(dataMap)
-	org := NewOrg{}
+	id := int64(0)
 	req, err := c.newRequest("POST", "/api/orgs", bytes.NewBuffer(data))
 	if err != nil {
-		return org, err
+		return id, err
 	}
 	resp, err := c.Do(req)
 	if err != nil {
-		return org, err
+		return id, err
 	}
 	if resp.StatusCode != 200 {
-		return org, errors.New(resp.Status)
+		return id, errors.New(resp.Status)
 	}
 	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return org, err
+		return id, err
 	}
-	err = json.Unmarshal(data, &org)
-	return org, err
+	tmp := struct {
+		Id int64 `json:"orgId"`
+	}{}
+	err = json.Unmarshal(data, &tmp)
+	if err != nil {
+		return id, err
+	}
+	id = tmp.Id
+	return id, err
 }
 
 func (c *Client) UpdateOrg(id int64, name string) error {

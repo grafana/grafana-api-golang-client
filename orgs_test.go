@@ -73,7 +73,7 @@ func TestNewOrg(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.OrgId != 1 {
+	if resp != 1 {
 		t.Error("Not correctly parsing returned creation message.")
 	}
 }
