@@ -8,19 +8,11 @@ import (
 )
 
 type User struct {
-	Id      int64
-	Email   string
-	Name    string
-	Login   string
-	IsAdmin bool
-}
-
-type Lookup struct {
-	Id		int64
-	Email	string
-	Name	string
-	Login	string
-	IsAdmin	bool 	`json:"isGrafanaAdmin"`
+	Id      int64 	`json:"id"`
+	Email   string	`json:"email"`
+	Name    string	`json:"name"`
+	Login   string	`json:"login"`
+	IsAdmin bool	`json:"isAdmin"`
 }
 
 func (c *Client) Users() ([]User, error) {
@@ -53,7 +45,6 @@ func (c *Client) UserByEmail(email string) (User, error) {
 	if err != nil {
 		return user, err
 	}
-	fmt.Println(req)
 	resp, err := c.Do(req)
 	if err != nil {
 		return user, err
@@ -65,7 +56,13 @@ func (c *Client) UserByEmail(email string) (User, error) {
 	if err != nil {
 		return user, err
 	}
-	tmp := Lookup{}
+	tmp := struct {
+		Id		int64	`json:"id"`
+		Email	string	`json:"email"`
+		Name	string	`json:"name"`
+		Login	string	`json:"login"`
+		IsAdmin	bool 	`json:"isGrafanaAdmin"`
+	}{}
 	err = json.Unmarshal(data, &tmp)
 	if err != nil {
 		return user, err
