@@ -16,9 +16,9 @@ type OrgUser struct {
 	Role    string `json:"role"`
 }
 
-func (c *Client) OrgUsers(id int64) ([]OrgUser, error) {
+func (c *Client) OrgUsers(orgId int64) ([]OrgUser, error) {
 	users := make([]OrgUser, 0)
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/%d/users", id), nil)
+	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/%d/users", orgId), nil)
 	if err != nil {
 		return users, err
 	}
