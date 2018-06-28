@@ -10,6 +10,10 @@ import (
 	"github.com/gobs/pretty"
 )
 
+const (
+	createdDataSourceJSON = `{"id":1,"message":"Datasource added", "name": "test_datasource"}`
+)
+
 func gapiTestTools(code int, body string) (*httptest.Server, *Client) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(code)

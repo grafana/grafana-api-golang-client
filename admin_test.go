@@ -6,6 +6,11 @@ import (
     "github.com/grafana/grafana/pkg/api/dtos"
 )
 
+const (
+    createUserJSON = `{"id":1,"message":"User created"}`
+	deleteUserJSON = `{"message":"User deleted"}`
+)
+
 func TestCreateUserForm(t *testing.T) {
 	server, client := gapiTestTools(200, createUserJSON)
 	defer server.Close()
