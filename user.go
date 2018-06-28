@@ -15,6 +15,14 @@ type User struct {
 	IsAdmin bool
 }
 
+type Lookup struct {
+	Id		int64
+	Email	string
+	Name	string
+	Login	string
+	IsAdmin	bool 	`json:"isGrafanaAdmin"`
+}
+
 func (c *Client) Users() ([]User, error) {
 	users := make([]User, 0)
 	req, err := c.newRequest("GET", "/api/users", nil)
@@ -57,9 +65,11 @@ func (c *Client) UserByEmail(email string) (User, error) {
 	if err != nil {
 		return user, err
 	}
-	err = json.Unmarshal(data, &user)
+	tmp := Lookup{}
+	err = json.Unmarshal(data, &tmp)
 	if err != nil {
 		return user, err
 	}
+	user = User(tmp)
 	return user, err
 }
