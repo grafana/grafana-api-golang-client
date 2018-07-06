@@ -17,7 +17,7 @@ type User struct {
 
 func (c *Client) Users() ([]User, error) {
 	users := make([]User, 0)
-	req, err := c.newRequest("GET", "/api/users", nil)
+	req, err := c.newRequest("GET", "/api/users", "", nil)
 	if err != nil {
 		return users, err
 	}
@@ -41,7 +41,7 @@ func (c *Client) Users() ([]User, error) {
 
 func (c *Client) UserByEmail(email string) (User, error) {
 	user := User{}
-	req, err := c.newQueryRequest("GET", "/api/users/lookup", fmt.Sprintf("loginOrEmail=%s", email))
+	req, err := c.newRequest("GET", "/api/users/lookup", fmt.Sprintf("loginOrEmail=%s", email), nil)
 	if err != nil {
 		return user, err
 	}

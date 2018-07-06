@@ -16,7 +16,7 @@ type Org struct {
 func (c *Client) Orgs() ([]Org, error) {
 	orgs := make([]Org, 0)
 
-	req, err := c.newRequest("GET", "/api/orgs/", nil)
+	req, err := c.newRequest("GET", "/api/orgs/", "", nil)
 	if err != nil {
 		return orgs, err
 	}
@@ -37,7 +37,7 @@ func (c *Client) Orgs() ([]Org, error) {
 
 func (c *Client) OrgByName(name string) (Org, error) {
 	org := Org{}
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/name/%s",  name), nil)
+	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/name/%s",  name), "", nil)
 	if err != nil {
 		return org, err
 	}
@@ -58,7 +58,7 @@ func (c *Client) OrgByName(name string) (Org, error) {
 
 func (c *Client) Org(id int64) (Org, error) {
 	org := Org{}
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/%d",  id), nil)
+	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/%d",  id), "", nil)
 	if err != nil {
 		return org, err
 	}
@@ -83,7 +83,7 @@ func (c *Client) NewOrg(name string) (int64, error) {
 	}
 	data, err := json.Marshal(dataMap)
 	id := int64(0)
-	req, err := c.newRequest("POST", "/api/orgs", bytes.NewBuffer(data))
+	req, err := c.newRequest("POST", "/api/orgs", "", bytes.NewBuffer(data))
 	if err != nil {
 		return id, err
 	}
@@ -114,7 +114,7 @@ func (c *Client) UpdateOrg(id int64, name string) error {
 		"name": name,
 	}
 	data, err := json.Marshal(dataMap)
-	req, err := c.newRequest("PUT", fmt.Sprintf("/api/orgs/%d", id), bytes.NewBuffer(data))
+	req, err := c.newRequest("PUT", fmt.Sprintf("/api/orgs/%d", id), "", bytes.NewBuffer(data))
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,7 @@ func (c *Client) UpdateOrg(id int64, name string) error {
 }
 
 func (c *Client) DeleteOrg(id int64) error {
-	req, err := c.newRequest("DELETE", fmt.Sprintf("/api/orgs/%d", id), nil)
+	req, err := c.newRequest("DELETE", fmt.Sprintf("/api/orgs/%d", id), "", nil)
 	if err != nil {
 		return err
 	}
