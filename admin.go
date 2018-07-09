@@ -13,7 +13,7 @@ import (
 func (c *Client) CreateUserForm(settings dtos.AdminCreateUserForm) (int64, error) {
 	id := int64(0)
 	data, err := json.Marshal(settings)
-	req, err := c.newRequest("POST", "/api/admin/users", "", bytes.NewBuffer(data))
+	req, err := c.newRequest("POST", "/api/admin/users", bytes.NewBuffer(data))
 	if err != nil {
 		return id, err
 	}
@@ -43,7 +43,7 @@ func (c *Client) CreateUser(email, login, name, password string) (int64, error) 
 }
 
 func (c *Client) DeleteUser(id int64) error {
-	req, err := c.newRequest("DELETE", fmt.Sprintf("/api/admin/users/%d", id), "", nil)
+	req, err := c.newRequest("DELETE", fmt.Sprintf("/api/admin/users/%d", id), nil)
 	if err != nil {
 		return err
 	}
