@@ -2,22 +2,21 @@ package gapi
 
 import (
 	"testing"
-    "github.com/grafana/grafana/pkg/api/dtos"
+  "github.com/grafana/grafana/pkg/api/dtos"
 )
 
 const (
-    createUserJSON = `{"id":1,"message":"User created"}`
+  createUserJSON = `{"id":1,"message":"User created"}`
 	deleteUserJSON = `{"message":"User deleted"}`
 )
 
 func TestCreateUserForm(t *testing.T) {
 	server, client := gapiTestTools(200, createUserJSON)
 	defer server.Close()
-
-    user := dtos.AdminCreateUserForm{
+  user := dtos.AdminCreateUserForm{
 		Email: "admin@localhost",
 		Login: "admin",
-        Name: "Administrator",
+    Name: "Administrator",
 		Password: "password",
 	}
 	resp, err := client.CreateUserForm(user)
@@ -34,10 +33,10 @@ func TestCreateUser(t *testing.T) {
 	server, client := gapiTestTools(200, createUserJSON)
 	defer server.Close()
 
-    user := dtos.AdminCreateUserForm{
+  user := dtos.AdminCreateUserForm{
 		Email: "admin@localhost",
 		Login: "admin",
-        Name: "Administrator",
+    Name: "Administrator",
 		Password: "password",
 	}
 	resp, err := client.CreateUser(user.Email, user.Login, user.Email, user.Password)
