@@ -2,7 +2,6 @@ package gapi
 
 import (
 	"testing"
-  "github.com/grafana/grafana/pkg/api/dtos"
 )
 
 const (
@@ -10,36 +9,16 @@ const (
 	deleteUserJSON = `{"message":"User deleted"}`
 )
 
-func TestCreateUserForm(t *testing.T) {
-	server, client := gapiTestTools(200, createUserJSON)
-	defer server.Close()
-  user := dtos.AdminCreateUserForm{
-		Email: "admin@localhost",
-		Login: "admin",
-    Name: "Administrator",
-		Password: "password",
-	}
-	resp, err := client.CreateUserForm(user)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if resp != 1 {
-		t.Error("Not correctly parsing returned user message.")
-	}
-}
-
 func TestCreateUser(t *testing.T) {
 	server, client := gapiTestTools(200, createUserJSON)
 	defer server.Close()
-
-  user := dtos.AdminCreateUserForm{
+  user := User{
 		Email: "admin@localhost",
 		Login: "admin",
     Name: "Administrator",
 		Password: "password",
 	}
-	resp, err := client.CreateUser(user.Email, user.Login, user.Email, user.Password)
+	resp, err := client.CreateUser(user)
 	if err != nil {
 		t.Error(err)
 	}
