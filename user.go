@@ -3,8 +3,8 @@ package gapi
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
+	"net/url"
 )
 
 type User struct {
@@ -18,7 +18,7 @@ type User struct {
 
 func (c *Client) Users() ([]User, error) {
 	users := make([]User, 0)
-	req, err := c.newRequest("GET", "/api/users", nil)
+	req, err := c.newRequest("GET", "/api/users", nil, nil)
 	if err != nil {
 		return users, err
 	}
@@ -42,8 +42,9 @@ func (c *Client) Users() ([]User, error) {
 
 func (c *Client) UserByEmail(email string) (User, error) {
 	user := User{}
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/users/lookup?loginOrEmail=%s", email), nil)
-	return User{}, errors.New(req.URL.String())
+	query := url.Values{}
+	query.Add("loginOrEmail", email)
+	req, err := c.newRequest("GET", "/api/users/lookup", query, nil)
 	if err != nil {
 		return user, err
 	}

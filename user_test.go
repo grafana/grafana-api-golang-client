@@ -42,13 +42,13 @@ func TestUserByEmail(t *testing.T) {
     if err != nil {
         t.Error(err)
     }
-		
+
     t.Log(pretty.PrettyFormat(resp))
 
     user := User{
 		Id: 1,
 		Email: "admin@localhost",
-        Name: "",
+    Name: "",
 		Login: "admin",
 		IsAdmin: true,
 	}
