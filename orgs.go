@@ -9,8 +9,8 @@ import (
 )
 
 type Org struct {
-	Id   int64	`json:"id"`
-	Name string	`json:"name"`
+	Id   int64  `json:"id"`
+	Name string `json:"name"`
 }
 
 func (c *Client) Orgs() ([]Org, error) {
@@ -37,7 +37,7 @@ func (c *Client) Orgs() ([]Org, error) {
 
 func (c *Client) OrgByName(name string) (Org, error) {
 	org := Org{}
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/name/%s",  name), nil, nil)
+	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/name/%s", name), nil, nil)
 	if err != nil {
 		return org, err
 	}
@@ -58,7 +58,7 @@ func (c *Client) OrgByName(name string) (Org, error) {
 
 func (c *Client) Org(id int64) (Org, error) {
 	org := Org{}
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/%d",  id), nil, nil)
+	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/%d", id), nil, nil)
 	if err != nil {
 		return org, err
 	}

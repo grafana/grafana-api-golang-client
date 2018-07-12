@@ -8,10 +8,10 @@ import (
 )
 
 type User struct {
-	Id       int64 	`json:"id,omitempty"`
-	Email    string	`json:"email,omitempty"`
-	Name     string	`json:"name,omitempty"`
-	Login    string	`json:"login,omitempty"`
+	Id       int64  `json:"id,omitempty"`
+	Email    string `json:"email,omitempty"`
+	Name     string `json:"name,omitempty"`
+	Login    string `json:"login,omitempty"`
 	Password string `json:"password,omitempty"`
 	IsAdmin  bool   `json:"isAdmin,omitempty"`
 }
@@ -60,10 +60,10 @@ func (c *Client) UserByEmail(email string) (User, error) {
 		return user, err
 	}
 	tmp := struct {
-		Id       int64 	`json:"id,omitempty"`
-		Email    string	`json:"email,omitempty"`
-		Name     string	`json:"name,omitempty"`
-		Login    string	`json:"login,omitempty"`
+		Id       int64  `json:"id,omitempty"`
+		Email    string `json:"email,omitempty"`
+		Name     string `json:"name,omitempty"`
+		Login    string `json:"login,omitempty"`
 		Password string `json:"password,omitempty"`
 		IsAdmin  bool   `json:"isGrafanaAdmin,omitempty"`
 	}{}

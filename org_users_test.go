@@ -1,13 +1,13 @@
 package gapi
 
 import (
-	"testing"
 	"github.com/gobs/pretty"
+	"testing"
 )
 
 const (
-	getOrgUsersJSON = `[{"orgId":1,"userId":1,"email":"admin@localhost","avatarUrl":"/avatar/46d229b033af06a191ff2267bca9ae56","login":"admin","role":"Admin","lastSeenAt":"2018-06-28T14:16:11Z","lastSeenAtAge":"\u003c 1m"}]`
-	addOrgUserJSON = `{"message":"User added to organization"}`
+	getOrgUsersJSON   = `[{"orgId":1,"userId":1,"email":"admin@localhost","avatarUrl":"/avatar/46d229b033af06a191ff2267bca9ae56","login":"admin","role":"Admin","lastSeenAt":"2018-06-28T14:16:11Z","lastSeenAtAge":"\u003c 1m"}]`
+	addOrgUserJSON    = `{"message":"User added to organization"}`
 	updateOrgUserJSON = `{"message":"Organization user updated"}`
 	removeOrgUserJSON = `{"message":"User removed from organization"}`
 )
@@ -25,11 +25,11 @@ func TestOrgUsers(t *testing.T) {
 	t.Log(pretty.PrettyFormat(resp))
 
 	user := OrgUser{
-		OrgId: 1,
+		OrgId:  1,
 		UserId: 1,
-		Email: "admin@localhost",
-		Login: "admin",
-		Role: "Admin",
+		Email:  "admin@localhost",
+		Login:  "admin",
+		Role:   "Admin",
 	}
 
 	if resp[0] != user {

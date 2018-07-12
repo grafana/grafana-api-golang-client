@@ -9,11 +9,11 @@ import (
 )
 
 type OrgUser struct {
-	OrgId   int64  `json:"orgId"`
-	UserId  int64  `json:"userId"`
-	Email   string `json:"email"`
-	Login   string `json:"login"`
-	Role    string `json:"role"`
+	OrgId  int64  `json:"orgId"`
+	UserId int64  `json:"userId"`
+	Email  string `json:"email"`
+	Login  string `json:"login"`
+	Role   string `json:"role"`
 }
 
 func (c *Client) OrgUsers(orgId int64) ([]OrgUser, error) {
@@ -43,7 +43,7 @@ func (c *Client) OrgUsers(orgId int64) ([]OrgUser, error) {
 func (c *Client) AddOrgUser(orgId int64, user, role string) error {
 	dataMap := map[string]string{
 		"loginOrEmail": user,
-		"role": role,
+		"role":         role,
 	}
 	data, err := json.Marshal(dataMap)
 	req, err := c.newRequest("POST", fmt.Sprintf("/api/orgs/%d/users", orgId), nil, bytes.NewBuffer(data))

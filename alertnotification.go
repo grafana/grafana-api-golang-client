@@ -9,11 +9,11 @@ import (
 )
 
 type AlertNotification struct {
-	Id          int64       `json:"id,omitempty"`
-	Name        string      `json:"name"`
-	Type        string      `json:"type"`
-	IsDefault   bool        `json:"isDefault"`
-	Settings    interface{} `json:"settings"`
+	Id        int64       `json:"id,omitempty"`
+	Name      string      `json:"name"`
+	Type      string      `json:"type"`
+	IsDefault bool        `json:"isDefault"`
+	Settings  interface{} `json:"settings"`
 }
 
 func (c *Client) AlertNotification(id int64) (*AlertNotification, error) {
