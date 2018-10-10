@@ -54,6 +54,7 @@ func TestNewDataSource(t *testing.T) {
 			AuthType:                "keys",
 			CustomMetricsNamespaces: "SomeNamespace",
 			DefaultRegion:           "us-east-1",
+			TlsSkipVerify:           true,
 		},
 		SecureJSONData: SecureJSONData{
 			AccessKey: "123",
