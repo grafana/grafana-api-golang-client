@@ -130,7 +130,7 @@ func TestNewFolder(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp != 1 {
+	if resp.Uid != "nErXDvCkzz" {
 		t.Error("Not correctly parsing returned creation message.")
 	}
 }
@@ -139,7 +139,7 @@ func TestUpdateFolder(t *testing.T) {
 	server, client := gapiTestTools(200, updatedFolderJSON)
 	defer server.Close()
 
-	err := client.UpdateFolder(int64(1), "test-folder")
+	err := client.UpdateFolder("nErXDvCkzz", "test-folder")
 	if err != nil {
 		t.Error(err)
 	}
@@ -149,7 +149,7 @@ func TestDeleteFolder(t *testing.T) {
 	server, client := gapiTestTools(200, deletedFolderJSON)
 	defer server.Close()
 
-	err := client.DeleteFolder(int64(1))
+	err := client.DeleteFolder("nErXDvCkzz")
 	if err != nil {
 		t.Error(err)
 	}
