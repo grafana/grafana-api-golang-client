@@ -36,9 +36,9 @@ func (c *Client) Folders() ([]Folder, error) {
 	return folders, err
 }
 
-func (c *Client) Folder(id int64) (Folder, error) {
-	folder := Folder{}
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/folders/%d", id), nil, nil)
+func (c *Client) Folder(id int64) (*Folder, error) {
+	folder := &Folder{}
+	req, err := c.newRequest("GET", fmt.Sprintf("/api/folders/id/%d", id), nil, nil)
 	if err != nil {
 		return folder, err
 	}
@@ -72,7 +72,8 @@ func (c *Client) NewFolder(title string) (Folder, error) {
 		return folder, err
 	}
 	if resp.StatusCode != 200 {
-		return folder, errors.New(resp.Status)
+		data, _ = ioutil.ReadAll(resp.Body)
+		return folder, fmt.Errorf("status: %s body: %s", resp.Status, data)
 	}
 	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
