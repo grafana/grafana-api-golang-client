@@ -15,7 +15,7 @@ const (
 		"version": 1
 	}`
 
-	getDashboardBySlugResponse = `{
+	getDashboardResponse = `{
 		"dashboard": {
 			"id": 1,
 			"uid": "cIBgcSjkk",
@@ -62,18 +62,24 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 	}
 }
 
-func TestDashboardGetBySlug(t *testing.T) {
-	server, client := gapiTestTools(200, getDashboardBySlugResponse)
+func TestDashboardGet(t *testing.T) {
+	server, client := gapiTestTools(200, getDashboardResponse)
 	defer server.Close()
 
 	resp, err := client.Dashboard("test")
 	if err != nil {
 		t.Error(err)
 	}
-
-	t.Log(pretty.PrettyFormat(resp))
-
 	uid, ok := resp.Model["uid"]
+	if !ok || uid != "cIBgcSjkk" {
+		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
+	}
+
+	resp, err = client.DashboardByUID("cIBgcSjkk")
+	if err != nil {
+		t.Error(err)
+	}
+	uid, ok = resp.Model["uid"]
 	if !ok || uid != "cIBgcSjkk" {
 		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
 	}
@@ -84,10 +90,15 @@ func TestDashboardGetBySlug(t *testing.T) {
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
+
+		_, err = client.DashboardByUID("cIBgcSjkk")
+		if err == nil {
+			t.Errorf("%d not detected", code)
+		}
 	}
 }
 
-func TestDashboardDeleteBySlug(t *testing.T) {
+func TestDashboardDelete(t *testing.T) {
 	server, client := gapiTestTools(200, "")
 	defer server.Close()
 
@@ -96,27 +107,22 @@ func TestDashboardDeleteBySlug(t *testing.T) {
 		t.Error(err)
 	}
 
+	err = client.DeleteDashboardByUID("cIBgcSjkk")
+	if err != nil {
+		t.Error(err)
+	}
+
 	for _, code := range []int{401, 403, 404, 412} {
 		server.code = code
+
 		err = client.DeleteDashboard("test")
+		if err == nil {
+			t.Errorf("%d not detected", code)
+		}
+
+		err = client.DeleteDashboardByUID("cIBgcSjkk")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
 	}
 }
-
-// func TestDashboardNew(t *testing.T) {
-// 	mock, client := newMockApiServer()
-// 	defer mock.server.Close()
-
-// 	response, err := client.NewDashboard(exampleDashboard)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-
-// 	t.Log(pretty.PrettyFormat(response))
-
-// 	if response.Uid == "" {
-// 		t.Error("dashboard creation response should return the created dashboard UID")
-// 	}
-// }
