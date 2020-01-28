@@ -1,5 +1,10 @@
 package gapi
 
+import (
+	"github.com/gobs/pretty"
+	"testing"
+)
+
 const (
 	getTeamJSON = `
 {
@@ -7,8 +12,9 @@ const (
   "orgId": 1,
   "name": "MyTestTeam",
   "email": "",
-  "created": "2017-12-15T10:40:45+01:00",
-  "updated": "2017-12-15T10:40:45+01:00"
+  "avatarUrl": "avatar/abcdef",
+  "memberCount": 1,
+  "permission": 0
 }
 `
 	addTeamsJSON = `
@@ -58,3 +64,70 @@ const (
 }
 `
 )
+
+func TestTeam(t *testing.T) {
+	server, client := gapiTestTools(200, getTeamJSON)
+	defer server.Close()
+
+	id := int64(1)
+	resp, err := client.Team(id)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(resp))
+
+	expect := &Team{
+		Id:          1,
+		OrgId:       1,
+		Name:        "MyTestTeam",
+		Email:       "",
+		AvatarUrl:   "avatar/abcdef",
+		MemberCount: 1,
+		Permission:  0,
+	}
+	t.Run("check data", func(t *testing.T) {
+		if expect.Id != resp.Id || expect.Name != expect.Name {
+			t.Error("Not correctly data")
+		}
+	})
+}
+
+func TestAddTeam(t *testing.T) {
+	server, client := gapiTestTools(200, addTeamsJSON)
+	defer server.Close()
+
+	name := "TestTeam"
+	email := ""
+
+	err := client.AddTeam(name, email)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestUpdateTeam(t *testing.T) {
+	server, client := gapiTestTools(200, addTeamsJSON)
+	defer server.Close()
+
+	id := int64(1)
+	name := "TestTeam"
+	email := ""
+
+	err := client.UpdateTeam(id, name, email)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestDeleteTeam(t *testing.T) {
+	server, client := gapiTestTools(200, addTeamsJSON)
+	defer server.Close()
+
+	id := int64(1)
+
+	err := client.DeleteTeam(id)
+	if err != nil {
+		t.Error(err)
+	}
+}
