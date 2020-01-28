@@ -31,17 +31,23 @@ const (
     "orgId": 1,
     "teamId": 1,
     "userId": 3,
+    "auth_module": "oauth_github",
     "email": "user1@email.com",
     "login": "user1",
-    "avatarUrl": "\/avatar\/1b3c32f6386b0185c40d359cdc733a79"
+    "avatarUrl": "\/avatar\/1b3c32f6386b0185c40d359cdc733a79",
+    "labels": [],
+    "permission": 0
   },
   {
     "orgId": 1,
     "teamId": 1,
     "userId": 2,
+    "auth_module": "oauth_github",
     "email": "user2@email.com",
     "login": "user2",
-    "avatarUrl": "\/avatar\/cad3c68da76e45d10269e8ef02f8e73e"
+    "avatarUrl": "\/avatar\/cad3c68da76e45d10269e8ef02f8e73e",
+    "labels": [],
+    "permission": 0
   }
 ]
 `
@@ -107,7 +113,7 @@ func TestAddTeam(t *testing.T) {
 }
 
 func TestUpdateTeam(t *testing.T) {
-	server, client := gapiTestTools(200, addTeamsJSON)
+	server, client := gapiTestTools(200, updateTeamJSON)
 	defer server.Close()
 
 	id := int64(1)
@@ -121,13 +127,114 @@ func TestUpdateTeam(t *testing.T) {
 }
 
 func TestDeleteTeam(t *testing.T) {
-	server, client := gapiTestTools(200, addTeamsJSON)
+	server, client := gapiTestTools(200, deleteTeamJSON)
 	defer server.Close()
 
 	id := int64(1)
 
 	err := client.DeleteTeam(id)
 	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTeamMembers(t *testing.T) {
+	server, client := gapiTestTools(200, getTeamMembersJSON)
+	defer server.Close()
+
+	id := int64(1)
+
+	resp, err := client.TeamMembers(id)
+	if err != nil {
+		t.Error(err)
+	}
+	expects := []TeamMember{
+		{
+			OrgId:      1,
+			TeamId:     1,
+			UserId:     3,
+			Email:      "user1@email.com",
+			Login:      "user1",
+			AvatarUrl:  "/avatar/1b3c32f6386b0185c40d359cdc733a79",
+			Permission: 0,
+		},
+		{
+			OrgId:      1,
+			TeamId:     1,
+			UserId:     2,
+			Email:      "user2@email.com",
+			Login:      "user2",
+			AvatarUrl:  "/avatar/cad3c68da76e45d10269e8ef02f8e73e",
+			Permission: 0,
+		},
+	}
+
+	for i, expect := range expects {
+		t.Run("check data", func(t *testing.T) {
+			if expect.Email != resp[i].Email || expect.AvatarUrl != resp[i].AvatarUrl {
+				t.Error("Not correctly data")
+			}
+		})
+	}
+}
+
+func TestAddTeamMember(t *testing.T) {
+	server, client := gapiTestTools(200, addTeamMemberJSON)
+	defer server.Close()
+
+	id := int64(1)
+	userId := int64(2)
+
+	if err := client.AddTeamMember(id, userId); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestRemoveMemberFromTeam(t *testing.T) {
+	server, client := gapiTestTools(200, removeMemberFromTeamJSON)
+	defer server.Close()
+
+	id := int64(1)
+	userId := int64(2)
+
+	if err := client.RemoveMemberFromTeam(id, userId); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTeamPreferences(t *testing.T) {
+	server, client := gapiTestTools(200, getTeamPreferencesJSON)
+	defer server.Close()
+
+	id := int64(1)
+
+	resp, err := client.TeamPreferences(id)
+	if err != nil {
+		t.Error(err)
+	}
+	expect := &Preferences{
+		Theme:           "",
+		HomeDashboardId: 0,
+		Timezone:        "",
+	}
+
+	t.Run("check data", func(t *testing.T) {
+		if expect.Theme != resp.Theme || expect.HomeDashboardId != resp.HomeDashboardId {
+			t.Error("Not correctly data")
+		}
+	})
+}
+
+func TestUpdateTeamPreferences(t *testing.T) {
+	server, client := gapiTestTools(200, updateTeamPreferencesJSON)
+	defer server.Close()
+
+	id := int64(1)
+	theme := ""
+	homeDashboardId := int64(0)
+	timezone := ""
+
+	if err := client.UpdateTeamPreferences(id, theme, homeDashboardId, timezone); err != nil {
 		t.Error(err)
 	}
 }
