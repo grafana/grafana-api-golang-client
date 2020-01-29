@@ -67,7 +67,7 @@ func TestFolderPermissions(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	expects := []FolderPermission{
+	expects := []*FolderPermission{
 		{
 			Id:             1,
 			FolderUid:      "nErXDvCkzz",
@@ -96,7 +96,7 @@ func TestFolderPermissions(t *testing.T) {
 
 	for i, expect := range expects {
 		t.Run("check data", func(t *testing.T) {
-			if resp[i] != expect {
+			if resp[i].Id != expect.Id || resp[i].Role != expect.Role {
 				t.Error("Not correctly data")
 			}
 		})
@@ -108,7 +108,7 @@ func TestUpdateFolderPermissions(t *testing.T) {
 	defer server.Close()
 
 	items := &PermissionItems{
-		Items: []PermissionItem{
+		Items: []*PermissionItem{
 			{
 				Role:       "viewer",
 				Permission: 1,

@@ -29,7 +29,7 @@ type FolderPermission struct {
 }
 
 type PermissionItems struct {
-	Items []PermissionItem `json:"items"`
+	Items []*PermissionItem `json:"items"`
 }
 
 type PermissionItem struct {
@@ -41,8 +41,8 @@ type PermissionItem struct {
 	Permission int64  `json:"permission"`
 }
 
-func (c *Client) FolderPermissions(fid string) ([]FolderPermission, error) {
-	permissions := make([]FolderPermission, 0)
+func (c *Client) FolderPermissions(fid string) ([]*FolderPermission, error) {
+	permissions := make([]*FolderPermission, 0)
 
 	req, err := c.newRequest("GET", fmt.Sprintf("/api/folders/%s/permissions", fid), nil, nil)
 	if err != nil {
