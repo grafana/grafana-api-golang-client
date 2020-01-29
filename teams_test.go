@@ -102,7 +102,7 @@ func TestSearchTeam(t *testing.T) {
 
 	expect := &SearchTeam{
 		TotalCount: 1,
-		Teams: []Team{
+		Teams: []*Team{
 			{
 				Id:          1,
 				OrgId:       1,
@@ -200,7 +200,7 @@ func TestTeamMembers(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	expects := []TeamMember{
+	expects := []*TeamMember{
 		{
 			OrgId:      1,
 			TeamId:     1,

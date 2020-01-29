@@ -9,10 +9,10 @@ import (
 )
 
 type SearchTeam struct {
-	TotalCount int64  `json:"totalCount,omitempty"`
-	Teams      []Team `json:"teams,omitempty"`
-	Page       int64  `json:"page,omitempty"`
-	PerPage    int64  `json:"perPage,omitempty"`
+	TotalCount int64   `json:"totalCount,omitempty"`
+	Teams      []*Team `json:"teams,omitempty"`
+	Page       int64   `json:"page,omitempty"`
+	PerPage    int64   `json:"perPage,omitempty"`
 }
 
 // Team consists of a get response
@@ -169,8 +169,8 @@ func (c *Client) DeleteTeam(id int64) error {
 	return nil
 }
 
-func (c *Client) TeamMembers(id int64) ([]TeamMember, error) {
-	members := make([]TeamMember, 0)
+func (c *Client) TeamMembers(id int64) ([]*TeamMember, error) {
+	members := make([]*TeamMember, 0)
 
 	req, err := c.newRequest("GET", fmt.Sprintf("/api/teams/%d/members", id), nil, nil)
 	if err != nil {
