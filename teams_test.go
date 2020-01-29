@@ -6,6 +6,23 @@ import (
 )
 
 const (
+	searchTeamJSON = `
+{
+  "totalCount": 1,
+  "teams": [
+    {
+      "id": 1,
+      "orgId": 1,
+      "name": "MyTestTeam",
+      "email": "",
+      "avatarUrl": "/avatar/3f49c15916554246daa714b9bd0ee398",
+      "memberCount": 1
+    }
+  ],
+  "page": 1,
+  "perPage": 1000
+}
+`
 	getTeamJSON = `
 {
   "id": 1,
@@ -34,7 +51,7 @@ const (
     "auth_module": "oauth_github",
     "email": "user1@email.com",
     "login": "user1",
-    "avatarUrl": "\/avatar\/1b3c32f6386b0185c40d359cdc733a79",
+    "avatarUrl": "/avatar/1b3c32f6386b0185c40d359cdc733a79",
     "labels": [],
     "permission": 0
   },
@@ -45,7 +62,7 @@ const (
     "auth_module": "oauth_github",
     "email": "user2@email.com",
     "login": "user2",
-    "avatarUrl": "\/avatar\/cad3c68da76e45d10269e8ef02f8e73e",
+    "avatarUrl": "/avatar/cad3c68da76e45d10269e8ef02f8e73e",
     "labels": [],
     "permission": 0
   }
@@ -70,6 +87,41 @@ const (
 }
 `
 )
+
+func TestSearchTeam(t *testing.T) {
+	server, client := gapiTestTools(200, searchTeamJSON)
+	defer server.Close()
+
+	query := "myteam"
+	resp, err := client.SearchTeam(query)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(resp))
+
+	expect := &SearchTeam{
+		TotalCount: 1,
+		Teams: []Team{
+			{
+				Id:          1,
+				OrgId:       1,
+				Name:        "MyTestTeam",
+				Email:       "",
+				AvatarUrl:   "avatar/3f49c15916554246daa714b9bd0ee398",
+				MemberCount: 1,
+				Permission:  0,
+			},
+		},
+		Page:    1,
+		PerPage: 1000,
+	}
+	t.Run("check data", func(t *testing.T) {
+		if expect.TotalCount != resp.TotalCount || expect.Teams[0].Name != resp.Teams[0].Name {
+			t.Error("Not correctly data")
+		}
+	})
+}
 
 func TestTeam(t *testing.T) {
 	server, client := gapiTestTools(200, getTeamJSON)

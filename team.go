@@ -5,7 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/url"
 )
+
+type SearchTeam struct {
+	TotalCount int64  `json:"totalCount,omitempty"`
+	Teams      []Team `json:"teams,omitempty"`
+	Page       int64  `json:"page,omitempty"`
+	PerPage    int64  `json:"perPage,omitempty"`
+}
 
 // Team consists of a get response
 // It's used in  Add and Update API
@@ -34,6 +42,38 @@ type Preferences struct {
 	Theme           string `json:"theme"`
 	HomeDashboardId int64  `json:"homeDashboardId"`
 	Timezone        string `json:"timezone"`
+}
+
+func (c *Client) SearchTeam(query string) (*SearchTeam, error) {
+	var result SearchTeam
+
+	page := "1"
+	perPage := "1000"
+	path := "/api/teams/search"
+	queryValues := url.Values{}
+	queryValues.Set("page", page)
+	queryValues.Set("perPage", perPage)
+	queryValues.Set("query", query)
+
+	req, err := c.newRequest("GET", path, queryValues, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf(resp.Status)
+	}
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
 func (c *Client) Team(id int64) (*Team, error) {
