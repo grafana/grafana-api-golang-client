@@ -45,7 +45,7 @@ type Dashboard struct {
 	Meta      DashboardMeta          `json:"meta"`
 	Model     map[string]interface{} `json:"dashboard"`
 	Folder    int64                  `json:"folderId"`
-	Overwrite bool                   `json:overwrite`
+	Overwrite bool                   `json:"overwrite"`
 }
 
 // Deprecated: use NewDashboard instead
