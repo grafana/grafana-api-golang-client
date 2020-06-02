@@ -28,7 +28,7 @@ const (
 			"slug": "production-overview"
 		}
 	}`
-  
+
 	getDashboardsJSON = `[
     {
       "id": 1,
@@ -138,7 +138,7 @@ func TestDashboardDelete(t *testing.T) {
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
-  }
+	}
 }
 
 func TestDashboards(t *testing.T) {
