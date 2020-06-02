@@ -40,7 +40,7 @@ const (
   "teamId":2
 }
 `
-	updateTeamJSON     = `{ "message":"Team updated"}`
+	updateTeamJSON     = `{"message":"Team updated"}`
 	deleteTeamJSON     = `{"message":"Team deleted"}`
 	getTeamMembersJSON = `
 [
@@ -118,7 +118,7 @@ func TestSearchTeam(t *testing.T) {
 	}
 	t.Run("check data", func(t *testing.T) {
 		if expect.TotalCount != resp.TotalCount || expect.Teams[0].Name != resp.Teams[0].Name {
-			t.Error("Not correctly data")
+			t.Error("Not correctly parsing returned team search.")
 		}
 	})
 }
@@ -146,7 +146,7 @@ func TestTeam(t *testing.T) {
 	}
 	t.Run("check data", func(t *testing.T) {
 		if expect.Id != resp.Id || expect.Name != expect.Name {
-			t.Error("Not correctly data")
+			t.Error("Not correctly parsing returned team.")
 		}
 	})
 }
@@ -224,7 +224,7 @@ func TestTeamMembers(t *testing.T) {
 	for i, expect := range expects {
 		t.Run("check data", func(t *testing.T) {
 			if expect.Email != resp[i].Email || expect.AvatarUrl != resp[i].AvatarUrl {
-				t.Error("Not correctly data")
+				t.Error("Not correctly parsing returned team members.")
 			}
 		})
 	}
@@ -272,7 +272,7 @@ func TestTeamPreferences(t *testing.T) {
 
 	t.Run("check data", func(t *testing.T) {
 		if expect.Theme != resp.Theme || expect.HomeDashboardId != resp.HomeDashboardId {
-			t.Error("Not correctly data")
+			t.Error("Not correctly parsing returned team preferences.")
 		}
 	})
 }
