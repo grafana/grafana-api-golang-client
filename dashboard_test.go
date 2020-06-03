@@ -89,7 +89,7 @@ func TestDashboardGet(t *testing.T) {
 		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
 	}
 
-	resp, err = client.DashboardByUID("cIBgcSjkk")
+	resp, err = client.DashboardByUid("cIBgcSjkk")
 	if err != nil {
 		t.Error(err)
 	}
@@ -105,7 +105,7 @@ func TestDashboardGet(t *testing.T) {
 			t.Errorf("%d not detected", code)
 		}
 
-		_, err = client.DashboardByUID("cIBgcSjkk")
+		_, err = client.DashboardByUid("cIBgcSjkk")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
@@ -121,7 +121,7 @@ func TestDashboardDelete(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = client.DeleteDashboardByUID("cIBgcSjkk")
+	err = client.DeleteDashboardByUid("cIBgcSjkk")
 	if err != nil {
 		t.Error(err)
 	}
@@ -134,7 +134,7 @@ func TestDashboardDelete(t *testing.T) {
 			t.Errorf("%d not detected", code)
 		}
 
-		err = client.DeleteDashboardByUID("cIBgcSjkk")
+		err = client.DeleteDashboardByUid("cIBgcSjkk")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
