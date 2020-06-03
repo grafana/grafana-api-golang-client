@@ -10,6 +10,8 @@ import (
 	"os"
 	"path"
 	"strings"
+
+	"github.com/hashicorp/go-cleanhttp"
 )
 
 type Client struct {
@@ -27,25 +29,22 @@ func New(auth, baseURL string) (*Client, error) {
 	}
 	key := ""
 	if strings.Contains(auth, ":") {
-		split := strings.Split(auth, ":")
+		split := strings.SplitN(auth, ":", 2)
 		u.User = url.UserPassword(split[0], split[1])
-	} else {
+	} else if auth != "" {
 		key = fmt.Sprintf("Bearer %s", auth)
 	}
 	return &Client{
 		key,
 		*u,
-		&http.Client{},
+		cleanhttp.DefaultClient(),
 	}, nil
 }
 
-func (c *Client) newRequest(method, requestPathAndQuery string, body io.Reader) (*http.Request, error) {
+func (c *Client) newRequest(method, requestPath string, query url.Values, body io.Reader) (*http.Request, error) {
 	url := c.baseURL
-	pathAndQuery := strings.Split(requestPathAndQuery, "?")
-	url.Path = path.Join(url.Path, pathAndQuery[0])
-	if len(pathAndQuery) > 1 {
-		url.RawQuery = pathAndQuery[1]
-	}
+	url.Path = path.Join(url.Path, requestPath)
+	url.RawQuery = query.Encode()
 	req, err := http.NewRequest(method, url.String(), body)
 	if err != nil {
 		return req, err
@@ -56,9 +55,9 @@ func (c *Client) newRequest(method, requestPathAndQuery string, body io.Reader) 
 
 	if os.Getenv("GF_LOG") != "" {
 		if body == nil {
-			log.Println("request to ", url.String(), "with no body data")
+			log.Printf("request (%s) to %s with no body data", method, url.String())
 		} else {
-			log.Println("request to ", url.String(), "with body data", body.(*bytes.Buffer).String())
+			log.Printf("request (%s) to %s with body data: %s", method, url.String(), body.(*bytes.Buffer).String())
 		}
 	}
 
