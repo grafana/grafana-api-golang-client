@@ -1,20 +1,57 @@
 package gapi
 
 import (
+	"net/url"
 	"testing"
 
 	"github.com/gobs/pretty"
+)
+
+const (
+	annotationsJSON = `[{
+		"id": 1124,
+		"alertId": 0,
+		"dashboardId": 468,
+		"panelId": 2,
+		"userId": 1,
+		"userName": "",
+		"newState": "",
+		"prevState": "",
+		"time": 1507266395000,
+		"text": "test",
+		"metric": "",
+		"regionId": 1123,
+		"type": "event",
+		"tags": [
+			"tag1",
+			"tag2"
+		],
+		"data": {}
+	}]`
+
+	newAnnotationJSON = `{
+		"message":"Annotation added",
+		"id": 1,
+		"endId": 2
+	}`
+
+	newGraphiteAnnotationJSON = `{
+		"message":"Annotation added",
+		"id": 1
+	}`
+
+	deleteAnnotationJSON = `{"message":"Annotation deleted"}`
 )
 
 func TestAnnotations(t *testing.T) {
 	server, client := gapiTestTools(200, annotationsJSON)
 	defer server.Close()
 
-	params := map[string]string{
-		"from":  "1506676478816",
-		"to":    "1507281278816",
-		"limit": "100",
-	}
+	params := url.Values{}
+	params.Add("from", "1506676478816")
+	params.Add("to", "1507281278816")
+	params.Add("limit", "100")
+
 	as, err := client.Annotations(params)
 	if err != nil {
 		t.Error(err)

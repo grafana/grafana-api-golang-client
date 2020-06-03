@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/url"
 )
 
 // Annotation represents a Grafana API Annotation
@@ -37,9 +38,8 @@ type GraphiteAnnotation struct {
 }
 
 // Annotations fetches the annotations queried with the params it's passed
-func (c *Client) Annotations(params map[string]string) ([]Annotation, error) {
-	pathAndQuery := buildPathAndQuery("/api/annotations", params)
-	req, err := c.newRequest("GET", pathAndQuery, nil)
+func (c *Client) Annotations(params url.Values) ([]Annotation, error) {
+	req, err := c.newRequest("GET", "/api/annotation", params, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (c *Client) NewAnnotation(a *Annotation) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	req, err := c.newRequest("POST", "/api/annotations", bytes.NewBuffer(data))
+	req, err := c.newRequest("POST", "/api/annotations", nil, bytes.NewBuffer(data))
 	if err != nil {
 		return 0, err
 	}
@@ -99,7 +99,7 @@ func (c *Client) NewGraphiteAnnotation(gfa *GraphiteAnnotation) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	req, err := c.newRequest("POST", "/api/annotations/graphite", bytes.NewBuffer(data))
+	req, err := c.newRequest("POST", "/api/annotations/graphite", nil, bytes.NewBuffer(data))
 	if err != nil {
 		return 0, err
 	}
@@ -131,7 +131,7 @@ func (c *Client) UpdateAnnotation(a *Annotation) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	req, err := c.newRequest("PUT", path, bytes.NewBuffer(data))
+	req, err := c.newRequest("PUT", path, nil, bytes.NewBuffer(data))
 	if err != nil {
 		return 0, err
 	}
@@ -159,7 +159,7 @@ func (c *Client) UpdateAnnotation(a *Annotation) (int64, error) {
 // DeleteAnnotation deletes the annotation of the ID it is passed
 func (c *Client) DeleteAnnotation(id int64) (string, error) {
 	path := fmt.Sprintf("/api/annotations/%d", id)
-	req, err := c.newRequest("DELETE", path, bytes.NewBuffer(nil))
+	req, err := c.newRequest("DELETE", path, nil, bytes.NewBuffer(nil))
 	if err != nil {
 		return "", err
 	}
@@ -187,7 +187,7 @@ func (c *Client) DeleteAnnotation(id int64) (string, error) {
 // DeleteAnnotationByRegionID deletes the annotation corresponding to the region ID it is passed
 func (c *Client) DeleteAnnotationByRegionID(id int64) (string, error) {
 	path := fmt.Sprintf("/api/annotations/region/%d", id)
-	req, err := c.newRequest("DELETE", path, bytes.NewBuffer(nil))
+	req, err := c.newRequest("DELETE", path, nil, bytes.NewBuffer(nil))
 	if err != nil {
 		return "", err
 	}
