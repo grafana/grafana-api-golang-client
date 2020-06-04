@@ -1,0 +1,21 @@
+name-template: 'v$NEXT_PATCH_VERSION'
+tag-template: 'v$NEXT_PATCH_VERSION'
+categories:
+  - title: 'New Features'
+    label: 'new feature'
+  - title: 'Bug Fixes'
+    label: 'fix'
+  - title: 'Improvements'
+    label: 'enhancement'
+version-resolver:
+  major:
+    labels:
+      - 'breaking change'
+  minor:
+    labels:
+      - 'new feature'
+  default: patch
+template: |
+  $CHANGES
+
+  Changes since previous release: https://github.com/nytm/go-grafana-api/compare/v$PREVIOUS_TAG...v$NEXT_PATCH_VERSION
