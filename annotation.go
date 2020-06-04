@@ -124,36 +124,68 @@ func (c *Client) NewGraphiteAnnotation(gfa *GraphiteAnnotation) (int64, error) {
 	return result.ID, err
 }
 
-// UpdateAnnotation updates an existing annotation with the Annotation it is passed
-func (c *Client) UpdateAnnotation(a *Annotation) (int64, error) {
-	path := fmt.Sprintf("/api/annotations/%d", a.ID)
+// UpdateAnnotation updates all properties an existing annotation with the Annotation it is passed.
+func (c *Client) UpdateAnnotation(id int64, a *Annotation) (string, error) {
+	path := fmt.Sprintf("/api/annotations/%d", id)
 	data, err := json.Marshal(a)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	req, err := c.newRequest("PUT", path, nil, bytes.NewBuffer(data))
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	resp, err := c.Do(req)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	if resp.StatusCode != 200 {
-		return 0, errors.New(resp.Status)
+		return "", errors.New(resp.Status)
 	}
 
 	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	result := struct {
-		ID int64 `json:"id"`
+		Message string `json:"message"`
 	}{}
 	err = json.Unmarshal(data, &result)
-	return result.ID, err
+	return result.Message, err
+}
+
+// PatchAnnotation updates one or more properties of an existing annotation that matches the specified ID.
+func (c *Client) PatchAnnotation(id int64, a *Annotation) (string, error) {
+	path := fmt.Sprintf("/api/annotations/%d", id)
+	data, err := json.Marshal(a)
+	if err != nil {
+		return "", err
+	}
+	req, err := c.newRequest("PATCH", path, nil, bytes.NewBuffer(data))
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != 200 {
+		return "", errors.New(resp.Status)
+	}
+
+	data, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	result := struct {
+		Message string `json:"message"`
+	}{}
+	err = json.Unmarshal(data, &result)
+	return result.Message, err
 }
 
 // DeleteAnnotation deletes the annotation of the ID it is passed

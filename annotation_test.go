@@ -40,6 +40,10 @@ const (
 		"id": 1
 	}`
 
+	updateAnnotationJSON = `{"message":"Annotation updated"}`
+
+	patchAnnotationJSON = `{"message":"Annotation patched"}`
+
 	deleteAnnotationJSON = `{"message":"Annotation deleted"}`
 )
 
@@ -86,6 +90,44 @@ func TestNewAnnotation(t *testing.T) {
 
 	if res != 1 {
 		t.Error("new annotation response should contain the ID of the new annotation")
+	}
+}
+
+func TestUpdateAnnotation(t *testing.T) {
+	server, client := gapiTestTools(200, updateAnnotationJSON)
+	defer server.Close()
+
+	a := Annotation{
+		Text: "new text description",
+	}
+	res, err := client.UpdateAnnotation(1, &a)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(res))
+
+	if res != "Annotation updated" {
+		t.Error("update annotation response should contain the correct response message")
+	}
+}
+
+func TestPatchAnnotation(t *testing.T) {
+	server, client := gapiTestTools(200, patchAnnotationJSON)
+	defer server.Close()
+
+	a := Annotation{
+		Text: "new text description",
+	}
+	res, err := client.PatchAnnotation(1, &a)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(res))
+
+	if res != "Annotation patched" {
+		t.Error("patch annotation response should contain the correct response message")
 	}
 }
 
