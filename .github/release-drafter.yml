@@ -16,6 +16,8 @@ version-resolver:
       - 'new feature'
   default: patch
 template: |
+  # Changelog
+  
   $CHANGES
 
-  Changes since previous release: https://github.com/nytm/go-grafana-api/compare/v$PREVIOUS_TAG...v$NEXT_PATCH_VERSION
+  Changes since previous release: https://github.com/nytm/go-grafana-api/compare/$PREVIOUS_TAG...v$NEXT_PATCH_VERSION
