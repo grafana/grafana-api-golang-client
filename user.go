@@ -2,7 +2,6 @@ package gapi
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"net/url"
 )
@@ -16,19 +15,14 @@ type User struct {
 	IsAdmin  bool   `json:"isAdmin,omitempty"`
 }
 
+// Users fetches and returns Grafana users.
 func (c *Client) Users() ([]User, error) {
 	users := make([]User, 0)
-	req, err := c.newRequest("GET", "/api/users", nil, nil)
+	resp, err := c.request("GET", "/api/users", nil, nil)
 	if err != nil {
 		return users, err
 	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return users, err
-	}
-	if resp.StatusCode != 200 {
-		return users, errors.New(resp.Status)
-	}
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return users, err
@@ -40,21 +34,16 @@ func (c *Client) Users() ([]User, error) {
 	return users, err
 }
 
+// UserByEmail fetches and returns the user whose email matches that passed.
 func (c *Client) UserByEmail(email string) (User, error) {
 	user := User{}
 	query := url.Values{}
 	query.Add("loginOrEmail", email)
-	req, err := c.newRequest("GET", "/api/users/lookup", query, nil)
+	resp, err := c.request("GET", "/api/users/lookup", query, nil)
 	if err != nil {
 		return user, err
 	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return user, err
-	}
-	if resp.StatusCode != 200 {
-		return user, errors.New(resp.Status)
-	}
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return user, err
