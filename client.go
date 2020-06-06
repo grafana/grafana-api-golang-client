@@ -16,6 +16,7 @@ import (
 	"github.com/hashicorp/go-cleanhttp"
 )
 
+// Client is a Grafana API client.
 type Client struct {
 	key     string
 	baseURL url.URL
