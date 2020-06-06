@@ -3,7 +3,6 @@ package gapi
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 )
@@ -14,20 +13,14 @@ type Folder struct {
 	Title string `json:"title"`
 }
 
+// Folders fetches and returns Grafana folders.
 func (c *Client) Folders() ([]Folder, error) {
 	folders := make([]Folder, 0)
+	resp, err := c.request("GET", "/api/folders/", nil, nil)
+	if err != nil {
+		return folders, err
+	}
 
-	req, err := c.newRequest("GET", "/api/folders/", nil, nil)
-	if err != nil {
-		return folders, err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return folders, err
-	}
-	if resp.StatusCode != 200 {
-		return folders, errors.New(resp.Status)
-	}
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return folders, err
@@ -36,19 +29,14 @@ func (c *Client) Folders() ([]Folder, error) {
 	return folders, err
 }
 
+// Folder fetches and returns the Grafana folder whose ID it's passed.
 func (c *Client) Folder(id int64) (*Folder, error) {
 	folder := &Folder{}
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/folders/id/%d", id), nil, nil)
+	resp, err := c.request("GET", fmt.Sprintf("/api/folders/id/%d", id), nil, nil)
 	if err != nil {
 		return folder, err
 	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return folder, err
-	}
-	if resp.StatusCode != 200 {
-		return folder, errors.New(resp.Status)
-	}
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return folder, err
@@ -57,6 +45,7 @@ func (c *Client) Folder(id int64) (*Folder, error) {
 	return folder, err
 }
 
+// NewFolder creates a new Grafana folder.
 func (c *Client) NewFolder(title string) (Folder, error) {
 	folder := Folder{}
 	dataMap := map[string]string{
@@ -66,18 +55,11 @@ func (c *Client) NewFolder(title string) (Folder, error) {
 	if err != nil {
 		return folder, err
 	}
-	req, err := c.newRequest("POST", "/api/folders", nil, bytes.NewBuffer(data))
+	resp, err := c.request("POST", "/api/folders", nil, bytes.NewBuffer(data))
 	if err != nil {
 		return folder, err
 	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return folder, err
-	}
-	if resp.StatusCode != 200 {
-		data, _ = ioutil.ReadAll(resp.Body)
-		return folder, fmt.Errorf("status: %s body: %s", resp.Status, data)
-	}
+
 	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return folder, err
@@ -89,6 +71,7 @@ func (c *Client) NewFolder(title string) (Folder, error) {
 	return folder, err
 }
 
+// UpdateFolder updates the folder whose ID it's passed.
 func (c *Client) UpdateFolder(id string, name string) error {
 	dataMap := map[string]string{
 		"name": name,
@@ -97,31 +80,14 @@ func (c *Client) UpdateFolder(id string, name string) error {
 	if err != nil {
 		return err
 	}
-	req, err := c.newRequest("PUT", fmt.Sprintf("/api/folders/%s", id), nil, bytes.NewBuffer(data))
-	if err != nil {
-		return err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
+	_, err = c.request("PUT", fmt.Sprintf("/api/folders/%s", id), nil, bytes.NewBuffer(data))
+
 	return err
 }
 
+// DeleteFolder deletes the folder whose ID it's passed.
 func (c *Client) DeleteFolder(id string) error {
-	req, err := c.newRequest("DELETE", fmt.Sprintf("/api/folders/%s", id), nil, nil)
-	if err != nil {
-		return err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
+	_, err := c.request("DELETE", fmt.Sprintf("/api/folders/%s", id), nil, nil)
+
 	return err
 }
