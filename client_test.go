@@ -36,7 +36,7 @@ func TestNew_tokenAuth(t *testing.T) {
 func TestNew_invalidURL(t *testing.T) {
 	_, err := New("123", "://my-grafana.com")
 
-	expected := "parse ://my-grafana.com: missing protocol scheme"
+	expected := "parse \"://my-grafana.com\": missing protocol scheme"
 	if err.Error() != expected {
 		t.Errorf("expected error: %v; got: %s", expected, err.Error())
 	}
