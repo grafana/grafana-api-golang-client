@@ -3,7 +3,6 @@ package gapi
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 )
@@ -103,22 +102,15 @@ type SecureJSONData struct {
 	PrivateKey string `json:"privateKey,omitempty"`
 }
 
+// NewDataSource creates a new Grafana data source.
 func (c *Client) NewDataSource(s *DataSource) (int64, error) {
 	data, err := json.Marshal(s)
 	if err != nil {
 		return 0, err
 	}
-	req, err := c.newRequest("POST", "/api/datasources", nil, bytes.NewBuffer(data))
+	resp, err := c.request("POST", "/api/datasources", nil, bytes.NewBuffer(data))
 	if err != nil {
 		return 0, err
-	}
-
-	resp, err := c.Do(req)
-	if err != nil {
-		return 0, err
-	}
-	if resp.StatusCode != 200 {
-		return 0, errors.New(resp.Status)
 	}
 
 	data, err = ioutil.ReadAll(resp.Body)
@@ -133,41 +125,24 @@ func (c *Client) NewDataSource(s *DataSource) (int64, error) {
 	return result.Id, err
 }
 
+// UpdateDataSource updates a Grafana data source.
 func (c *Client) UpdateDataSource(s *DataSource) error {
 	path := fmt.Sprintf("/api/datasources/%d", s.Id)
 	data, err := json.Marshal(s)
 	if err != nil {
 		return err
 	}
-	req, err := c.newRequest("PUT", path, nil, bytes.NewBuffer(data))
-	if err != nil {
-		return err
-	}
+	_, err = c.request("PUT", path, nil, bytes.NewBuffer(data))
 
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
-
-	return nil
+	return err
 }
 
+// DataSource fetches and returns the Grafana data source whose ID it's passed.
 func (c *Client) DataSource(id int64) (*DataSource, error) {
 	path := fmt.Sprintf("/api/datasources/%d", id)
-	req, err := c.newRequest("GET", path, nil, nil)
+	resp, err := c.request("GET", path, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	resp, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != 200 {
-		return nil, errors.New(resp.Status)
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
@@ -180,20 +155,10 @@ func (c *Client) DataSource(id int64) (*DataSource, error) {
 	return result, err
 }
 
+// DeleteDataSource deletes the Grafana data source whose ID it's passed.
 func (c *Client) DeleteDataSource(id int64) error {
 	path := fmt.Sprintf("/api/datasources/%d", id)
-	req, err := c.newRequest("DELETE", path, nil, nil)
-	if err != nil {
-		return err
-	}
+	_, err := c.request("DELETE", path, nil, nil)
 
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
-
-	return nil
+	return err
 }
