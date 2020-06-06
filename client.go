@@ -41,6 +41,24 @@ func New(auth, baseURL string) (*Client, error) {
 	}, nil
 }
 
+func (c *Client) request(method, requestPath string, query url.Values, body io.Reader) (*http.Response, error) {
+	r, err := c.newRequest(method, requestPath, query, body)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.Do(r)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode >= 400 {
+		return nil, fmt.Errorf("status: %d", resp.StatusCode)
+	}
+
+	return resp, err
+}
+
 func (c *Client) newRequest(method, requestPath string, query url.Values, body io.Reader) (*http.Request, error) {
 	url := c.baseURL
 	url.Path = path.Join(url.Path, requestPath)
