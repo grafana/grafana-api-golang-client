@@ -59,6 +59,10 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 		return err
 	}
 
+	if os.Getenv("GF_LOG") != "" {
+		log.Printf("response status %d with body %v", resp.StatusCode, string(bodyContents))
+	}
+
 	if resp.StatusCode >= 400 {
 		return fmt.Errorf("status: %d, body: %v", resp.StatusCode, bodyContents)
 	}
