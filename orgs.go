@@ -3,7 +3,6 @@ package gapi
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 )
@@ -13,20 +12,15 @@ type Org struct {
 	Name string `json:"name"`
 }
 
+// Orgs fetches and returns the Grafana orgs.
 func (c *Client) Orgs() ([]Org, error) {
 	orgs := make([]Org, 0)
 
-	req, err := c.newRequest("GET", "/api/orgs/", nil, nil)
+	resp, err := c.request("GET", "/api/orgs/", nil, nil)
 	if err != nil {
 		return orgs, err
 	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return orgs, err
-	}
-	if resp.StatusCode != 200 {
-		return orgs, errors.New(resp.Status)
-	}
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return orgs, err
@@ -35,19 +29,14 @@ func (c *Client) Orgs() ([]Org, error) {
 	return orgs, err
 }
 
+// OrgByName fetches and returns the org whose name it's passed.
 func (c *Client) OrgByName(name string) (Org, error) {
 	org := Org{}
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/name/%s", name), nil, nil)
+	resp, err := c.request("GET", fmt.Sprintf("/api/orgs/name/%s", name), nil, nil)
 	if err != nil {
 		return org, err
 	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return org, err
-	}
-	if resp.StatusCode != 200 {
-		return org, errors.New(resp.Status)
-	}
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return org, err
@@ -56,19 +45,14 @@ func (c *Client) OrgByName(name string) (Org, error) {
 	return org, err
 }
 
+// Org fetches and returns the org whose ID it's passed.
 func (c *Client) Org(id int64) (Org, error) {
 	org := Org{}
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/%d", id), nil, nil)
+	resp, err := c.request("GET", fmt.Sprintf("/api/orgs/%d", id), nil, nil)
 	if err != nil {
 		return org, err
 	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return org, err
-	}
-	if resp.StatusCode != 200 {
-		return org, errors.New(resp.Status)
-	}
+
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return org, err
@@ -77,6 +61,7 @@ func (c *Client) Org(id int64) (Org, error) {
 	return org, err
 }
 
+// NewOrg creates a new Grafana org.
 func (c *Client) NewOrg(name string) (int64, error) {
 	id := int64(0)
 
@@ -87,17 +72,11 @@ func (c *Client) NewOrg(name string) (int64, error) {
 	if err != nil {
 		return id, err
 	}
-	req, err := c.newRequest("POST", "/api/orgs", nil, bytes.NewBuffer(data))
+	resp, err := c.request("POST", "/api/orgs", nil, bytes.NewBuffer(data))
 	if err != nil {
 		return id, err
 	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return id, err
-	}
-	if resp.StatusCode != 200 {
-		return id, errors.New(resp.Status)
-	}
+
 	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return id, err
@@ -113,6 +92,7 @@ func (c *Client) NewOrg(name string) (int64, error) {
 	return id, err
 }
 
+// UpdateOrg updates a Grafana org.
 func (c *Client) UpdateOrg(id int64, name string) error {
 	dataMap := map[string]string{
 		"name": name,
@@ -121,31 +101,14 @@ func (c *Client) UpdateOrg(id int64, name string) error {
 	if err != nil {
 		return err
 	}
-	req, err := c.newRequest("PUT", fmt.Sprintf("/api/orgs/%d", id), nil, bytes.NewBuffer(data))
-	if err != nil {
-		return err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
+	_, err = c.request("PUT", fmt.Sprintf("/api/orgs/%d", id), nil, bytes.NewBuffer(data))
+
 	return err
 }
 
+// DeleteOrg deletes the Grafana org whose ID it's passed.
 func (c *Client) DeleteOrg(id int64) error {
-	req, err := c.newRequest("DELETE", fmt.Sprintf("/api/orgs/%d", id), nil, nil)
-	if err != nil {
-		return err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
+	_, err := c.request("DELETE", fmt.Sprintf("/api/orgs/%d", id), nil, nil)
+
 	return err
 }
