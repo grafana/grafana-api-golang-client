@@ -2,8 +2,10 @@ package gapi
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -41,22 +43,36 @@ func New(auth, baseURL string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) request(method, requestPath string, query url.Values, body io.Reader) (*http.Response, error) {
+func (c *Client) request(method, requestPath string, query url.Values, body io.Reader, responseStruct interface{}) error {
 	r, err := c.newRequest(method, requestPath, query, body)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	resp, err := c.Do(r)
 	if err != nil {
-		return nil, err
+		return err
+	}
+
+	bodyContents, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
 	}
 
 	if resp.StatusCode >= 400 {
-		return nil, fmt.Errorf("status: %d", resp.StatusCode)
+		return fmt.Errorf("status: %d, body: %v", resp.StatusCode, bodyContents)
 	}
 
-	return resp, err
+	if responseStruct == nil {
+		return nil
+	}
+
+	err = json.Unmarshal(bodyContents, responseStruct)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Client) newRequest(method, requestPath string, query url.Values, body io.Reader) (*http.Request, error) {

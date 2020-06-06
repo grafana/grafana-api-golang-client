@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 )
 
@@ -38,18 +37,12 @@ type GraphiteAnnotation struct {
 
 // Annotations fetches the annotations queried with the params it's passed
 func (c *Client) Annotations(params url.Values) ([]Annotation, error) {
-	resp, err := c.request("GET", "/api/annotation", params, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	result := []Annotation{}
-	err = json.Unmarshal(data, &result)
+	err := c.request("GET", "/api/annotation", params, nil, &result)
+	if err != nil {
+		return nil, err
+	}
+
 	return result, err
 }
 
@@ -59,20 +52,16 @@ func (c *Client) NewAnnotation(a *Annotation) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	resp, err := c.request("POST", "/api/annotations", nil, bytes.NewBuffer(data))
-	if err != nil {
-		return 0, err
-	}
-
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
 
 	result := struct {
 		ID int64 `json:"id"`
 	}{}
-	err = json.Unmarshal(data, &result)
+
+	err = c.request("POST", "/api/annotations", nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return 0, err
+	}
+
 	return result.ID, err
 }
 
@@ -82,20 +71,16 @@ func (c *Client) NewGraphiteAnnotation(gfa *GraphiteAnnotation) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	resp, err := c.request("POST", "/api/annotations/graphite", nil, bytes.NewBuffer(data))
-	if err != nil {
-		return 0, err
-	}
-
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
 
 	result := struct {
 		ID int64 `json:"id"`
 	}{}
-	err = json.Unmarshal(data, &result)
+
+	err = c.request("POST", "/api/annotations/graphite", nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return 0, err
+	}
+
 	return result.ID, err
 }
 
@@ -106,20 +91,16 @@ func (c *Client) UpdateAnnotation(id int64, a *Annotation) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	resp, err := c.request("PUT", path, nil, bytes.NewBuffer(data))
-	if err != nil {
-		return "", err
-	}
-
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
 
 	result := struct {
 		Message string `json:"message"`
 	}{}
-	err = json.Unmarshal(data, &result)
+
+	err = c.request("PUT", path, nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return "", err
+	}
+
 	return result.Message, err
 }
 
@@ -130,59 +111,45 @@ func (c *Client) PatchAnnotation(id int64, a *Annotation) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	resp, err := c.request("PATCH", path, nil, bytes.NewBuffer(data))
-	if err != nil {
-		return "", err
-	}
-
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
 
 	result := struct {
 		Message string `json:"message"`
 	}{}
-	err = json.Unmarshal(data, &result)
+
+	err = c.request("PATCH", path, nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return "", err
+	}
+
 	return result.Message, err
 }
 
 // DeleteAnnotation deletes the annotation of the ID it is passed
 func (c *Client) DeleteAnnotation(id int64) (string, error) {
 	path := fmt.Sprintf("/api/annotations/%d", id)
-	resp, err := c.request("DELETE", path, nil, bytes.NewBuffer(nil))
-	if err != nil {
-		return "", err
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
 	result := struct {
 		Message string `json:"message"`
 	}{}
-	err = json.Unmarshal(data, &result)
+
+	err := c.request("DELETE", path, nil, bytes.NewBuffer(nil), &result)
+	if err != nil {
+		return "", err
+	}
+
 	return result.Message, err
 }
 
 // DeleteAnnotationByRegionID deletes the annotation corresponding to the region ID it is passed
 func (c *Client) DeleteAnnotationByRegionID(id int64) (string, error) {
 	path := fmt.Sprintf("/api/annotations/region/%d", id)
-	resp, err := c.request("DELETE", path, nil, bytes.NewBuffer(nil))
-	if err != nil {
-		return "", err
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
 	result := struct {
 		Message string `json:"message"`
 	}{}
-	err = json.Unmarshal(data, &result)
+
+	err := c.request("DELETE", path, nil, bytes.NewBuffer(nil), &result)
+	if err != nil {
+		return "", err
+	}
+
 	return result.Message, err
 }

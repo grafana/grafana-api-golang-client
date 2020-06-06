@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 type DataSource struct {
@@ -108,20 +107,16 @@ func (c *Client) NewDataSource(s *DataSource) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	resp, err := c.request("POST", "/api/datasources", nil, bytes.NewBuffer(data))
-	if err != nil {
-		return 0, err
-	}
-
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
 
 	result := struct {
 		Id int64 `json:"id"`
 	}{}
-	err = json.Unmarshal(data, &result)
+
+	err = c.request("POST", "/api/datasources", nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return 0, err
+	}
+
 	return result.Id, err
 }
 
@@ -132,33 +127,25 @@ func (c *Client) UpdateDataSource(s *DataSource) error {
 	if err != nil {
 		return err
 	}
-	_, err = c.request("PUT", path, nil, bytes.NewBuffer(data))
 
-	return err
+	return c.request("PUT", path, nil, bytes.NewBuffer(data), nil)
 }
 
 // DataSource fetches and returns the Grafana data source whose ID it's passed.
 func (c *Client) DataSource(id int64) (*DataSource, error) {
 	path := fmt.Sprintf("/api/datasources/%d", id)
-	resp, err := c.request("GET", path, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	result := &DataSource{}
-	err = json.Unmarshal(data, &result)
+	err := c.request("GET", path, nil, nil, result)
+	if err != nil {
+		return nil, err
+	}
+
 	return result, err
 }
 
 // DeleteDataSource deletes the Grafana data source whose ID it's passed.
 func (c *Client) DeleteDataSource(id int64) error {
 	path := fmt.Sprintf("/api/datasources/%d", id)
-	_, err := c.request("DELETE", path, nil, nil)
 
-	return err
+	return c.request("DELETE", path, nil, nil, nil)
 }

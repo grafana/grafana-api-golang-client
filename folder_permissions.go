@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 // FolderPermission has information such as a folder, user, team, role and permission.
@@ -44,18 +43,11 @@ type PermissionItem struct {
 // FolderPermissions fetches and returns the permissions for the folder whose ID it's passed.
 func (c *Client) FolderPermissions(fid string) ([]*FolderPermission, error) {
 	permissions := make([]*FolderPermission, 0)
-	resp, err := c.request("GET", fmt.Sprintf("/api/folders/%s/permissions", fid), nil, nil)
+	err := c.request("GET", fmt.Sprintf("/api/folders/%s/permissions", fid), nil, nil, &permissions)
 	if err != nil {
 		return permissions, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return permissions, err
-	}
-	if err := json.Unmarshal(data, &permissions); err != nil {
-		return permissions, err
-	}
 	return permissions, nil
 }
 
@@ -67,7 +59,5 @@ func (c *Client) UpdateFolderPermissions(fid string, items *PermissionItems) err
 		return err
 	}
 
-	_, err = c.request("POST", path, nil, bytes.NewBuffer(data))
-
-	return err
+	return c.request("POST", path, nil, bytes.NewBuffer(data), nil)
 }

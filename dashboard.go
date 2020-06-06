@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 )
 
@@ -57,18 +56,13 @@ func (c *Client) SaveDashboard(model map[string]interface{}, overwrite bool) (*D
 	if err != nil {
 		return nil, err
 	}
-	resp, err := c.request("POST", "/api/dashboards/db", nil, bytes.NewBuffer(data))
-	if err != nil {
-		return nil, err
-	}
-
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
 
 	result := &DashboardSaveResponse{}
-	err = json.Unmarshal(data, &result)
+	err = c.request("POST", "/api/dashboards/db", nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return nil, err
+	}
+
 	return result, err
 }
 
@@ -78,18 +72,13 @@ func (c *Client) NewDashboard(dashboard Dashboard) (*DashboardSaveResponse, erro
 	if err != nil {
 		return nil, err
 	}
-	resp, err := c.request("POST", "/api/dashboards/db", nil, bytes.NewBuffer(data))
-	if err != nil {
-		return nil, err
-	}
-
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
 
 	result := &DashboardSaveResponse{}
-	err = json.Unmarshal(data, &result)
+	err = c.request("POST", "/api/dashboards/db", nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return nil, err
+	}
+
 	return result, err
 }
 
@@ -99,17 +88,12 @@ func (c *Client) Dashboards() ([]DashboardSearchResponse, error) {
 	query := url.Values{}
 	// search only dashboards
 	query.Add("type", "dash-db")
-	resp, err := c.request("GET", "/api/search", query, nil)
+
+	err := c.request("GET", "/api/search", query, nil, &dashboards)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return dashboards, err
-	}
-
-	err = json.Unmarshal(data, &dashboards)
 	return dashboards, err
 }
 
@@ -131,19 +115,11 @@ func (c *Client) DashboardByUID(uid string) (*Dashboard, error) {
 }
 
 func (c *Client) dashboard(path string) (*Dashboard, error) {
-	resp, err := c.request("GET", path, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	result := &Dashboard{}
-	err = json.Unmarshal(data, &result)
-	result.Folder = result.Meta.Folder
+	err := c.request("GET", path, nil, nil, &result)
+	if err != nil {
+		return nil, err
+	}
 
 	return result, err
 }
@@ -166,7 +142,5 @@ func (c *Client) DeleteDashboardByUID(uid string) error {
 }
 
 func (c *Client) deleteDashboard(path string) error {
-	_, err := c.request("DELETE", path, nil, nil)
-
-	return err
+	return c.request("DELETE", path, nil, nil, nil)
 }

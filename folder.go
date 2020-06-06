@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 type Folder struct {
@@ -16,32 +15,22 @@ type Folder struct {
 // Folders fetches and returns Grafana folders.
 func (c *Client) Folders() ([]Folder, error) {
 	folders := make([]Folder, 0)
-	resp, err := c.request("GET", "/api/folders/", nil, nil)
+	err := c.request("GET", "/api/folders/", nil, nil, &folders)
 	if err != nil {
 		return folders, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return folders, err
-	}
-	err = json.Unmarshal(data, &folders)
 	return folders, err
 }
 
 // Folder fetches and returns the Grafana folder whose ID it's passed.
 func (c *Client) Folder(id int64) (*Folder, error) {
 	folder := &Folder{}
-	resp, err := c.request("GET", fmt.Sprintf("/api/folders/id/%d", id), nil, nil)
+	err := c.request("GET", fmt.Sprintf("/api/folders/id/%d", id), nil, nil, folder)
 	if err != nil {
 		return folder, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return folder, err
-	}
-	err = json.Unmarshal(data, &folder)
 	return folder, err
 }
 
@@ -55,19 +44,12 @@ func (c *Client) NewFolder(title string) (Folder, error) {
 	if err != nil {
 		return folder, err
 	}
-	resp, err := c.request("POST", "/api/folders", nil, bytes.NewBuffer(data))
+
+	err = c.request("POST", "/api/folders", nil, bytes.NewBuffer(data), &folder)
 	if err != nil {
 		return folder, err
 	}
 
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return folder, err
-	}
-	err = json.Unmarshal(data, &folder)
-	if err != nil {
-		return folder, err
-	}
 	return folder, err
 }
 
@@ -80,14 +62,11 @@ func (c *Client) UpdateFolder(id string, name string) error {
 	if err != nil {
 		return err
 	}
-	_, err = c.request("PUT", fmt.Sprintf("/api/folders/%s", id), nil, bytes.NewBuffer(data))
 
-	return err
+	return c.request("PUT", fmt.Sprintf("/api/folders/%s", id), nil, bytes.NewBuffer(data), nil)
 }
 
 // DeleteFolder deletes the folder whose ID it's passed.
 func (c *Client) DeleteFolder(id string) error {
-	_, err := c.request("DELETE", fmt.Sprintf("/api/folders/%s", id), nil, nil)
-
-	return err
+	return c.request("DELETE", fmt.Sprintf("/api/folders/%s", id), nil, nil, nil)
 }

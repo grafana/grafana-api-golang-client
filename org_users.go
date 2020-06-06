@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 type OrgUser struct {
@@ -18,19 +17,11 @@ type OrgUser struct {
 // OrgUsers fetches and returns the users for the org whose ID it's passed.
 func (c *Client) OrgUsers(orgId int64) ([]OrgUser, error) {
 	users := make([]OrgUser, 0)
-	resp, err := c.request("GET", fmt.Sprintf("/api/orgs/%d/users", orgId), nil, nil)
+	err := c.request("GET", fmt.Sprintf("/api/orgs/%d/users", orgId), nil, nil, &users)
 	if err != nil {
 		return users, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return users, err
-	}
-	err = json.Unmarshal(data, &users)
-	if err != nil {
-		return users, err
-	}
 	return users, err
 }
 
@@ -45,9 +36,7 @@ func (c *Client) AddOrgUser(orgId int64, user, role string) error {
 		return err
 	}
 
-	_, err = c.request("POST", fmt.Sprintf("/api/orgs/%d/users", orgId), nil, bytes.NewBuffer(data))
-
-	return err
+	return c.request("POST", fmt.Sprintf("/api/orgs/%d/users", orgId), nil, bytes.NewBuffer(data), nil)
 }
 
 // UpdateOrgUser updates and org user.
@@ -59,14 +48,11 @@ func (c *Client) UpdateOrgUser(orgId, userId int64, role string) error {
 	if err != nil {
 		return err
 	}
-	_, err = c.request("PATCH", fmt.Sprintf("/api/orgs/%d/users/%d", orgId, userId), nil, bytes.NewBuffer(data))
 
-	return err
+	return c.request("PATCH", fmt.Sprintf("/api/orgs/%d/users/%d", orgId, userId), nil, bytes.NewBuffer(data), nil)
 }
 
 // RemoveOrgUser removes a user from an org.
 func (c *Client) RemoveOrgUser(orgId, userId int64) error {
-	_, err := c.request("DELETE", fmt.Sprintf("/api/orgs/%d/users/%d", orgId, userId), nil, nil)
-
-	return err
+	return c.request("DELETE", fmt.Sprintf("/api/orgs/%d/users/%d", orgId, userId), nil, nil, nil)
 }

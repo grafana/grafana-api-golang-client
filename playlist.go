@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 type PlaylistItem struct {
@@ -24,19 +23,8 @@ type Playlist struct {
 // Playlist fetches and returns a Grafana playlist.
 func (c *Client) Playlist(id int) (*Playlist, error) {
 	path := fmt.Sprintf("/api/playlists/%d", id)
-	resp, err := c.request("GET", path, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	playlist := &Playlist{}
-
-	err = json.Unmarshal(data, &playlist)
+	err := c.request("GET", path, nil, nil, playlist)
 	if err != nil {
 		return nil, err
 	}
@@ -51,21 +39,11 @@ func (c *Client) NewPlaylist(playlist Playlist) (int, error) {
 		return 0, err
 	}
 
-	resp, err := c.request("POST", "/api/playlists", nil, bytes.NewBuffer(data))
-	if err != nil {
-		return 0, err
-	}
-
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
-
 	result := struct {
 		Id int
 	}{}
 
-	err = json.Unmarshal(data, &result)
+	err = c.request("POST", "/api/playlists", nil, bytes.NewBuffer(data), &result)
 	if err != nil {
 		return 0, err
 	}
@@ -81,15 +59,12 @@ func (c *Client) UpdatePlaylist(playlist Playlist) error {
 		return err
 	}
 
-	_, err = c.request("PUT", path, nil, bytes.NewBuffer(data))
-
-	return err
+	return c.request("PUT", path, nil, bytes.NewBuffer(data), nil)
 }
 
 // DeletePlaylist deletes the Grafana playlist whose ID it's passed.
 func (c *Client) DeletePlaylist(id int) error {
 	path := fmt.Sprintf("/api/playlists/%d", id)
-	_, err := c.request("DELETE", path, nil, nil)
 
-	return err
+	return c.request("DELETE", path, nil, nil, nil)
 }

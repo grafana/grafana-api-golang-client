@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 )
 
@@ -56,38 +55,24 @@ func (c *Client) SearchTeam(query string) (*SearchTeam, error) {
 	queryValues.Set("perPage", perPage)
 	queryValues.Set("query", query)
 
-	resp, err := c.request("GET", path, queryValues, nil)
+	err := c.request("GET", path, queryValues, nil, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if err := json.Unmarshal(data, &result); err != nil {
-		return nil, err
-	}
 	return &result, nil
 }
 
 // Team fetches and returns the Grafana team whose ID it's passed.
 func (c *Client) Team(id int64) (*Team, error) {
-	var team Team
+	team := &Team{}
 
-	resp, err := c.request("GET", fmt.Sprintf("/api/teams/%d", id), nil, nil)
+	err := c.request("GET", fmt.Sprintf("/api/teams/%d", id), nil, nil, team)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if err := json.Unmarshal(data, &team); err != nil {
-		return nil, err
-	}
-	return &team, nil
+	return team, nil
 }
 
 // AddTeam makes a new team
@@ -104,9 +89,7 @@ func (c *Client) AddTeam(name string, email string) error {
 		return err
 	}
 
-	_, err = c.request("POST", path, nil, bytes.NewBuffer(data))
-
-	return err
+	return c.request("POST", path, nil, bytes.NewBuffer(data), nil)
 }
 
 // UpdateTeam updates a Grafana team.
@@ -124,34 +107,23 @@ func (c *Client) UpdateTeam(id int64, name string, email string) error {
 		return err
 	}
 
-	_, err = c.request("PUT", path, nil, bytes.NewBuffer(data))
-
-	return err
+	return c.request("PUT", path, nil, bytes.NewBuffer(data), nil)
 }
 
 // DeleteTeam deletes the Grafana team whose ID it's passed.
 func (c *Client) DeleteTeam(id int64) error {
-	_, err := c.request("DELETE", fmt.Sprintf("/api/teams/%d", id), nil, nil)
-
-	return err
+	return c.request("DELETE", fmt.Sprintf("/api/teams/%d", id), nil, nil, nil)
 }
 
 // TeamMembers fetches and returns the team members for the Grafana team whose ID it's passed.
 func (c *Client) TeamMembers(id int64) ([]*TeamMember, error) {
 	members := make([]*TeamMember, 0)
 
-	resp, err := c.request("GET", fmt.Sprintf("/api/teams/%d/members", id), nil, nil)
+	err := c.request("GET", fmt.Sprintf("/api/teams/%d/members", id), nil, nil, &members)
 	if err != nil {
 		return members, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return members, err
-	}
-	if err := json.Unmarshal(data, &members); err != nil {
-		return members, err
-	}
 	return members, nil
 }
 
@@ -163,37 +135,27 @@ func (c *Client) AddTeamMember(id int64, userId int64) error {
 	if err != nil {
 		return err
 	}
-	_, err = c.request("POST", path, nil, bytes.NewBuffer(data))
 
-	return err
+	return c.request("POST", path, nil, bytes.NewBuffer(data), nil)
 }
 
 // RemoveMemberFromTeam removes a user from the Grafana team whose ID it's passed.
 func (c *Client) RemoveMemberFromTeam(id int64, userId int64) error {
 	path := fmt.Sprintf("/api/teams/%d/members/%d", id, userId)
-	_, err := c.request("DELETE", path, nil, nil)
 
-	return err
+	return c.request("DELETE", path, nil, nil, nil)
 }
 
 // TeamPreferences fetches and returns preferences for the Grafana team whose ID it's passed.
 func (c *Client) TeamPreferences(id int64) (*Preferences, error) {
-	var preferences Preferences
+	preferences := &Preferences{}
 
-	resp, err := c.request("GET", fmt.Sprintf("/api/teams/%d/preferences", id), nil, nil)
+	err := c.request("GET", fmt.Sprintf("/api/teams/%d/preferences", id), nil, nil, preferences)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	if err := json.Unmarshal(data, &preferences); err != nil {
-		return nil, err
-	}
-
-	return &preferences, nil
+	return preferences, nil
 }
 
 // UpdateTeamPreferences updates team preferences for the Grafana team whose ID it's passed.
@@ -208,7 +170,6 @@ func (c *Client) UpdateTeamPreferences(id int64, theme string, homeDashboardId i
 	if err != nil {
 		return err
 	}
-	_, err = c.request("PUT", path, nil, bytes.NewBuffer(data))
 
-	return err
+	return c.request("PUT", path, nil, bytes.NewBuffer(data), nil)
 }

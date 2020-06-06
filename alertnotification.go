@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 // AlertNotification represents a Grafana alert notification.
@@ -24,35 +23,23 @@ type AlertNotification struct {
 func (c *Client) AlertNotifications() ([]AlertNotification, error) {
 	alertnotifications := make([]AlertNotification, 0)
 
-	resp, err := c.request("GET", "/api/alert-notifications/", nil, nil)
+	err := c.request("GET", "/api/alert-notifications/", nil, nil, &alertnotifications)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(data, &alertnotifications)
 	return alertnotifications, err
 }
 
 // AlertNotification fetches and returns a Grafana alert notification.
 func (c *Client) AlertNotification(id int64) (*AlertNotification, error) {
 	path := fmt.Sprintf("/api/alert-notifications/%d", id)
-	resp, err := c.request("GET", path, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	result := &AlertNotification{}
-	err = json.Unmarshal(data, &result)
+	err := c.request("GET", path, nil, nil, result)
+	if err != nil {
+		return nil, err
+	}
+
 	return result, err
 }
 
@@ -62,20 +49,15 @@ func (c *Client) NewAlertNotification(a *AlertNotification) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	resp, err := c.request("POST", "/api/alert-notifications", nil, bytes.NewBuffer(data))
-	if err != nil {
-		return 0, err
-	}
-
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
-
 	result := struct {
 		Id int64 `json:"id"`
 	}{}
-	err = json.Unmarshal(data, &result)
+
+	err = c.request("POST", "/api/alert-notifications", nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return 0, err
+	}
+
 	return result.Id, err
 }
 
@@ -86,17 +68,14 @@ func (c *Client) UpdateAlertNotification(a *AlertNotification) error {
 	if err != nil {
 		return err
 	}
-
-	_, err = c.request("PUT", path, nil, bytes.NewBuffer(data))
+	err = c.request("PUT", path, nil, bytes.NewBuffer(data), nil)
 
 	return err
-
 }
 
 // DeleteAlertNotification deletes a Grafana alert notification.
 func (c *Client) DeleteAlertNotification(id int64) error {
 	path := fmt.Sprintf("/api/alert-notifications/%d", id)
-	_, err := c.request("DELETE", path, nil, nil)
 
-	return err
+	return c.request("DELETE", path, nil, nil, nil)
 }
