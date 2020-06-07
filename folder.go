@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// Folder represents a Grafana folder.
 type Folder struct {
 	Id    int64  `json:"id"`
 	Uid   string `json:"uid"`

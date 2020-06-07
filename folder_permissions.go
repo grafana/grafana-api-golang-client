@@ -27,10 +27,12 @@ type FolderPermission struct {
 	DashboardId int64 `json:"dashboardId,omitempty"`
 }
 
+// PermissionItems represents Grafana folder permission items.
 type PermissionItems struct {
 	Items []*PermissionItem `json:"items"`
 }
 
+// PermissionItem represents a Grafana folder permission item.
 type PermissionItem struct {
 	// As you can see the docs, each item has a pair of [Role|TeamId|UserId] and Permission.
 	// unnecessary fields are omitted.

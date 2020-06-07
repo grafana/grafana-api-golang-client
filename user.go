@@ -4,6 +4,7 @@ import (
 	"net/url"
 )
 
+// User represents a Grafana user.
 type User struct {
 	Id       int64  `json:"id,omitempty"`
 	Email    string `json:"email,omitempty"`

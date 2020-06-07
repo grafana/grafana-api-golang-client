@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// OrgUser represents a Grafana org user.
 type OrgUser struct {
 	OrgId  int64  `json:"orgId"`
 	UserId int64  `json:"userId"`

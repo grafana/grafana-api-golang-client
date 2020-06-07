@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// DataSource represents a Grafana data source.
 type DataSource struct {
 	Id     int64  `json:"id,omitempty"`
 	Name   string `json:"name"`

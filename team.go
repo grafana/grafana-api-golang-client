@@ -7,6 +7,7 @@ import (
 	"net/url"
 )
 
+// SearchTeam represents a search for a Grafana team.
 type SearchTeam struct {
 	TotalCount int64   `json:"totalCount,omitempty"`
 	Teams      []*Team `json:"teams,omitempty"`
@@ -26,7 +27,7 @@ type Team struct {
 	Permission  int64  `json:"permission,omitempty"`
 }
 
-// TeamMember
+// TeamMember represents a Grafana team member.
 type TeamMember struct {
 	OrgId      int64  `json:"orgId,omitempty"`
 	TeamId     int64  `json:"teamId,omitempty"`
@@ -37,6 +38,7 @@ type TeamMember struct {
 	Permission int64  `json:"permission,omitempty"`
 }
 
+// Preferences represents Grafana preferences.
 type Preferences struct {
 	Theme           string `json:"theme"`
 	HomeDashboardId int64  `json:"homeDashboardId"`

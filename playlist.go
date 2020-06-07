@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// PlaylistItem represents a Grafana playlist item.
 type PlaylistItem struct {
 	Type  string `json:"type"`
 	Value string `json:"value"`
@@ -13,6 +14,7 @@ type PlaylistItem struct {
 	Title string `json:"title"`
 }
 
+// PlaylistItem represents a Grafana playlist.
 type Playlist struct {
 	Id       int            `json:"id"`
 	Name     string         `json:"name"`

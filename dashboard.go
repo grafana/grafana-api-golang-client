@@ -14,6 +14,7 @@ type DashboardMeta struct {
 	Folder    int64  `json:"folderId"`
 }
 
+// DashboardSaveResponse represents the Grafana API response to creating or saving a dashboard.
 type DashboardSaveResponse struct {
 	Slug    string `json:"slug"`
 	Id      int64  `json:"id"`
@@ -22,6 +23,7 @@ type DashboardSaveResponse struct {
 	Version int64  `json:"version"`
 }
 
+// DashboardSearchResponse represents the Grafana API dashboard search response.
 type DashboardSearchResponse struct {
 	Id          uint     `json:"id"`
 	Uid         string   `json:"uid"`
@@ -38,6 +40,7 @@ type DashboardSearchResponse struct {
 	FolderUrl   string   `json:"folderUrl"`
 }
 
+// Dashboard represents a Grafana dashboard.
 type Dashboard struct {
 	Meta      DashboardMeta          `json:"meta"`
 	Model     map[string]interface{} `json:"dashboard"`
