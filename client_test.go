@@ -1,6 +1,9 @@
 package gapi
 
 import (
+	"bytes"
+	"encoding/json"
+	"net/url"
 	"testing"
 )
 
@@ -39,5 +42,91 @@ func TestNew_invalidURL(t *testing.T) {
 	expected := "parse \"://my-grafana.com\": missing protocol scheme"
 	if err.Error() != expected {
 		t.Errorf("expected error: %v; got: %s", expected, err.Error())
+	}
+}
+
+func TestRequest_200(t *testing.T) {
+	server, client := gapiTestTools(200, `{"foo":"bar"}`)
+	defer server.Close()
+
+	err := client.request("GET", "/foo", url.Values{}, nil, nil)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+}
+
+func TestRequest_201(t *testing.T) {
+	server, client := gapiTestTools(201, `{"foo":"bar"}`)
+	defer server.Close()
+
+	err := client.request("GET", "/foo", url.Values{}, nil, nil)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+}
+
+func TestRequest_400(t *testing.T) {
+	server, client := gapiTestTools(400, `{"foo":"bar"}`)
+	defer server.Close()
+
+	expected := `status: 400, body: {"foo":"bar"}`
+	err := client.request("GET", "/foo", url.Values{}, nil, nil)
+	if err.Error() != expected {
+		t.Errorf("expected error: %v; got: %s", expected, err.Error())
+	}
+}
+
+func TestRequest_500(t *testing.T) {
+	server, client := gapiTestTools(500, `{"foo":"bar"}`)
+	defer server.Close()
+
+	expected := `status: 500, body: {"foo":"bar"}`
+	err := client.request("GET", "/foo", url.Values{}, nil, nil)
+	if err.Error() != expected {
+		t.Errorf("expected error: %v; got: %s", expected, err.Error())
+	}
+}
+
+func TestRequest_200Unmarshal(t *testing.T) {
+	server, client := gapiTestTools(200, `{"foo":"bar"}`)
+	defer server.Close()
+
+	result := struct {
+		Foo string `json:"foo"`
+	}{}
+	err := client.request("GET", "/foo", url.Values{}, nil, &result)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	if result.Foo != "bar" {
+		t.Errorf("expected: bar; got: %s", result.Foo)
+	}
+}
+
+func TestRequest_200UnmarshalPut(t *testing.T) {
+	server, client := gapiTestTools(200, `{"name":"mike"}`)
+	defer server.Close()
+
+	u := User{
+		Name: "mike",
+	}
+	data, err := json.Marshal(u)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	result := struct {
+		Name string `json:"name"`
+	}{}
+	q := url.Values{}
+	q.Add("a", "b")
+	err = client.request("PUT", "/foo", q, bytes.NewBuffer(data), &result)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	if result.Name != "mike" {
+		t.Errorf("expected: name; got: %s", result.Name)
 	}
 }
