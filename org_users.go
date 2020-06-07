@@ -16,9 +16,9 @@ type OrgUser struct {
 }
 
 // OrgUsers fetches and returns the users for the org whose ID it's passed.
-func (c *Client) OrgUsers(orgId int64) ([]OrgUser, error) {
+func (c *Client) OrgUsers(orgID int64) ([]OrgUser, error) {
 	users := make([]OrgUser, 0)
-	err := c.request("GET", fmt.Sprintf("/api/orgs/%d/users", orgId), nil, nil, &users)
+	err := c.request("GET", fmt.Sprintf("/api/orgs/%d/users", orgID), nil, nil, &users)
 	if err != nil {
 		return users, err
 	}
@@ -27,7 +27,7 @@ func (c *Client) OrgUsers(orgId int64) ([]OrgUser, error) {
 }
 
 // AddOrgUser adds a user to an org with the specified role.
-func (c *Client) AddOrgUser(orgId int64, user, role string) error {
+func (c *Client) AddOrgUser(orgID int64, user, role string) error {
 	dataMap := map[string]string{
 		"loginOrEmail": user,
 		"role":         role,
@@ -37,11 +37,11 @@ func (c *Client) AddOrgUser(orgId int64, user, role string) error {
 		return err
 	}
 
-	return c.request("POST", fmt.Sprintf("/api/orgs/%d/users", orgId), nil, bytes.NewBuffer(data), nil)
+	return c.request("POST", fmt.Sprintf("/api/orgs/%d/users", orgID), nil, bytes.NewBuffer(data), nil)
 }
 
 // UpdateOrgUser updates and org user.
-func (c *Client) UpdateOrgUser(orgId, userId int64, role string) error {
+func (c *Client) UpdateOrgUser(orgID, userID int64, role string) error {
 	dataMap := map[string]string{
 		"role": role,
 	}
@@ -50,10 +50,10 @@ func (c *Client) UpdateOrgUser(orgId, userId int64, role string) error {
 		return err
 	}
 
-	return c.request("PATCH", fmt.Sprintf("/api/orgs/%d/users/%d", orgId, userId), nil, bytes.NewBuffer(data), nil)
+	return c.request("PATCH", fmt.Sprintf("/api/orgs/%d/users/%d", orgID, userID), nil, bytes.NewBuffer(data), nil)
 }
 
 // RemoveOrgUser removes a user from an org.
-func (c *Client) RemoveOrgUser(orgId, userId int64) error {
-	return c.request("DELETE", fmt.Sprintf("/api/orgs/%d/users/%d", orgId, userId), nil, nil, nil)
+func (c *Client) RemoveOrgUser(orgID, userID int64) error {
+	return c.request("DELETE", fmt.Sprintf("/api/orgs/%d/users/%d", orgID, userID), nil, nil, nil)
 }
