@@ -14,7 +14,7 @@ type PlaylistItem struct {
 	Title string `json:"title"`
 }
 
-// PlaylistItem represents a Grafana playlist.
+// Playlist represents a Grafana playlist.
 type Playlist struct {
 	Id       int            `json:"id"`
 	Name     string         `json:"name"`
