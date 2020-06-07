@@ -68,7 +68,6 @@ func (c *Client) SearchTeam(query string) (*SearchTeam, error) {
 // Team fetches and returns the Grafana team whose ID it's passed.
 func (c *Client) Team(id int64) (*Team, error) {
 	team := &Team{}
-
 	err := c.request("GET", fmt.Sprintf("/api/teams/%d", id), nil, nil, team)
 	if err != nil {
 		return nil, err
@@ -120,7 +119,6 @@ func (c *Client) DeleteTeam(id int64) error {
 // TeamMembers fetches and returns the team members for the Grafana team whose ID it's passed.
 func (c *Client) TeamMembers(id int64) ([]*TeamMember, error) {
 	members := make([]*TeamMember, 0)
-
 	err := c.request("GET", fmt.Sprintf("/api/teams/%d/members", id), nil, nil, &members)
 	if err != nil {
 		return members, err
@@ -130,9 +128,9 @@ func (c *Client) TeamMembers(id int64) ([]*TeamMember, error) {
 }
 
 // AddTeamMember adds a user to the Grafana team whose ID it's passed.
-func (c *Client) AddTeamMember(id int64, userId int64) error {
+func (c *Client) AddTeamMember(id int64, userID int64) error {
 	path := fmt.Sprintf("/api/teams/%d/members", id)
-	member := TeamMember{UserId: userId}
+	member := TeamMember{UserId: userID}
 	data, err := json.Marshal(member)
 	if err != nil {
 		return err
@@ -142,8 +140,8 @@ func (c *Client) AddTeamMember(id int64, userId int64) error {
 }
 
 // RemoveMemberFromTeam removes a user from the Grafana team whose ID it's passed.
-func (c *Client) RemoveMemberFromTeam(id int64, userId int64) error {
-	path := fmt.Sprintf("/api/teams/%d/members/%d", id, userId)
+func (c *Client) RemoveMemberFromTeam(id int64, userID int64) error {
+	path := fmt.Sprintf("/api/teams/%d/members/%d", id, userID)
 
 	return c.request("DELETE", path, nil, nil, nil)
 }
@@ -151,7 +149,6 @@ func (c *Client) RemoveMemberFromTeam(id int64, userId int64) error {
 // TeamPreferences fetches and returns preferences for the Grafana team whose ID it's passed.
 func (c *Client) TeamPreferences(id int64) (*Preferences, error) {
 	preferences := &Preferences{}
-
 	err := c.request("GET", fmt.Sprintf("/api/teams/%d/preferences", id), nil, nil, preferences)
 	if err != nil {
 		return nil, err
@@ -161,11 +158,11 @@ func (c *Client) TeamPreferences(id int64) (*Preferences, error) {
 }
 
 // UpdateTeamPreferences updates team preferences for the Grafana team whose ID it's passed.
-func (c *Client) UpdateTeamPreferences(id int64, theme string, homeDashboardId int64, timezone string) error {
+func (c *Client) UpdateTeamPreferences(id int64, theme string, homeDashboardID int64, timezone string) error {
 	path := fmt.Sprintf("/api/teams/%d", id)
 	preferences := Preferences{
 		Theme:           theme,
-		HomeDashboardId: homeDashboardId,
+		HomeDashboardId: homeDashboardID,
 		Timezone:        timezone,
 	}
 	data, err := json.Marshal(preferences)
