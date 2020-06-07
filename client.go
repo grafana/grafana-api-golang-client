@@ -65,7 +65,7 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 	}
 
 	if resp.StatusCode >= 400 {
-		return fmt.Errorf("status: %d, body: %v", resp.StatusCode, bodyContents)
+		return fmt.Errorf("status: %d, body: %v", resp.StatusCode, string(bodyContents))
 	}
 
 	if responseStruct == nil {
