@@ -3,11 +3,10 @@ package gapi
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
 )
 
+// AlertNotification represents a Grafana alert notification.
 type AlertNotification struct {
 	Id                    int64       `json:"id,omitempty"`
 	Uid                   string      `json:"uid"`
@@ -20,122 +19,63 @@ type AlertNotification struct {
 	Settings              interface{} `json:"settings"`
 }
 
+// AlertNotifications fetches and returns Grafana alert notifications.
 func (c *Client) AlertNotifications() ([]AlertNotification, error) {
 	alertnotifications := make([]AlertNotification, 0)
 
-	req, err := c.newRequest("GET", "/api/alert-notifications/", nil, nil)
+	err := c.request("GET", "/api/alert-notifications/", nil, nil, &alertnotifications)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != 200 {
-		return nil, errors.New(resp.Status)
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(data, &alertnotifications)
 	return alertnotifications, err
 }
 
+// AlertNotification fetches and returns a Grafana alert notification.
 func (c *Client) AlertNotification(id int64) (*AlertNotification, error) {
 	path := fmt.Sprintf("/api/alert-notifications/%d", id)
-	req, err := c.newRequest("GET", path, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != 200 {
-		return nil, errors.New(resp.Status)
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	result := &AlertNotification{}
-	err = json.Unmarshal(data, &result)
+	err := c.request("GET", path, nil, nil, result)
+	if err != nil {
+		return nil, err
+	}
+
 	return result, err
 }
 
+// NewAlertNotification creates a new Grafana alert notification.
 func (c *Client) NewAlertNotification(a *AlertNotification) (int64, error) {
 	data, err := json.Marshal(a)
 	if err != nil {
 		return 0, err
 	}
-	req, err := c.newRequest("POST", "/api/alert-notifications", nil, bytes.NewBuffer(data))
-	if err != nil {
-		return 0, err
-	}
-
-	resp, err := c.Do(req)
-	if err != nil {
-		return 0, err
-	}
-	if resp.StatusCode != 200 {
-		return 0, errors.New(resp.Status)
-	}
-
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
-
 	result := struct {
 		Id int64 `json:"id"`
 	}{}
-	err = json.Unmarshal(data, &result)
+
+	err = c.request("POST", "/api/alert-notifications", nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return 0, err
+	}
+
 	return result.Id, err
 }
 
+// UpdateAlertNotification updates a Grafana alert notification.
 func (c *Client) UpdateAlertNotification(a *AlertNotification) error {
 	path := fmt.Sprintf("/api/alert-notifications/%d", a.Id)
 	data, err := json.Marshal(a)
 	if err != nil {
 		return err
 	}
-	req, err := c.newRequest("PUT", path, nil, bytes.NewBuffer(data))
-	if err != nil {
-		return err
-	}
+	err = c.request("PUT", path, nil, bytes.NewBuffer(data), nil)
 
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
-
-	return nil
+	return err
 }
 
+// DeleteAlertNotification deletes a Grafana alert notification.
 func (c *Client) DeleteAlertNotification(id int64) error {
 	path := fmt.Sprintf("/api/alert-notifications/%d", id)
-	req, err := c.newRequest("DELETE", path, nil, nil)
-	if err != nil {
-		return err
-	}
 
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
-
-	return nil
+	return c.request("DELETE", path, nil, nil, nil)
 }

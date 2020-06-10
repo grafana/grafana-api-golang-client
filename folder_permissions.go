@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 )
 
 // FolderPermission has information such as a folder, user, team, role and permission.
@@ -28,10 +27,12 @@ type FolderPermission struct {
 	DashboardId int64 `json:"dashboardId,omitempty"`
 }
 
+// PermissionItems represents Grafana folder permission items.
 type PermissionItems struct {
 	Items []*PermissionItem `json:"items"`
 }
 
+// PermissionItem represents a Grafana folder permission item.
 type PermissionItem struct {
 	// As you can see the docs, each item has a pair of [Role|TeamId|UserId] and Permission.
 	// unnecessary fields are omitted.
@@ -41,27 +42,14 @@ type PermissionItem struct {
 	Permission int64  `json:"permission"`
 }
 
+// FolderPermissions fetches and returns the permissions for the folder whose ID it's passed.
 func (c *Client) FolderPermissions(fid string) ([]*FolderPermission, error) {
 	permissions := make([]*FolderPermission, 0)
+	err := c.request("GET", fmt.Sprintf("/api/folders/%s/permissions", fid), nil, nil, &permissions)
+	if err != nil {
+		return permissions, err
+	}
 
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/folders/%s/permissions", fid), nil, nil)
-	if err != nil {
-		return permissions, err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return permissions, err
-	}
-	if resp.StatusCode != 200 {
-		return permissions, fmt.Errorf(resp.Status)
-	}
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return permissions, err
-	}
-	if err := json.Unmarshal(data, &permissions); err != nil {
-		return permissions, err
-	}
 	return permissions, nil
 }
 
@@ -72,17 +60,6 @@ func (c *Client) UpdateFolderPermissions(fid string, items *PermissionItems) err
 	if err != nil {
 		return err
 	}
-	req, err := c.newRequest("POST", path, nil, bytes.NewBuffer(data))
-	if err != nil {
-		return err
-	}
 
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return fmt.Errorf(resp.Status)
-	}
-	return nil
+	return c.request("POST", path, nil, bytes.NewBuffer(data), nil)
 }

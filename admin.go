@@ -3,11 +3,10 @@ package gapi
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
 )
 
+// CreateUser creates a Grafana user.
 func (c *Client) CreateUser(user User) (int64, error) {
 	id := int64(0)
 	data, err := json.Marshal(user)
@@ -15,42 +14,19 @@ func (c *Client) CreateUser(user User) (int64, error) {
 		return id, err
 	}
 
-	req, err := c.newRequest("POST", "/api/admin/users", nil, bytes.NewBuffer(data))
-	if err != nil {
-		return id, err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return id, err
-	}
-	if resp.StatusCode != 200 {
-		return id, errors.New(resp.Status)
-	}
-	data, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return id, err
-	}
 	created := struct {
 		Id int64 `json:"id"`
 	}{}
-	err = json.Unmarshal(data, &created)
+
+	err = c.request("POST", "/api/admin/users", nil, bytes.NewBuffer(data), &created)
 	if err != nil {
 		return id, err
 	}
+
 	return created.Id, err
 }
 
+// DeleteUser deletes a Grafana user.
 func (c *Client) DeleteUser(id int64) error {
-	req, err := c.newRequest("DELETE", fmt.Sprintf("/api/admin/users/%d", id), nil, nil)
-	if err != nil {
-		return err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
-	return err
+	return c.request("DELETE", fmt.Sprintf("/api/admin/users/%d", id), nil, nil, nil)
 }

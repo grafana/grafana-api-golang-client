@@ -3,11 +3,10 @@ package gapi
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
 )
 
+// OrgUser represents a Grafana org user.
 type OrgUser struct {
 	OrgId  int64  `json:"orgId"`
 	UserId int64  `json:"userId"`
@@ -16,31 +15,19 @@ type OrgUser struct {
 	Role   string `json:"role"`
 }
 
-func (c *Client) OrgUsers(orgId int64) ([]OrgUser, error) {
+// OrgUsers fetches and returns the users for the org whose ID it's passed.
+func (c *Client) OrgUsers(orgID int64) ([]OrgUser, error) {
 	users := make([]OrgUser, 0)
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/orgs/%d/users", orgId), nil, nil)
+	err := c.request("GET", fmt.Sprintf("/api/orgs/%d/users", orgID), nil, nil, &users)
 	if err != nil {
 		return users, err
 	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return users, err
-	}
-	if resp.StatusCode != 200 {
-		return users, errors.New(resp.Status)
-	}
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return users, err
-	}
-	err = json.Unmarshal(data, &users)
-	if err != nil {
-		return users, err
-	}
+
 	return users, err
 }
 
-func (c *Client) AddOrgUser(orgId int64, user, role string) error {
+// AddOrgUser adds a user to an org with the specified role.
+func (c *Client) AddOrgUser(orgID int64, user, role string) error {
 	dataMap := map[string]string{
 		"loginOrEmail": user,
 		"role":         role,
@@ -49,21 +36,12 @@ func (c *Client) AddOrgUser(orgId int64, user, role string) error {
 	if err != nil {
 		return err
 	}
-	req, err := c.newRequest("POST", fmt.Sprintf("/api/orgs/%d/users", orgId), nil, bytes.NewBuffer(data))
-	if err != nil {
-		return err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
-	return err
+
+	return c.request("POST", fmt.Sprintf("/api/orgs/%d/users", orgID), nil, bytes.NewBuffer(data), nil)
 }
 
-func (c *Client) UpdateOrgUser(orgId, userId int64, role string) error {
+// UpdateOrgUser updates and org user.
+func (c *Client) UpdateOrgUser(orgID, userID int64, role string) error {
 	dataMap := map[string]string{
 		"role": role,
 	}
@@ -71,31 +49,11 @@ func (c *Client) UpdateOrgUser(orgId, userId int64, role string) error {
 	if err != nil {
 		return err
 	}
-	req, err := c.newRequest("PATCH", fmt.Sprintf("/api/orgs/%d/users/%d", orgId, userId), nil, bytes.NewBuffer(data))
-	if err != nil {
-		return err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
-	return err
+
+	return c.request("PATCH", fmt.Sprintf("/api/orgs/%d/users/%d", orgID, userID), nil, bytes.NewBuffer(data), nil)
 }
 
-func (c *Client) RemoveOrgUser(orgId, userId int64) error {
-	req, err := c.newRequest("DELETE", fmt.Sprintf("/api/orgs/%d/users/%d", orgId, userId), nil, nil)
-	if err != nil {
-		return err
-	}
-	resp, err := c.Do(req)
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
-	}
-	return err
+// RemoveOrgUser removes a user from an org.
+func (c *Client) RemoveOrgUser(orgID, userID int64) error {
+	return c.request("DELETE", fmt.Sprintf("/api/orgs/%d/users/%d", orgID, userID), nil, nil, nil)
 }
