@@ -1,6 +1,8 @@
 package gapi
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"time"
@@ -60,4 +62,13 @@ func (c *Client) UserByEmail(email string) (user User, err error) {
 	query.Add("loginOrEmail", email)
 	err = c.request("GET", "/api/users/lookup", query, nil, &user)
 	return
+}
+
+// UserUpdate updates a user by ID.
+func (c *Client) UserUpdate(u User) error {
+	data, err := json.Marshal(u)
+	if err != nil {
+		return err
+	}
+	return c.request("PUT", fmt.Sprintf("/api/users/%d", u.Id), nil, bytes.NewBuffer(data), nil)
 }

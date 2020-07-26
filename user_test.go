@@ -10,6 +10,7 @@ const (
 	getUsersJSON       = `[{"id":1,"email":"users@localhost","isAdmin":true}]`
 	getUserJSON        = `{"id":2,"email":"user@localhost","isGrafanaAdmin":false}`
 	getUserByEmailJSON = `{"id":3,"email":"userByEmail@localhost","isGrafanaAdmin":true}`
+	getUserUpdateJSON  = `{"id":4,"email":"userUpdate@localhost","isGrafanaAdmin":false}`
 )
 
 func TestUsers(t *testing.T) {
@@ -69,5 +70,20 @@ func TestUserByEmail(t *testing.T) {
 		user.Id != 3 ||
 		user.IsAdmin != true {
 		t.Error("Not correctly parsing returned user.")
+	}
+}
+
+func TestUserUpdate(t *testing.T) {
+	server, client := gapiTestTools(200, getUserUpdateJSON)
+	defer server.Close()
+
+	user, err := client.User(4)
+	if err != nil {
+		t.Error(err)
+	}
+	user.IsAdmin = true
+	err = client.UserUpdate(user)
+	if err != nil {
+		t.Error(err)
 	}
 }
