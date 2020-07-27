@@ -38,6 +38,16 @@ func (c *Client) DeleteUser(id int64) error {
 	return c.request("DELETE", fmt.Sprintf("/api/admin/users/%d", id), nil, nil, nil)
 }
 
+// UpdateUserPassword updates a user password.
+func (c *Client) UpdateUserPassword(id int64, password string) error {
+	body := map[string]string{"password": password}
+	data, err := json.Marshal(body)
+	if err != nil {
+		return err
+	}
+	return c.request("PUT", fmt.Sprintf("/api/admin/users/%d/password", id), nil, bytes.NewBuffer(data), nil)
+}
+
 // PauseAllAlerts pauses all Grafana alerts.
 func (c *Client) PauseAllAlerts() (PauseAllAlertsResponse, error) {
 	result := PauseAllAlertsResponse{}
