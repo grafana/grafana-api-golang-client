@@ -8,9 +8,10 @@ import (
 )
 
 const (
-	createUserJSON         = `{"id":1,"message":"User created"}`
-	deleteUserJSON         = `{"message":"User deleted"}`
-	updateUserPasswordJSON = `{"message":"User password updated"}`
+	createUserJSON            = `{"id":1,"message":"User created"}`
+	deleteUserJSON            = `{"message":"User deleted"}`
+	updateUserPasswordJSON    = `{"message":"User password updated"}`
+	updateUserPermissionsJSON = `{"message":"User permissions updated"}`
 
 	pauseAllAlertsJSON = `{
 		"alertsAffected": 1,
@@ -53,6 +54,16 @@ func TestUpdateUserPassword(t *testing.T) {
 	defer server.Close()
 
 	err := client.UpdateUserPassword(int64(1), "new-password")
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestUpdateUserPermissions(t *testing.T) {
+	server, client := gapiTestTools(200, updateUserPermissionsJSON)
+	defer server.Close()
+
+	err := client.UpdateUserPermissions(int64(1), false)
 	if err != nil {
 		t.Error(err)
 	}

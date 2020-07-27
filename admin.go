@@ -48,6 +48,16 @@ func (c *Client) UpdateUserPassword(id int64, password string) error {
 	return c.request("PUT", fmt.Sprintf("/api/admin/users/%d/password", id), nil, bytes.NewBuffer(data), nil)
 }
 
+// UpdateUserPermissions sets a user's admin status.
+func (c *Client) UpdateUserPermissions(id int64, isAdmin bool) error {
+	body := map[string]bool{"isGrafanaAdmin": isAdmin}
+	data, err := json.Marshal(body)
+	if err != nil {
+		return err
+	}
+	return c.request("PUT", fmt.Sprintf("/api/admin/users/%d/permissions", id), nil, bytes.NewBuffer(data), nil)
+}
+
 // PauseAllAlerts pauses all Grafana alerts.
 func (c *Client) PauseAllAlerts() (PauseAllAlertsResponse, error) {
 	result := PauseAllAlertsResponse{}
