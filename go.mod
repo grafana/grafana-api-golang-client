@@ -1,4 +1,4 @@
-module github.com/nytm/go-grafana-api
+module github.com/grafana/grafana-api-golang-client
 
 go 1.14
 
