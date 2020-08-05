@@ -7,8 +7,10 @@ import (
 )
 
 const (
-	getUsersJSON       = `[{"id":1,"name":"","login":"admin","email":"admin@localhost","avatarUrl":"/avatar/46d229b033af06a191ff2267bca9ae56","isAdmin":true,"lastSeenAt":"2018-06-28T14:42:24Z","lastSeenAtAge":"\u003c 1m"}]`
-	getUserByEmailJSON = `{"id":1,"email":"admin@localhost","name":"","login":"admin","theme":"","orgId":1,"isGrafanaAdmin":true}`
+	getUsersJSON       = `[{"id":1,"email":"users@localhost","isAdmin":true}]`
+	getUserJSON        = `{"id":2,"email":"user@localhost","isGrafanaAdmin":false}`
+	getUserByEmailJSON = `{"id":3,"email":"userByEmail@localhost","isGrafanaAdmin":true}`
+	getUserUpdateJSON  = `{"id":4,"email":"userUpdate@localhost","isGrafanaAdmin":false}`
 )
 
 func TestUsers(t *testing.T) {
@@ -22,16 +24,34 @@ func TestUsers(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	user := User{
-		Id:      1,
-		Email:   "admin@localhost",
-		Name:    "",
-		Login:   "admin",
-		IsAdmin: true,
+	if len(resp) != 1 {
+		t.Fatal("No users were returned.")
 	}
 
-	if len(resp) != 1 || resp[0] != user {
+	user := resp[0]
+
+	if user.Email != "users@localhost" ||
+		user.Id != 1 ||
+		user.IsAdmin != true {
 		t.Error("Not correctly parsing returned users.")
+	}
+}
+
+func TestUser(t *testing.T) {
+	server, client := gapiTestTools(200, getUserJSON)
+	defer server.Close()
+
+	user, err := client.User(1)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(user))
+
+	if user.Email != "user@localhost" ||
+		user.Id != 2 ||
+		user.IsAdmin != false {
+		t.Error("Not correctly parsing returned user.")
 	}
 }
 
@@ -39,21 +59,31 @@ func TestUserByEmail(t *testing.T) {
 	server, client := gapiTestTools(200, getUserByEmailJSON)
 	defer server.Close()
 
-	resp, err := client.UserByEmail("admin@localhost")
+	user, err := client.UserByEmail("admin@localhost")
 	if err != nil {
 		t.Error(err)
 	}
 
-	t.Log(pretty.PrettyFormat(resp))
+	t.Log(pretty.PrettyFormat(user))
 
-	user := User{
-		Id:      1,
-		Email:   "admin@localhost",
-		Name:    "",
-		Login:   "admin",
-		IsAdmin: true,
-	}
-	if resp != user {
+	if user.Email != "userByEmail@localhost" ||
+		user.Id != 3 ||
+		user.IsAdmin != true {
 		t.Error("Not correctly parsing returned user.")
+	}
+}
+
+func TestUserUpdate(t *testing.T) {
+	server, client := gapiTestTools(200, getUserUpdateJSON)
+	defer server.Close()
+
+	user, err := client.User(4)
+	if err != nil {
+		t.Error(err)
+	}
+	user.IsAdmin = true
+	err = client.UserUpdate(user)
+	if err != nil {
+		t.Error(err)
 	}
 }
