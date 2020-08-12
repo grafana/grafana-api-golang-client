@@ -123,6 +123,7 @@ func (c *Client) dashboard(path string) (*Dashboard, error) {
 	if err != nil {
 		return nil, err
 	}
+	result.Folder = result.Meta.Folder
 
 	return result, err
 }
