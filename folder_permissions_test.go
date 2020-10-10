@@ -1,8 +1,9 @@
 package gapi
 
 import (
-	"github.com/gobs/pretty"
 	"testing"
+
+	"github.com/gobs/pretty"
 )
 
 const (

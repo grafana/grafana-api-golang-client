@@ -80,7 +80,7 @@ func (c *Client) Team(id int64) (*Team, error) {
 // email arg is an optional value.
 // If you don't want to set email, please set "" (empty string).
 func (c *Client) AddTeam(name string, email string) error {
-	path := fmt.Sprintf("/api/teams")
+	path := "/api/teams"
 	team := Team{
 		Name:  name,
 		Email: email,
