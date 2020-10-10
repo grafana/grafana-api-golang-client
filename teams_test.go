@@ -1,8 +1,9 @@
 package gapi
 
 import (
-	"github.com/gobs/pretty"
 	"testing"
+
+	"github.com/gobs/pretty"
 )
 
 const (
@@ -145,7 +146,7 @@ func TestTeam(t *testing.T) {
 		Permission:  0,
 	}
 	t.Run("check data", func(t *testing.T) {
-		if expect.Id != resp.Id || expect.Name != expect.Name {
+		if resp.Id != expect.Id || resp.Name != expect.Name {
 			t.Error("Not correctly parsing returned team.")
 		}
 	})
