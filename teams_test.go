@@ -164,7 +164,7 @@ func TestAddTeam(t *testing.T) {
 		t.Error(err)
 	}
 	if id == 0 {
-		t.Error("AddTeam returned an invalid id.")
+		t.Error("AddTeam returned an invalid ID")
 	}
 }
 
