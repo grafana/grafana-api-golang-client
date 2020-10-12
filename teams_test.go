@@ -159,9 +159,12 @@ func TestAddTeam(t *testing.T) {
 	name := "TestTeam"
 	email := ""
 
-	err := client.AddTeam(name, email)
+	id, err := client.AddTeam(name, email)
 	if err != nil {
 		t.Error(err)
+	}
+	if id == 0 {
+		t.Error("AddTeam returned an invalid ID")
 	}
 }
 
