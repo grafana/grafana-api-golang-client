@@ -82,8 +82,8 @@ func TestGetPlaylist(t *testing.T) {
 		t.Error(err)
 	}
 
-	if playlist.Id != 2 {
-		t.Errorf("Invalid id - %d, Expected %d", playlist.Id, 1)
+	if playlist.ID != 2 {
+		t.Errorf("Invalid id - %d, Expected %d", playlist.ID, 1)
 	}
 
 	if len(playlist.Items) != 2 {

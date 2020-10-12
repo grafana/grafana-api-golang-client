@@ -98,7 +98,7 @@ func TestFolders(t *testing.T) {
 	if len(folders) != 1 {
 		t.Error("Length of returned folders should be 1")
 	}
-	if folders[0].Id != 1 || folders[0].Title != "Departmenet ABC" {
+	if folders[0].ID != 1 || folders[0].Title != "Departmenet ABC" {
 		t.Error("Not correctly parsing returned folders.")
 	}
 }
@@ -115,7 +115,7 @@ func TestFolder(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.Id != folder || resp.Title != "Departmenet ABC" {
+	if resp.ID != folder || resp.Title != "Departmenet ABC" {
 		t.Error("Not correctly parsing returned folder.")
 	}
 }
@@ -131,7 +131,7 @@ func TestNewFolder(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.Uid != "nErXDvCkzz" {
+	if resp.UID != "nErXDvCkzz" {
 		t.Error("Not correctly parsing returned creation message.")
 	}
 }

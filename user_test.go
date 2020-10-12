@@ -31,7 +31,7 @@ func TestUsers(t *testing.T) {
 	user := resp[0]
 
 	if user.Email != "users@localhost" ||
-		user.Id != 1 ||
+		user.ID != 1 ||
 		user.IsAdmin != true {
 		t.Error("Not correctly parsing returned users.")
 	}
@@ -49,7 +49,7 @@ func TestUser(t *testing.T) {
 	t.Log(pretty.PrettyFormat(user))
 
 	if user.Email != "user@localhost" ||
-		user.Id != 2 ||
+		user.ID != 2 ||
 		user.IsAdmin != false {
 		t.Error("Not correctly parsing returned user.")
 	}
@@ -67,7 +67,7 @@ func TestUserByEmail(t *testing.T) {
 	t.Log(pretty.PrettyFormat(user))
 
 	if user.Email != "userByEmail@localhost" ||
-		user.Id != 3 ||
+		user.ID != 3 ||
 		user.IsAdmin != true {
 		t.Error("Not correctly parsing returned user.")
 	}

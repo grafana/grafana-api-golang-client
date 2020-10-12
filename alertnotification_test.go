@@ -89,7 +89,7 @@ func TestAlertNotifications(t *testing.T) {
 	if len(alertnotifications) != 1 {
 		t.Error("Length of returned alert notifications should be 1")
 	}
-	if alertnotifications[0].Id != 1 || alertnotifications[0].Name != "Team A" {
+	if alertnotifications[0].ID != 1 || alertnotifications[0].Name != "Team A" {
 		t.Error("Not correctly parsing returned alert notifications.")
 	}
 }
@@ -106,7 +106,7 @@ func TestAlertNotification(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.Id != alertnotification || resp.Name != "Team A" {
+	if resp.ID != alertnotification || resp.Name != "Team A" {
 		t.Error("Not correctly parsing returned alert notification.")
 	}
 }
@@ -143,7 +143,7 @@ func TestUpdateAlertNotification(t *testing.T) {
 	defer server.Close()
 
 	an := &AlertNotification{
-		Id:                    1,
+		ID:                    1,
 		Name:                  "Team A",
 		Type:                  "email",
 		IsDefault:             false,
