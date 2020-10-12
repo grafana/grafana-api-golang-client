@@ -82,8 +82,7 @@ func (c *Client) Team(id int64) (*Team, error) {
 // When team creation is successful, returns the team ID.
 func (c *Client) AddTeam(name string, email string) (int64, error) {
 	id := int64(0)
-	path := fmt.Sprintf("/api/teams")
-
+	path := "/api/teams"
 	team := Team{
 		Name:  name,
 		Email: email,
