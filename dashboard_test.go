@@ -63,8 +63,8 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.Uid != "nErXDvCkzz" {
-		t.Errorf("Invalid uid - %s, Expected %s", resp.Uid, "nErXDvCkzz")
+	if resp.UID != "nErXDvCkzz" {
+		t.Errorf("Invalid uid - %s, Expected %s", resp.UID, "nErXDvCkzz")
 	}
 
 	for _, code := range []int{400, 401, 403, 412} {
@@ -89,7 +89,7 @@ func TestDashboardGet(t *testing.T) {
 		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
 	}
 
-	resp, err = client.DashboardByUid("cIBgcSjkk")
+	resp, err = client.DashboardByUID("cIBgcSjkk")
 	if err != nil {
 		t.Error(err)
 	}
@@ -105,7 +105,7 @@ func TestDashboardGet(t *testing.T) {
 			t.Errorf("%d not detected", code)
 		}
 
-		_, err = client.DashboardByUid("cIBgcSjkk")
+		_, err = client.DashboardByUID("cIBgcSjkk")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
@@ -121,7 +121,7 @@ func TestDashboardDelete(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = client.DeleteDashboardByUid("cIBgcSjkk")
+	err = client.DeleteDashboardByUID("cIBgcSjkk")
 	if err != nil {
 		t.Error(err)
 	}
@@ -134,7 +134,7 @@ func TestDashboardDelete(t *testing.T) {
 			t.Errorf("%d not detected", code)
 		}
 
-		err = client.DeleteDashboardByUid("cIBgcSjkk")
+		err = client.DeleteDashboardByUID("cIBgcSjkk")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
@@ -156,7 +156,7 @@ func TestDashboards(t *testing.T) {
 		t.Error("Length of returned dashboards should be 1")
 	}
 
-	if dashboards[0].Id != 1 || dashboards[0].Title != "Grafana Stats" {
+	if dashboards[0].ID != 1 || dashboards[0].Title != "Grafana Stats" {
 		t.Error("Not correctly parsing returned dashboards.")
 	}
 }

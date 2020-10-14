@@ -28,7 +28,7 @@ func TestOrgs(t *testing.T) {
 	if len(orgs) != 2 {
 		t.Error("Length of returned orgs should be 2")
 	}
-	if orgs[0].Id != 1 || orgs[0].Name != "Main Org." {
+	if orgs[0].ID != 1 || orgs[0].Name != "Main Org." {
 		t.Error("Not correctly parsing returned organizations.")
 	}
 }
@@ -45,7 +45,7 @@ func TestOrgByName(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.Id != 1 || resp.Name != org {
+	if resp.ID != 1 || resp.Name != org {
 		t.Error("Not correctly parsing returned organization.")
 	}
 }
@@ -62,7 +62,7 @@ func TestOrg(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.Id != org || resp.Name != "Main Org." {
+	if resp.ID != org || resp.Name != "Main Org." {
 		t.Error("Not correctly parsing returned organization.")
 	}
 }

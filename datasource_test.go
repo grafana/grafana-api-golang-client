@@ -25,7 +25,7 @@ func TestNewDataSource(t *testing.T) {
 			AuthType:                "keys",
 			CustomMetricsNamespaces: "SomeNamespace",
 			DefaultRegion:           "us-east-1",
-			TlsSkipVerify:           true,
+			TLSSkipVerify:           true,
 		},
 		SecureJSONData: SecureJSONData{
 			AccessKey: "123",
@@ -56,7 +56,7 @@ func TestNewPrometheusDataSource(t *testing.T) {
 		Access:    "access",
 		IsDefault: true,
 		JSONData: JSONData{
-			HttpMethod:   "POST",
+			HTTPMethod:   "POST",
 			QueryTimeout: "60s",
 			TimeInterval: "1m",
 		},
