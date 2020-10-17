@@ -17,8 +17,7 @@ import (
 
 // Client is a Grafana API client.
 type Client struct {
-	Config
-
+	config  Config
 	baseURL url.URL
 	client  *http.Client
 }
@@ -50,7 +49,7 @@ func New(baseURL string, cfg Config) (*Client, error) {
 	}
 
 	return &Client{
-		Config:  cfg,
+		config:  cfg,
 		baseURL: *u,
 		client:  cli,
 	}, nil
@@ -102,8 +101,8 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 		return req, err
 	}
 
-	if c.Config.APIKey != "" {
-		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.APIKey))
+	if c.config.APIKey != "" {
+		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.APIKey))
 	}
 
 	if os.Getenv("GF_LOG") != "" {

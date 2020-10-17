@@ -31,8 +31,8 @@ func TestNew_tokenAuth(t *testing.T) {
 		t.Errorf("expected error: %s; got: %s", expected, c.baseURL.String())
 	}
 
-	if c.Config.APIKey != apiKey {
-		t.Errorf("expected error: %s; got: %s", apiKey, c.Config.APIKey)
+	if c.config.APIKey != apiKey {
+		t.Errorf("expected error: %s; got: %s", apiKey, c.config.APIKey)
 	}
 }
 
