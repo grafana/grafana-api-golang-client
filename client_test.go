@@ -8,9 +8,9 @@ import (
 )
 
 func TestNew_basicAuth(t *testing.T) {
-	c, err := New("user:pass", "http://my-grafana.com")
+	c, err := New("http://my-grafana.com", Config{BasicAuth: url.UserPassword("user", "pass")})
 	if err != nil {
-		t.Errorf("expected error to be nil; got: %s", err.Error())
+		t.Fatalf("expected error to be nil; got: %s", err.Error())
 	}
 
 	expected := "http://user:pass@my-grafana.com"
@@ -20,9 +20,10 @@ func TestNew_basicAuth(t *testing.T) {
 }
 
 func TestNew_tokenAuth(t *testing.T) {
-	c, err := New("123", "http://my-grafana.com")
+	const apiKey = "123"
+	c, err := New("http://my-grafana.com", Config{APIKey: apiKey})
 	if err != nil {
-		t.Errorf("expected error to be nil; got: %s", err.Error())
+		t.Fatalf("expected error to be nil; got: %s", err.Error())
 	}
 
 	expected := "http://my-grafana.com"
@@ -30,14 +31,13 @@ func TestNew_tokenAuth(t *testing.T) {
 		t.Errorf("expected error: %s; got: %s", expected, c.baseURL.String())
 	}
 
-	expected = "Bearer 123"
-	if c.key != expected {
-		t.Errorf("expected error: %s; got: %s", expected, c.key)
+	if c.Config.APIKey != apiKey {
+		t.Errorf("expected error: %s; got: %s", apiKey, c.Config.APIKey)
 	}
 }
 
 func TestNew_invalidURL(t *testing.T) {
-	_, err := New("123", "://my-grafana.com")
+	_, err := New("://my-grafana.com", Config{APIKey: "123"})
 
 	expected := "parse \"://my-grafana.com\": missing protocol scheme"
 	if err.Error() != expected {
@@ -46,7 +46,7 @@ func TestNew_invalidURL(t *testing.T) {
 }
 
 func TestRequest_200(t *testing.T) {
-	server, client := gapiTestTools(200, `{"foo":"bar"}`)
+	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
 	defer server.Close()
 
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
@@ -56,7 +56,7 @@ func TestRequest_200(t *testing.T) {
 }
 
 func TestRequest_201(t *testing.T) {
-	server, client := gapiTestTools(201, `{"foo":"bar"}`)
+	server, client := gapiTestTools(t, 201, `{"foo":"bar"}`)
 	defer server.Close()
 
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
@@ -66,7 +66,7 @@ func TestRequest_201(t *testing.T) {
 }
 
 func TestRequest_400(t *testing.T) {
-	server, client := gapiTestTools(400, `{"foo":"bar"}`)
+	server, client := gapiTestTools(t, 400, `{"foo":"bar"}`)
 	defer server.Close()
 
 	expected := `status: 400, body: {"foo":"bar"}`
@@ -77,7 +77,7 @@ func TestRequest_400(t *testing.T) {
 }
 
 func TestRequest_500(t *testing.T) {
-	server, client := gapiTestTools(500, `{"foo":"bar"}`)
+	server, client := gapiTestTools(t, 500, `{"foo":"bar"}`)
 	defer server.Close()
 
 	expected := `status: 500, body: {"foo":"bar"}`
@@ -88,7 +88,7 @@ func TestRequest_500(t *testing.T) {
 }
 
 func TestRequest_200Unmarshal(t *testing.T) {
-	server, client := gapiTestTools(200, `{"foo":"bar"}`)
+	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
 	defer server.Close()
 
 	result := struct {
@@ -96,7 +96,7 @@ func TestRequest_200Unmarshal(t *testing.T) {
 	}{}
 	err := client.request("GET", "/foo", url.Values{}, nil, &result)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Fatal(err.Error())
 	}
 
 	if result.Foo != "bar" {
@@ -105,7 +105,7 @@ func TestRequest_200Unmarshal(t *testing.T) {
 }
 
 func TestRequest_200UnmarshalPut(t *testing.T) {
-	server, client := gapiTestTools(200, `{"name":"mike"}`)
+	server, client := gapiTestTools(t, 200, `{"name":"mike"}`)
 	defer server.Close()
 
 	u := User{
@@ -113,7 +113,7 @@ func TestRequest_200UnmarshalPut(t *testing.T) {
 	}
 	data, err := json.Marshal(u)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Fatal(err.Error())
 	}
 
 	result := struct {

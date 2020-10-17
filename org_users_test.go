@@ -14,13 +14,13 @@ const (
 )
 
 func TestOrgUsers(t *testing.T) {
-	server, client := gapiTestTools(200, getOrgUsersJSON)
+	server, client := gapiTestTools(t, 200, getOrgUsersJSON)
 	defer server.Close()
 
 	org := int64(1)
 	resp, err := client.OrgUsers(org)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -39,31 +39,31 @@ func TestOrgUsers(t *testing.T) {
 }
 
 func TestAddOrgUser(t *testing.T) {
-	server, client := gapiTestTools(200, addOrgUserJSON)
+	server, client := gapiTestTools(t, 200, addOrgUserJSON)
 	defer server.Close()
 
 	orgID, user, role := int64(1), "admin@localhost", "Admin"
 
 	err := client.AddOrgUser(orgID, user, role)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
 func TestUpdateOrgUser(t *testing.T) {
-	server, client := gapiTestTools(200, updateOrgUserJSON)
+	server, client := gapiTestTools(t, 200, updateOrgUserJSON)
 	defer server.Close()
 
 	orgID, userID, role := int64(1), int64(1), "Editor"
 
 	err := client.UpdateOrgUser(orgID, userID, role)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
 func TestRemoveOrgUser(t *testing.T) {
-	server, client := gapiTestTools(200, removeOrgUserJSON)
+	server, client := gapiTestTools(t, 200, removeOrgUserJSON)
 	defer server.Close()
 
 	orgID, userID := int64(1), int64(1)

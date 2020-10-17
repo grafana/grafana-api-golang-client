@@ -85,12 +85,12 @@ const (
 )
 
 func TestFolders(t *testing.T) {
-	server, client := gapiTestTools(200, getFoldersJSON)
+	server, client := gapiTestTools(t, 200, getFoldersJSON)
 	defer server.Close()
 
 	folders, err := client.Folders()
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(folders))
@@ -104,13 +104,13 @@ func TestFolders(t *testing.T) {
 }
 
 func TestFolder(t *testing.T) {
-	server, client := gapiTestTools(200, getFolderJSON)
+	server, client := gapiTestTools(t, 200, getFolderJSON)
 	defer server.Close()
 
 	folder := int64(1)
 	resp, err := client.Folder(folder)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -121,12 +121,12 @@ func TestFolder(t *testing.T) {
 }
 
 func TestNewFolder(t *testing.T) {
-	server, client := gapiTestTools(200, createdFolderJSON)
+	server, client := gapiTestTools(t, 200, createdFolderJSON)
 	defer server.Close()
 
 	resp, err := client.NewFolder("test-folder")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -137,21 +137,21 @@ func TestNewFolder(t *testing.T) {
 }
 
 func TestUpdateFolder(t *testing.T) {
-	server, client := gapiTestTools(200, updatedFolderJSON)
+	server, client := gapiTestTools(t, 200, updatedFolderJSON)
 	defer server.Close()
 
 	err := client.UpdateFolder("nErXDvCkzz", "test-folder")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
 func TestDeleteFolder(t *testing.T) {
-	server, client := gapiTestTools(200, deletedFolderJSON)
+	server, client := gapiTestTools(t, 200, deletedFolderJSON)
 	defer server.Close()
 
 	err := client.DeleteFolder("nErXDvCkzz")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
