@@ -286,11 +286,13 @@ func TestUpdateTeamPreferences(t *testing.T) {
 	defer server.Close()
 
 	id := int64(1)
-	theme := ""
-	homeDashboardId := int64(0)
-	timezone := ""
+	preferences := Preferences{
+		Theme:           "",
+		HomeDashboardId: int64(0),
+		Timezone:        "",
+	}
 
-	if err := client.UpdateTeamPreferences(id, theme, homeDashboardId, timezone); err != nil {
+	if err := client.UpdateTeamPreferences(id, preferences); err != nil {
 		t.Error(err)
 	}
 }
