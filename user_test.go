@@ -14,12 +14,12 @@ const (
 )
 
 func TestUsers(t *testing.T) {
-	server, client := gapiTestTools(200, getUsersJSON)
+	server, client := gapiTestTools(t, 200, getUsersJSON)
 	defer server.Close()
 
 	resp, err := client.Users()
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -38,12 +38,12 @@ func TestUsers(t *testing.T) {
 }
 
 func TestUser(t *testing.T) {
-	server, client := gapiTestTools(200, getUserJSON)
+	server, client := gapiTestTools(t, 200, getUserJSON)
 	defer server.Close()
 
 	user, err := client.User(1)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(user))
@@ -56,12 +56,12 @@ func TestUser(t *testing.T) {
 }
 
 func TestUserByEmail(t *testing.T) {
-	server, client := gapiTestTools(200, getUserByEmailJSON)
+	server, client := gapiTestTools(t, 200, getUserByEmailJSON)
 	defer server.Close()
 
 	user, err := client.UserByEmail("admin@localhost")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(user))
@@ -74,12 +74,12 @@ func TestUserByEmail(t *testing.T) {
 }
 
 func TestUserUpdate(t *testing.T) {
-	server, client := gapiTestTools(200, getUserUpdateJSON)
+	server, client := gapiTestTools(t, 200, getUserUpdateJSON)
 	defer server.Close()
 
 	user, err := client.User(4)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	user.IsAdmin = true
 	err = client.UserUpdate(user)

@@ -15,12 +15,12 @@ const (
 )
 
 func TestOrgs(t *testing.T) {
-	server, client := gapiTestTools(200, getOrgsJSON)
+	server, client := gapiTestTools(t, 200, getOrgsJSON)
 	defer server.Close()
 
 	orgs, err := client.Orgs()
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(orgs))
@@ -34,13 +34,13 @@ func TestOrgs(t *testing.T) {
 }
 
 func TestOrgByName(t *testing.T) {
-	server, client := gapiTestTools(200, getOrgJSON)
+	server, client := gapiTestTools(t, 200, getOrgJSON)
 	defer server.Close()
 
 	org := "Main Org."
 	resp, err := client.OrgByName(org)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -51,13 +51,13 @@ func TestOrgByName(t *testing.T) {
 }
 
 func TestOrg(t *testing.T) {
-	server, client := gapiTestTools(200, getOrgJSON)
+	server, client := gapiTestTools(t, 200, getOrgJSON)
 	defer server.Close()
 
 	org := int64(1)
 	resp, err := client.Org(org)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -68,12 +68,12 @@ func TestOrg(t *testing.T) {
 }
 
 func TestNewOrg(t *testing.T) {
-	server, client := gapiTestTools(200, createdOrgJSON)
+	server, client := gapiTestTools(t, 200, createdOrgJSON)
 	defer server.Close()
 
 	resp, err := client.NewOrg("test-org")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -84,7 +84,7 @@ func TestNewOrg(t *testing.T) {
 }
 
 func TestUpdateOrg(t *testing.T) {
-	server, client := gapiTestTools(200, updatedOrgJSON)
+	server, client := gapiTestTools(t, 200, updatedOrgJSON)
 	defer server.Close()
 
 	err := client.UpdateOrg(int64(1), "test-org")
@@ -94,7 +94,7 @@ func TestUpdateOrg(t *testing.T) {
 }
 
 func TestDeleteOrg(t *testing.T) {
-	server, client := gapiTestTools(200, deletedOrgJSON)
+	server, client := gapiTestTools(t, 200, deletedOrgJSON)
 	defer server.Close()
 
 	err := client.DeleteOrg(int64(1))

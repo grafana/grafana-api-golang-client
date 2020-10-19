@@ -76,7 +76,7 @@ const (
 )
 
 func TestAlertNotifications(t *testing.T) {
-	server, client := gapiTestTools(200, getAlertNotificationsJSON)
+	server, client := gapiTestTools(t, 200, getAlertNotificationsJSON)
 	defer server.Close()
 
 	alertnotifications, err := client.AlertNotifications()
@@ -95,13 +95,13 @@ func TestAlertNotifications(t *testing.T) {
 }
 
 func TestAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(200, getAlertNotificationJSON)
+	server, client := gapiTestTools(t, 200, getAlertNotificationJSON)
 	defer server.Close()
 
 	alertnotification := int64(1)
 	resp, err := client.AlertNotification(alertnotification)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -112,7 +112,7 @@ func TestAlertNotification(t *testing.T) {
 }
 
 func TestNewAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(200, createdAlertNotificationJSON)
+	server, client := gapiTestTools(t, 200, createdAlertNotificationJSON)
 	defer server.Close()
 
 	an := &AlertNotification{
@@ -128,7 +128,7 @@ func TestNewAlertNotification(t *testing.T) {
 	}
 	resp, err := client.NewAlertNotification(an)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -139,7 +139,7 @@ func TestNewAlertNotification(t *testing.T) {
 }
 
 func TestUpdateAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(200, updatedAlertNotificationJSON)
+	server, client := gapiTestTools(t, 200, updatedAlertNotificationJSON)
 	defer server.Close()
 
 	an := &AlertNotification{
@@ -162,7 +162,7 @@ func TestUpdateAlertNotification(t *testing.T) {
 }
 
 func TestDeleteAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(200, deletedAlertNotificationJSON)
+	server, client := gapiTestTools(t, 200, deletedAlertNotificationJSON)
 	defer server.Close()
 
 	err := client.DeleteAlertNotification(1)

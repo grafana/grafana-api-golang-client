@@ -90,13 +90,13 @@ const (
 )
 
 func TestSearchTeam(t *testing.T) {
-	server, client := gapiTestTools(200, searchTeamJSON)
+	server, client := gapiTestTools(t, 200, searchTeamJSON)
 	defer server.Close()
 
 	query := "myteam"
 	resp, err := client.SearchTeam(query)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -125,13 +125,13 @@ func TestSearchTeam(t *testing.T) {
 }
 
 func TestTeam(t *testing.T) {
-	server, client := gapiTestTools(200, getTeamJSON)
+	server, client := gapiTestTools(t, 200, getTeamJSON)
 	defer server.Close()
 
 	id := int64(1)
 	resp, err := client.Team(id)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -153,7 +153,7 @@ func TestTeam(t *testing.T) {
 }
 
 func TestAddTeam(t *testing.T) {
-	server, client := gapiTestTools(200, addTeamsJSON)
+	server, client := gapiTestTools(t, 200, addTeamsJSON)
 	defer server.Close()
 
 	name := "TestTeam"
@@ -169,7 +169,7 @@ func TestAddTeam(t *testing.T) {
 }
 
 func TestUpdateTeam(t *testing.T) {
-	server, client := gapiTestTools(200, updateTeamJSON)
+	server, client := gapiTestTools(t, 200, updateTeamJSON)
 	defer server.Close()
 
 	id := int64(1)
@@ -183,7 +183,7 @@ func TestUpdateTeam(t *testing.T) {
 }
 
 func TestDeleteTeam(t *testing.T) {
-	server, client := gapiTestTools(200, deleteTeamJSON)
+	server, client := gapiTestTools(t, 200, deleteTeamJSON)
 	defer server.Close()
 
 	id := int64(1)
@@ -195,14 +195,14 @@ func TestDeleteTeam(t *testing.T) {
 }
 
 func TestTeamMembers(t *testing.T) {
-	server, client := gapiTestTools(200, getTeamMembersJSON)
+	server, client := gapiTestTools(t, 200, getTeamMembersJSON)
 	defer server.Close()
 
 	id := int64(1)
 
 	resp, err := client.TeamMembers(id)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	expects := []*TeamMember{
 		{
@@ -235,7 +235,7 @@ func TestTeamMembers(t *testing.T) {
 }
 
 func TestAddTeamMember(t *testing.T) {
-	server, client := gapiTestTools(200, addTeamMemberJSON)
+	server, client := gapiTestTools(t, 200, addTeamMemberJSON)
 	defer server.Close()
 
 	id := int64(1)
@@ -247,7 +247,7 @@ func TestAddTeamMember(t *testing.T) {
 }
 
 func TestRemoveMemberFromTeam(t *testing.T) {
-	server, client := gapiTestTools(200, removeMemberFromTeamJSON)
+	server, client := gapiTestTools(t, 200, removeMemberFromTeamJSON)
 	defer server.Close()
 
 	id := int64(1)
@@ -259,14 +259,14 @@ func TestRemoveMemberFromTeam(t *testing.T) {
 }
 
 func TestTeamPreferences(t *testing.T) {
-	server, client := gapiTestTools(200, getTeamPreferencesJSON)
+	server, client := gapiTestTools(t, 200, getTeamPreferencesJSON)
 	defer server.Close()
 
 	id := int64(1)
 
 	resp, err := client.TeamPreferences(id)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	expect := &Preferences{
 		Theme:           "",
@@ -282,7 +282,7 @@ func TestTeamPreferences(t *testing.T) {
 }
 
 func TestUpdateTeamPreferences(t *testing.T) {
-	server, client := gapiTestTools(200, updateTeamPreferencesJSON)
+	server, client := gapiTestTools(t, 200, updateTeamPreferencesJSON)
 	defer server.Close()
 
 	id := int64(1)
