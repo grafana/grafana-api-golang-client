@@ -45,7 +45,7 @@ const (
 )
 
 func TestDashboardCreateAndUpdate(t *testing.T) {
-	server, client := gapiTestTools(200, createdAndUpdateDashboardResponse)
+	server, client := gapiTestTools(t, 200, createdAndUpdateDashboardResponse)
 	defer server.Close()
 
 	dashboard := Dashboard{
@@ -63,8 +63,8 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.Uid != "nErXDvCkzz" {
-		t.Errorf("Invalid uid - %s, Expected %s", resp.Uid, "nErXDvCkzz")
+	if resp.UID != "nErXDvCkzz" {
+		t.Errorf("Invalid uid - %s, Expected %s", resp.UID, "nErXDvCkzz")
 	}
 
 	for _, code := range []int{400, 401, 403, 412} {
@@ -77,7 +77,7 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 }
 
 func TestDashboardGet(t *testing.T) {
-	server, client := gapiTestTools(200, getDashboardResponse)
+	server, client := gapiTestTools(t, 200, getDashboardResponse)
 	defer server.Close()
 
 	resp, err := client.Dashboard("test")
@@ -89,13 +89,13 @@ func TestDashboardGet(t *testing.T) {
 		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
 	}
 
-	resp, err = client.DashboardByUid("cIBgcSjkk")
+	resp, err = client.DashboardByUID("cIBgcSjkk")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	uid, ok = resp.Model["uid"]
 	if !ok || uid != "cIBgcSjkk" {
-		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
+		t.Fatalf("Invalid UID - %s, Expected %s", uid, "cIBgcSjkk")
 	}
 
 	for _, code := range []int{401, 403, 404} {
@@ -105,7 +105,7 @@ func TestDashboardGet(t *testing.T) {
 			t.Errorf("%d not detected", code)
 		}
 
-		_, err = client.DashboardByUid("cIBgcSjkk")
+		_, err = client.DashboardByUID("cIBgcSjkk")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
@@ -113,7 +113,7 @@ func TestDashboardGet(t *testing.T) {
 }
 
 func TestDashboardDelete(t *testing.T) {
-	server, client := gapiTestTools(200, "")
+	server, client := gapiTestTools(t, 200, "")
 	defer server.Close()
 
 	err := client.DeleteDashboard("test")
@@ -121,9 +121,9 @@ func TestDashboardDelete(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = client.DeleteDashboardByUid("cIBgcSjkk")
+	err = client.DeleteDashboardByUID("cIBgcSjkk")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	for _, code := range []int{401, 403, 404, 412} {
@@ -134,7 +134,7 @@ func TestDashboardDelete(t *testing.T) {
 			t.Errorf("%d not detected", code)
 		}
 
-		err = client.DeleteDashboardByUid("cIBgcSjkk")
+		err = client.DeleteDashboardByUID("cIBgcSjkk")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
@@ -142,12 +142,12 @@ func TestDashboardDelete(t *testing.T) {
 }
 
 func TestDashboards(t *testing.T) {
-	server, client := gapiTestTools(200, getDashboardsJSON)
+	server, client := gapiTestTools(t, 200, getDashboardsJSON)
 	defer server.Close()
 
 	dashboards, err := client.Dashboards()
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(dashboards))
@@ -156,7 +156,7 @@ func TestDashboards(t *testing.T) {
 		t.Error("Length of returned dashboards should be 1")
 	}
 
-	if dashboards[0].Id != 1 || dashboards[0].Title != "Grafana Stats" {
+	if dashboards[0].ID != 1 || dashboards[0].Title != "Grafana Stats" {
 		t.Error("Not correctly parsing returned dashboards.")
 	}
 }

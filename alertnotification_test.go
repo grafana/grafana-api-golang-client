@@ -76,7 +76,7 @@ const (
 )
 
 func TestAlertNotifications(t *testing.T) {
-	server, client := gapiTestTools(200, getAlertNotificationsJSON)
+	server, client := gapiTestTools(t, 200, getAlertNotificationsJSON)
 	defer server.Close()
 
 	alertnotifications, err := client.AlertNotifications()
@@ -89,30 +89,30 @@ func TestAlertNotifications(t *testing.T) {
 	if len(alertnotifications) != 1 {
 		t.Error("Length of returned alert notifications should be 1")
 	}
-	if alertnotifications[0].Id != 1 || alertnotifications[0].Name != "Team A" {
+	if alertnotifications[0].ID != 1 || alertnotifications[0].Name != "Team A" {
 		t.Error("Not correctly parsing returned alert notifications.")
 	}
 }
 
 func TestAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(200, getAlertNotificationJSON)
+	server, client := gapiTestTools(t, 200, getAlertNotificationJSON)
 	defer server.Close()
 
 	alertnotification := int64(1)
 	resp, err := client.AlertNotification(alertnotification)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.Id != alertnotification || resp.Name != "Team A" {
+	if resp.ID != alertnotification || resp.Name != "Team A" {
 		t.Error("Not correctly parsing returned alert notification.")
 	}
 }
 
 func TestNewAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(200, createdAlertNotificationJSON)
+	server, client := gapiTestTools(t, 200, createdAlertNotificationJSON)
 	defer server.Close()
 
 	an := &AlertNotification{
@@ -128,7 +128,7 @@ func TestNewAlertNotification(t *testing.T) {
 	}
 	resp, err := client.NewAlertNotification(an)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
@@ -139,11 +139,11 @@ func TestNewAlertNotification(t *testing.T) {
 }
 
 func TestUpdateAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(200, updatedAlertNotificationJSON)
+	server, client := gapiTestTools(t, 200, updatedAlertNotificationJSON)
 	defer server.Close()
 
 	an := &AlertNotification{
-		Id:                    1,
+		ID:                    1,
 		Name:                  "Team A",
 		Type:                  "email",
 		IsDefault:             false,
@@ -162,7 +162,7 @@ func TestUpdateAlertNotification(t *testing.T) {
 }
 
 func TestDeleteAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(200, deletedAlertNotificationJSON)
+	server, client := gapiTestTools(t, 200, deletedAlertNotificationJSON)
 	defer server.Close()
 
 	err := client.DeleteAlertNotification(1)
