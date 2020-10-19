@@ -288,7 +288,7 @@ func TestUpdateTeamPreferences(t *testing.T) {
 	id := int64(1)
 	preferences := Preferences{
 		Theme:           "",
-		HomeDashboardId: int64(0),
+		HomeDashboardID: int64(0),
 		Timezone:        "",
 	}
 
