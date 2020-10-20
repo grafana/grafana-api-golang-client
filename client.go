@@ -30,6 +30,8 @@ type Config struct {
 	BasicAuth *url.Userinfo
 	// Client provides an optional HTTP client, otherwise a default will be used.
 	Client *http.Client
+	// OrgID provides an optional organization ID, ignored when using APIKey, BasicAuth defaults to last used org
+	OrgID string
 }
 
 // New creates a new Grafana client.
@@ -103,6 +105,8 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 
 	if c.config.APIKey != "" {
 		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.APIKey))
+	} else if c.config.OrgID != "" {
+		req.Header.Add("X-Grafana-Org-Id", c.config.OrgID)
 	}
 
 	if os.Getenv("GF_LOG") != "" {
