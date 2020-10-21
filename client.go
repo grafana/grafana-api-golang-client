@@ -102,7 +102,7 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 	}
 
 	if c.config.APIKey != "" {
-		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.APIKey))
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.config.APIKey))
 	}
 
 	if os.Getenv("GF_LOG") != "" {
@@ -113,6 +113,6 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 		}
 	}
 
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "application/json")
 	return req, err
 }
