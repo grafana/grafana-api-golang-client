@@ -42,7 +42,7 @@ func (c *Client) Alerts(params url.Values) ([]Alert, error) {
 		return nil, err
 	}
 
-	return result, err
+	return result, nil
 }
 
 // Alert fetches and returns an individual Grafana alert.
@@ -54,7 +54,7 @@ func (c *Client) Alert(id int64) (Alert, error) {
 		return result, err
 	}
 
-	return result, err
+	return result, nil
 }
 
 // PauseAlert pauses the Grafana alert whose ID it's passed.
@@ -73,5 +73,5 @@ func (c *Client) PauseAlert(id int64) (PauseAlertResponse, error) {
 		return result, err
 	}
 
-	return result, err
+	return result, nil
 }

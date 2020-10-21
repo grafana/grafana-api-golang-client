@@ -30,7 +30,7 @@ func (c *Client) CreateUser(user User) (int64, error) {
 		return id, err
 	}
 
-	return created.ID, err
+	return created.ID, nil
 }
 
 // DeleteUser deletes a Grafana user.
@@ -69,6 +69,5 @@ func (c *Client) PauseAllAlerts() (PauseAllAlertsResponse, error) {
 	}
 
 	err = c.request("POST", "/api/admin/pause-all-alerts", nil, bytes.NewBuffer(data), &result)
-
 	return result, err
 }

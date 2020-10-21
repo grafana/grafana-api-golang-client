@@ -21,7 +21,7 @@ func (c *Client) Folders() ([]Folder, error) {
 		return folders, err
 	}
 
-	return folders, err
+	return folders, nil
 }
 
 // Folder fetches and returns the Grafana folder whose ID it's passed.
@@ -32,7 +32,7 @@ func (c *Client) Folder(id int64) (*Folder, error) {
 		return folder, err
 	}
 
-	return folder, err
+	return folder, nil
 }
 
 // NewFolder creates a new Grafana folder.
@@ -51,7 +51,7 @@ func (c *Client) NewFolder(title string) (Folder, error) {
 		return folder, err
 	}
 
-	return folder, err
+	return folder, nil
 }
 
 // UpdateFolder updates the folder whose ID it's passed.

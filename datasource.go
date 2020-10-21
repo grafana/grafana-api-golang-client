@@ -118,7 +118,7 @@ func (c *Client) NewDataSource(s *DataSource) (int64, error) {
 		return 0, err
 	}
 
-	return result.ID, err
+	return result.ID, nil
 }
 
 // UpdateDataSource updates a Grafana data source.
@@ -141,7 +141,7 @@ func (c *Client) DataSource(id int64) (*DataSource, error) {
 		return nil, err
 	}
 
-	return result, err
+	return result, nil
 }
 
 // DeleteDataSource deletes the Grafana data source whose ID it's passed.

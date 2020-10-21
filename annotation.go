@@ -43,7 +43,7 @@ func (c *Client) Annotations(params url.Values) ([]Annotation, error) {
 		return nil, err
 	}
 
-	return result, err
+	return result, nil
 }
 
 // NewAnnotation creates a new annotation with the Annotation it is passed
@@ -62,7 +62,7 @@ func (c *Client) NewAnnotation(a *Annotation) (int64, error) {
 		return 0, err
 	}
 
-	return result.ID, err
+	return result.ID, nil
 }
 
 // NewGraphiteAnnotation creates a new annotation with the GraphiteAnnotation it is passed
@@ -81,7 +81,7 @@ func (c *Client) NewGraphiteAnnotation(gfa *GraphiteAnnotation) (int64, error) {
 		return 0, err
 	}
 
-	return result.ID, err
+	return result.ID, nil
 }
 
 // UpdateAnnotation updates all properties an existing annotation with the Annotation it is passed.
@@ -101,7 +101,7 @@ func (c *Client) UpdateAnnotation(id int64, a *Annotation) (string, error) {
 		return "", err
 	}
 
-	return result.Message, err
+	return result.Message, nil
 }
 
 // PatchAnnotation updates one or more properties of an existing annotation that matches the specified ID.
@@ -121,7 +121,7 @@ func (c *Client) PatchAnnotation(id int64, a *Annotation) (string, error) {
 		return "", err
 	}
 
-	return result.Message, err
+	return result.Message, nil
 }
 
 // DeleteAnnotation deletes the annotation of the ID it is passed
@@ -136,7 +136,7 @@ func (c *Client) DeleteAnnotation(id int64) (string, error) {
 		return "", err
 	}
 
-	return result.Message, err
+	return result.Message, nil
 }
 
 // DeleteAnnotationByRegionID deletes the annotation corresponding to the region ID it is passed
@@ -151,5 +151,5 @@ func (c *Client) DeleteAnnotationByRegionID(id int64) (string, error) {
 		return "", err
 	}
 
-	return result.Message, err
+	return result.Message, nil
 }

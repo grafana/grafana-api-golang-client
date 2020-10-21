@@ -101,7 +101,7 @@ func (c *Client) AddTeam(name string, email string) (int64, error) {
 		return id, err
 	}
 
-	return tmp.ID, err
+	return tmp.ID, nil
 }
 
 // UpdateTeam updates a Grafana team.

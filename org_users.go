@@ -23,7 +23,7 @@ func (c *Client) OrgUsers(orgID int64) ([]OrgUser, error) {
 		return users, err
 	}
 
-	return users, err
+	return users, nil
 }
 
 // AddOrgUser adds a user to an org with the specified role.

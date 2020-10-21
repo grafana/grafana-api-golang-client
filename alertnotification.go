@@ -28,7 +28,7 @@ func (c *Client) AlertNotifications() ([]AlertNotification, error) {
 		return nil, err
 	}
 
-	return alertnotifications, err
+	return alertnotifications, nil
 }
 
 // AlertNotification fetches and returns a Grafana alert notification.
@@ -40,7 +40,7 @@ func (c *Client) AlertNotification(id int64) (*AlertNotification, error) {
 		return nil, err
 	}
 
-	return result, err
+	return result, nil
 }
 
 // NewAlertNotification creates a new Grafana alert notification.
@@ -58,7 +58,7 @@ func (c *Client) NewAlertNotification(a *AlertNotification) (int64, error) {
 		return 0, err
 	}
 
-	return result.ID, err
+	return result.ID, nil
 }
 
 // UpdateAlertNotification updates a Grafana alert notification.

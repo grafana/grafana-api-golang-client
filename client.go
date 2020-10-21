@@ -84,8 +84,7 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 		return nil
 	}
 
-	err = json.Unmarshal(bodyContents, responseStruct)
-	if err != nil {
+	if err := json.Unmarshal(bodyContents, responseStruct); err != nil {
 		return err
 	}
 
@@ -114,5 +113,5 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	return req, err
+	return req, nil
 }

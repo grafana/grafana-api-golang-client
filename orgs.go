@@ -20,7 +20,7 @@ func (c *Client) Orgs() ([]Org, error) {
 		return orgs, err
 	}
 
-	return orgs, err
+	return orgs, nil
 }
 
 // OrgByName fetches and returns the org whose name it's passed.
@@ -31,7 +31,7 @@ func (c *Client) OrgByName(name string) (Org, error) {
 		return org, err
 	}
 
-	return org, err
+	return org, nil
 }
 
 // Org fetches and returns the org whose ID it's passed.
@@ -42,7 +42,7 @@ func (c *Client) Org(id int64) (Org, error) {
 		return org, err
 	}
 
-	return org, err
+	return org, nil
 }
 
 // NewOrg creates a new Grafana org.
@@ -65,7 +65,7 @@ func (c *Client) NewOrg(name string) (int64, error) {
 		return id, err
 	}
 
-	return tmp.ID, err
+	return tmp.ID, nil
 }
 
 // UpdateOrg updates a Grafana org.

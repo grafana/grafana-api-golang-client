@@ -66,7 +66,7 @@ func (c *Client) SaveDashboard(model map[string]interface{}, overwrite bool) (*D
 		return nil, err
 	}
 
-	return result, err
+	return result, nil
 }
 
 // NewDashboard creates a new Grafana dashboard.
@@ -82,7 +82,7 @@ func (c *Client) NewDashboard(dashboard Dashboard) (*DashboardSaveResponse, erro
 		return nil, err
 	}
 
-	return result, err
+	return result, nil
 }
 
 // Dashboards fetches and returns Grafana dashboards.
@@ -97,7 +97,7 @@ func (c *Client) Dashboards() ([]DashboardSearchResponse, error) {
 		return nil, err
 	}
 
-	return dashboards, err
+	return dashboards, nil
 }
 
 // Dashboard will be removed.
@@ -119,7 +119,7 @@ func (c *Client) dashboard(path string) (*Dashboard, error) {
 	}
 	result.Folder = result.Meta.Folder
 
-	return result, err
+	return result, nil
 }
 
 // DeleteDashboard will be removed.
