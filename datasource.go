@@ -159,5 +159,5 @@ func (c *Client) DataSources() ([]*DataSource, error) {
 		return nil, err
 	}
 
-	return result, err
+	return result, nil
 }
