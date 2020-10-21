@@ -40,6 +40,7 @@ enable = [
   "whitespace",
   "gocyclo",
   "unparam",
+  "exhaustive",
 ]
 
 [[issues.exclude-rules]]
