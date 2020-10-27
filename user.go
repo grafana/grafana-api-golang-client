@@ -72,3 +72,14 @@ func (c *Client) UserUpdate(u User) error {
 	}
 	return c.request("PUT", fmt.Sprintf("/api/users/%d", u.ID), nil, bytes.NewBuffer(data), nil)
 }
+
+// UserOrgs fetches and returns the user orgs by ID.
+func (c *Client) UserOrgs(id int64) ([]Org, error) {
+    orgs := make([]Org, 0)
+	err := c.request("GET", fmt.Sprintf("/api/users/%d/orgs", id), nil, nil, &orgs)
+    if err != nil {
+        return orgs, err
+    }
+
+    return orgs, err
+}
