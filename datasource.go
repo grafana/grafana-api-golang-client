@@ -153,11 +153,11 @@ func (c *Client) DeleteDataSource(id int64) error {
 
 // DataSources returns all data sources as defined in Grafana.
 func (c *Client) DataSources() ([]*DataSource, error) {
-    result := make([]*DataSource, 0)
-    err := c.request("GET", "/api/datasources", nil, nil, &result)
-    if err != nil {
-        return nil, err
-    }
+	result := make([]*DataSource, 0)
+	err := c.request("GET", "/api/datasources", nil, nil, &result)
+	if err != nil {
+		return nil, err
+	}
 
-    return result, nil
+	return result, nil
 }
