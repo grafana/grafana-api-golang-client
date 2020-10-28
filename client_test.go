@@ -37,7 +37,7 @@ func TestNew_tokenAuth(t *testing.T) {
 }
 
 func TestNew_orgId(t *testing.T) {
-	const orgID = "456"
+	const orgID = 456
 	c, err := New("http://my-grafana.com", Config{OrgID: orgID})
 	if err != nil {
 		t.Fatalf("expected error to be nil; got: %s", err.Error())
@@ -49,7 +49,7 @@ func TestNew_orgId(t *testing.T) {
 	}
 
 	if c.config.OrgID != orgID {
-		t.Errorf("expected error: %s; got: %s", orgID, c.config.OrgID)
+		t.Errorf("expected error: %d; got: %d", orgID, c.config.OrgID)
 	}
 }
 
