@@ -36,7 +36,7 @@ func TestNew_tokenAuth(t *testing.T) {
 	}
 }
 
-func TestNew_orgId(t *testing.T) {
+func TestNew_orgID(t *testing.T) {
 	const orgID = 456
 	c, err := New("http://my-grafana.com", Config{OrgID: orgID})
 	if err != nil {
