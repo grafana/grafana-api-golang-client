@@ -36,6 +36,23 @@ func TestNew_tokenAuth(t *testing.T) {
 	}
 }
 
+func TestNew_orgID(t *testing.T) {
+	const orgID = 456
+	c, err := New("http://my-grafana.com", Config{OrgID: orgID})
+	if err != nil {
+		t.Fatalf("expected error to be nil; got: %s", err.Error())
+	}
+
+	expected := "http://my-grafana.com"
+	if c.baseURL.String() != expected {
+		t.Errorf("expected error: %s; got: %s", expected, c.baseURL.String())
+	}
+
+	if c.config.OrgID != orgID {
+		t.Errorf("expected error: %d; got: %d", orgID, c.config.OrgID)
+	}
+}
+
 func TestNew_invalidURL(t *testing.T) {
 	_, err := New("://my-grafana.com", Config{APIKey: "123"})
 
