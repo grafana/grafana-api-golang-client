@@ -85,6 +85,29 @@ func (c *Client) NewDashboard(dashboard Dashboard) (*DashboardSaveResponse, erro
 	return result, err
 }
 
+// NewDashboardForOrg creates a new Grafana dashboard for a given org.
+func (c *Client) NewDashboardForOrg(dashboard Dashboard, orgId int64) (*DashboardSaveResponse, error) {
+	data, err := json.Marshal(dashboard)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &DashboardSaveResponse{}
+
+    headers := map[string]string{
+        "X-Grafana-Org-Id": fmt.Sprintf("%d", orgId),
+    }
+
+	err = c.requestWithHeaders("POST", "/api/dashboards/db", nil, bytes.NewBuffer(data), &result, headers)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, err
+}
+
+
+
 // Dashboards fetches and returns Grafana dashboards.
 func (c *Client) Dashboards() ([]DashboardSearchResponse, error) {
 	dashboards := make([]DashboardSearchResponse, 0)
@@ -99,6 +122,26 @@ func (c *Client) Dashboards() ([]DashboardSearchResponse, error) {
 
 	return dashboards, err
 }
+
+// DashboardsByOrgId fetches and returns Grafana dashboards for a given org.
+func (c *Client) DashboardsByOrgId(orgId int64) ([]DashboardSearchResponse, error) {
+	dashboards := make([]DashboardSearchResponse, 0)
+	query := url.Values{}
+	// search only dashboards
+	query.Add("type", "dash-db")
+
+    headers := map[string]string{
+        "X-Grafana-Org-Id": fmt.Sprintf("%d", orgId),
+    }
+    err := c.requestWithHeaders("GET", "/api/search", query, nil, &dashboards, headers)
+	if err != nil {
+		return nil, err
+	}
+
+	return dashboards, err
+}
+
+
 
 // Dashboard will be removed.
 // Deprecated: Starting from Grafana v5.0. Use DashboardByUID instead.
