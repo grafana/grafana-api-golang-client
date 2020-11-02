@@ -121,6 +121,28 @@ func (c *Client) NewDataSource(s *DataSource) (int64, error) {
 	return result.ID, err
 }
 
+// NewDataSourceForOrg creates a new Grafana data source for a given org.
+func (c *Client) NewDataSourceForOrg(s *DataSource, orgId int64) (int64, error) {
+	data, err := json.Marshal(s)
+	if err != nil {
+		return 0, err
+	}
+
+	result := struct {
+		ID int64 `json:"id"`
+	}{}
+
+    headers := map[string]string{
+        "X-Grafana-Org-Id": fmt.Sprintf("%d", orgId),
+    }
+	err = c.requestWithHeaders("POST", "/api/datasources", nil, bytes.NewBuffer(data), &result, headers)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.ID, err
+}
+
 // UpdateDataSource updates a Grafana data source.
 func (c *Client) UpdateDataSource(s *DataSource) error {
 	path := fmt.Sprintf("/api/datasources/%d", s.ID)
