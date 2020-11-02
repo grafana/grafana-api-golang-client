@@ -3,6 +3,7 @@ package gapi
 import (
 	"bytes"
 	"encoding/json"
+    _"github.com/davecgh/go-spew/spew"
 	"fmt"
 	"net/url"
 	"time"
@@ -46,9 +47,9 @@ type UserSearch struct {
 
 // UserOrg represents a Grafana user org.
 type UserOrg struct {
-	Name          string    `json:"name"`
-	OrgID         int64     `json:"orgId"`
-	Role          string    `json:"role"`
+	Name          string    `json:"name,omitempty"`
+	OrgID         int64     `json:"orgId,omitempty"`
+	Role          string    `json:"role,omitempty"`
 }
 
 // Users fetches and returns Grafana users.
@@ -77,8 +78,23 @@ func (c *Client) UserUpdate(u User) error {
 	if err != nil {
 		return err
 	}
+
 	return c.request("PUT", fmt.Sprintf("/api/users/%d", u.ID), nil, bytes.NewBuffer(data), nil)
 }
+
+// UpdateUserPermission updates a global user permission
+func (c *Client) UpdateUserPermission(id int64, isAdmin bool) error {
+	dataMap := map[string]bool{
+		"isGrafanaAdmin": isAdmin,
+	}
+	data, err := json.Marshal(dataMap)
+	if err != nil {
+		return err
+	}
+
+	return c.request("PUT", fmt.Sprintf("/api/admin/users/%d/permissions", id), nil, bytes.NewBuffer(data), nil)
+}
+
 
 // UserOrgs fetches and returns the user orgs by ID.
 func (c *Client) UserOrgs(id int64) ([]UserOrg, error) {
