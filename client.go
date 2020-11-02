@@ -29,6 +29,8 @@ type Config struct {
 	APIKey string
 	// BasicAuth is optional basic auth credentials.
 	BasicAuth *url.Userinfo
+	// HTTPHeaders are optional HTTP headers.
+	HTTPHeaders map[string]string
 	// Client provides an optional HTTP client, otherwise a default will be used.
 	Client *http.Client
 	// OrgID provides an optional organization ID, ignored when using APIKey, BasicAuth defaults to last used org
@@ -108,6 +110,11 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.APIKey))
 	} else if c.config.OrgID != 0 {
 		req.Header.Add("X-Grafana-Org-Id", strconv.FormatInt(c.config.OrgID, 10))
+	}
+	if c.config.HTTPHeaders != nil {
+		for k, v := range c.config.HTTPHeaders {
+			req.Header.Add(k, v)
+		}
 	}
 
 	if os.Getenv("GF_LOG") != "" {
