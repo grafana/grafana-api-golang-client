@@ -11,7 +11,7 @@ import (
 	"net/url"
 	"os"
 	"path"
-
+    _"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/go-cleanhttp"
 )
 
@@ -56,7 +56,9 @@ func New(baseURL string, cfg Config) (*Client, error) {
 }
 
 func (c *Client) request(method, requestPath string, query url.Values, body io.Reader, responseStruct interface{}) error {
-	r, err := c.newRequest(method, requestPath, query, body)
+    headers := make(map[string]string, 0)
+
+	r, err := c.newRequest(method, requestPath, query, body, headers)
 	if err != nil {
 		return err
 	}
@@ -92,7 +94,46 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 	return nil
 }
 
-func (c *Client) newRequest(method, requestPath string, query url.Values, body io.Reader) (*http.Request, error) {
+func (c *Client) requestWithHeaders(method, requestPath string, query url.Values, body io.Reader, responseStruct interface{}, headers map[string]string) error {
+	r, err := c.newRequest(method, requestPath, query, body, headers)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.client.Do(r)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	bodyContents, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if os.Getenv("GF_LOG") != "" {
+		log.Printf("response status %d with body %v", resp.StatusCode, string(bodyContents))
+	}
+
+	if resp.StatusCode >= 400 {
+		return fmt.Errorf("status: %d, body: %v", resp.StatusCode, string(bodyContents))
+	}
+
+	if responseStruct == nil {
+		return nil
+	}
+
+	err = json.Unmarshal(bodyContents, responseStruct)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+
+
+func (c *Client) newRequest(method, requestPath string, query url.Values, body io.Reader, headers map[string]string) (*http.Request, error) {
 	url := c.baseURL
 	url.Path = path.Join(url.Path, requestPath)
 	url.RawQuery = query.Encode()
@@ -113,6 +154,12 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 		}
 	}
 
+    // add extra headers
+    for h, v := range headers {
+        req.Header.Add(h, v)
+    }
+
 	req.Header.Add("Content-Type", "application/json")
+
 	return req, err
 }
