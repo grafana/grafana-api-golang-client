@@ -73,3 +73,31 @@ func TestNewPrometheusDataSource(t *testing.T) {
 		t.Error("datasource creation response should return the created datasource ID")
 	}
 }
+
+func TestNewOpenTSDBDataSource(t *testing.T) {
+	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
+	defer server.Close()
+
+	ds := &DataSource{
+		Name:      "foo_opentsdb",
+		Type:      "opentsdb",
+		URL:       "http://some-url.com",
+		Access:    "access",
+		IsDefault: true,
+		JSONData: JSONData{
+			TsdbResolution: 1,
+			TsdbVersion:    3,
+		},
+	}
+
+	created, err := client.NewDataSource(ds)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(pretty.PrettyFormat(created))
+
+	if created != 1 {
+		t.Error("datasource creation response should return the created datasource ID")
+	}
+}

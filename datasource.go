@@ -58,8 +58,8 @@ type JSONData struct {
 	CustomMetricsNamespaces string `json:"customMetricsNamespaces,omitempty"`
 
 	// Used by OpenTSDB
-	TsdbVersion    string `json:"tsdbVersion,omitempty"`
-	TsdbResolution string `json:"tsdbResolution,omitempty"`
+	TsdbVersion    int64 `json:"tsdbVersion,omitempty"`
+	TsdbResolution int64 `json:"tsdbResolution,omitempty"`
 
 	// Used by MSSQL
 	Encrypt string `json:"encrypt,omitempty"`
