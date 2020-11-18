@@ -6,10 +6,10 @@ import (
 )
 
 const (
-	createApiKeyJSON = `{"name":"key-name", "key":"mock-api-key"}`
-	deleteApiKeyJSON = `{"message":"API key deleted"}`
+	createAPIKeyJSON = `{"name":"key-name", "key":"mock-api-key"}`
+	deleteAPIKeyJSON = `{"message":"API key deleted"}`
 
-	getApiKeysJSON = `[
+	getAPIKeysJSON = `[
 		{
 			"id": 1,
 			"name": "key-name-2",
@@ -25,16 +25,16 @@ const (
 )
 
 func TestCreateApiKey(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createApiKeyJSON)
+	server, client := gapiTestTools(t, 200, createAPIKeyJSON)
 	defer server.Close()
 
-	req := CreateApiKeyRequest{
+	req := CreateAPIKeyRequest{
 		Name:          "key-name",
 		Role:          "Viewer",
 		SecondsToLive: 0,
 	}
 
-	res, err := client.CreateApiKey(req)
+	res, err := client.CreateAPIKey(req)
 	if err != nil {
 		t.Error(err)
 	}
@@ -43,10 +43,10 @@ func TestCreateApiKey(t *testing.T) {
 }
 
 func TestDeleteApiKey(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deleteApiKeyJSON)
+	server, client := gapiTestTools(t, 200, deleteAPIKeyJSON)
 	defer server.Close()
 
-	res, err := client.DeleteApiKey(int64(1))
+	res, err := client.DeleteAPIKey(int64(1))
 	if err != nil {
 		t.Error(err)
 	}
@@ -55,10 +55,10 @@ func TestDeleteApiKey(t *testing.T) {
 }
 
 func TestGetApiKeys(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getApiKeysJSON)
+	server, client := gapiTestTools(t, 200, getAPIKeysJSON)
 	defer server.Close()
 
-	res, err := client.GetApiKeys(true)
+	res, err := client.GetAPIKeys(true)
 	if err != nil {
 		t.Error(err)
 	}
