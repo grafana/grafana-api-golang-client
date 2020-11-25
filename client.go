@@ -23,7 +23,6 @@ type Client struct {
 	client  *http.Client
 }
 
-
 // Config contains client configuration.
 type Config struct {
 	// APIKey is an optional API key.
