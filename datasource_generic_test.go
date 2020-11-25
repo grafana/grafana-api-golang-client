@@ -66,6 +66,6 @@ func TestNewPrometheusDataSourceGeneric(t *testing.T) {
 	t.Log(pretty.PrettyFormat(created))
 
 	if created != 1 {
-		t.Error("datasource creation response should return the created datasource ID")
+		t.Error("data source creation response should return the created data source ID")
 	}
 }
