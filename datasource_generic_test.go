@@ -16,14 +16,14 @@ func TestNewDataSourceGeneric(t *testing.T) {
 		URL:       "http://some-url.com",
 		Access:    "access",
 		IsDefault: true,
-		JSONData: JsonData{
+		JSONData: JSONDataRaw{
 			"AssumeRoleArn":           "arn:aws:iam::123:role/some-role",
 			"AuthType":                "keys",
 			"CustomMetricsNamespaces": "SomeNamespace",
 			"DefaultRegion":           "us-east-1",
 			"TlsSkipVerify":           true,
 		},
-		SecureJSONData: JsonData{
+		SecureJSONData: JSONDataRaw{
 			"AccessKey": "123",
 			"SecretKey": "456",
 		},
@@ -51,7 +51,7 @@ func TestNewPrometheusDataSourceGeneric(t *testing.T) {
 		URL:       "http://some-url.com",
 		Access:    "access",
 		IsDefault: true,
-		JSONData: JsonData{
+		JSONData: JSONDataRaw{
 			"HttpMethod":   "POST",
 			"QueryTimeout": "60s",
 			"TimeInterval": "1m",

@@ -15,7 +15,7 @@ type DataSourceGeneric struct {
 
 	Database string `json:"database,omitempty"`
 	User     string `json:"user,omitempty"`
-	// Deprecated in favor of secureJsonData.password
+	// Deprecated: Use secureJsonData.password instead.
 	Password string `json:"password,omitempty"`
 
 	OrgID     int64 `json:"orgId,omitempty"`
@@ -23,14 +23,14 @@ type DataSourceGeneric struct {
 
 	BasicAuth     bool   `json:"basicAuth"`
 	BasicAuthUser string `json:"basicAuthUser,omitempty"`
-	// Deprecated in favor of secureJsonData.basicAuthPassword
+	// Deprecated: Use secureJsonData.basicAuthPassword instead.
 	BasicAuthPassword string `json:"basicAuthPassword,omitempty"`
 
-	JSONData       JsonData `json:"jsonData,omitempty"`
-	SecureJSONData JsonData `json:"secureJsonData,omitempty"`
+	JSONData       JSONDataRaw `json:"jsonData,omitempty"`
+	SecureJSONData JSONDataRaw `json:"secureJsonData,omitempty"`
 }
 
-type JsonData map[string]interface{}
+type JSONDataRaw map[string]interface{}
 
 func (c *Client) NewDataSourceGeneric(s *DataSourceGeneric) (int64, error) {
 	data, err := json.Marshal(s)
