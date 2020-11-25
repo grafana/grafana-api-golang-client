@@ -57,47 +57,47 @@ const (
 )
 
 func TestFolderPermissions(t *testing.T) {
-	server, client := gapiTestTools(200, getFolderPermissionsJSON)
+	server, client := gapiTestTools(t, 200, getFolderPermissionsJSON)
 	defer server.Close()
 
 	fid := "nErXDvCkzz"
 	resp, err := client.FolderPermissions(fid)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
 	expects := []*FolderPermission{
 		{
-			Id:             1,
-			FolderUid:      "nErXDvCkzz",
-			UserId:         0,
-			TeamId:         0,
+			ID:             1,
+			FolderUID:      "nErXDvCkzz",
+			UserID:         0,
+			TeamID:         0,
 			Role:           "Viewer",
 			IsFolder:       false,
 			Permission:     1,
 			PermissionName: "View",
-			FolderId:       -1,
-			DashboardId:    0,
+			FolderID:       -1,
+			DashboardID:    0,
 		},
 		{
-			Id:             2,
-			FolderUid:      "",
-			UserId:         0,
-			TeamId:         0,
+			ID:             2,
+			FolderUID:      "",
+			UserID:         0,
+			TeamID:         0,
 			Role:           "Editor",
 			IsFolder:       false,
 			Permission:     2,
 			PermissionName: "Edit",
-			FolderId:       0,
-			DashboardId:    -1,
+			FolderID:       0,
+			DashboardID:    -1,
 		},
 	}
 
 	for i, expect := range expects {
 		t.Run("check data", func(t *testing.T) {
-			if resp[i].Id != expect.Id || resp[i].Role != expect.Role {
+			if resp[i].ID != expect.ID || resp[i].Role != expect.Role {
 				t.Error("Not correctly data")
 			}
 		})
@@ -105,7 +105,7 @@ func TestFolderPermissions(t *testing.T) {
 }
 
 func TestUpdateFolderPermissions(t *testing.T) {
-	server, client := gapiTestTools(200, updateFolderPermissionsJSON)
+	server, client := gapiTestTools(t, 200, updateFolderPermissionsJSON)
 	defer server.Close()
 
 	items := &PermissionItems{
@@ -119,11 +119,11 @@ func TestUpdateFolderPermissions(t *testing.T) {
 				Permission: 2,
 			},
 			{
-				TeamId:     1,
+				TeamID:     1,
 				Permission: 1,
 			},
 			{
-				UserId:     11,
+				UserID:     11,
 				Permission: 4,
 			},
 		},

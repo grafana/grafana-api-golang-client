@@ -48,7 +48,7 @@ const (
 )
 
 func TestAnnotations(t *testing.T) {
-	server, client := gapiTestTools(200, annotationsJSON)
+	server, client := gapiTestTools(t, 200, annotationsJSON)
 	defer server.Close()
 
 	params := url.Values{}
@@ -58,7 +58,7 @@ func TestAnnotations(t *testing.T) {
 
 	as, err := client.Annotations(params)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(as))
@@ -69,7 +69,7 @@ func TestAnnotations(t *testing.T) {
 }
 
 func TestNewAnnotation(t *testing.T) {
-	server, client := gapiTestTools(200, newAnnotationJSON)
+	server, client := gapiTestTools(t, 200, newAnnotationJSON)
 	defer server.Close()
 
 	a := Annotation{
@@ -83,7 +83,7 @@ func TestNewAnnotation(t *testing.T) {
 	}
 	res, err := client.NewAnnotation(&a)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(res))
@@ -94,7 +94,7 @@ func TestNewAnnotation(t *testing.T) {
 }
 
 func TestUpdateAnnotation(t *testing.T) {
-	server, client := gapiTestTools(200, updateAnnotationJSON)
+	server, client := gapiTestTools(t, 200, updateAnnotationJSON)
 	defer server.Close()
 
 	a := Annotation{
@@ -102,7 +102,7 @@ func TestUpdateAnnotation(t *testing.T) {
 	}
 	res, err := client.UpdateAnnotation(1, &a)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(res))
@@ -113,7 +113,7 @@ func TestUpdateAnnotation(t *testing.T) {
 }
 
 func TestPatchAnnotation(t *testing.T) {
-	server, client := gapiTestTools(200, patchAnnotationJSON)
+	server, client := gapiTestTools(t, 200, patchAnnotationJSON)
 	defer server.Close()
 
 	a := Annotation{
@@ -121,7 +121,7 @@ func TestPatchAnnotation(t *testing.T) {
 	}
 	res, err := client.PatchAnnotation(1, &a)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(res))
@@ -132,7 +132,7 @@ func TestPatchAnnotation(t *testing.T) {
 }
 
 func TestNewGraphiteAnnotation(t *testing.T) {
-	server, client := gapiTestTools(200, newGraphiteAnnotationJSON)
+	server, client := gapiTestTools(t, 200, newGraphiteAnnotationJSON)
 	defer server.Close()
 
 	a := GraphiteAnnotation{
@@ -143,7 +143,7 @@ func TestNewGraphiteAnnotation(t *testing.T) {
 	}
 	res, err := client.NewGraphiteAnnotation(&a)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(res))
@@ -154,12 +154,12 @@ func TestNewGraphiteAnnotation(t *testing.T) {
 }
 
 func TestDeleteAnnotation(t *testing.T) {
-	server, client := gapiTestTools(200, deleteAnnotationJSON)
+	server, client := gapiTestTools(t, 200, deleteAnnotationJSON)
 	defer server.Close()
 
 	res, err := client.DeleteAnnotation(1)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(res))
@@ -170,12 +170,12 @@ func TestDeleteAnnotation(t *testing.T) {
 }
 
 func TestDeleteAnnotationByRegionID(t *testing.T) {
-	server, client := gapiTestTools(200, deleteAnnotationJSON)
+	server, client := gapiTestTools(t, 200, deleteAnnotationJSON)
 	defer server.Close()
 
 	res, err := client.DeleteAnnotationByRegionID(1)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(res))

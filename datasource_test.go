@@ -11,7 +11,7 @@ const (
 )
 
 func TestNewDataSource(t *testing.T) {
-	server, client := gapiTestTools(200, createdDataSourceJSON)
+	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer server.Close()
 
 	ds := &DataSource{
@@ -25,7 +25,7 @@ func TestNewDataSource(t *testing.T) {
 			AuthType:                "keys",
 			CustomMetricsNamespaces: "SomeNamespace",
 			DefaultRegion:           "us-east-1",
-			TlsSkipVerify:           true,
+			TLSSkipVerify:           true,
 		},
 		SecureJSONData: SecureJSONData{
 			AccessKey: "123",
@@ -35,7 +35,7 @@ func TestNewDataSource(t *testing.T) {
 
 	created, err := client.NewDataSource(ds)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(created))
@@ -46,7 +46,7 @@ func TestNewDataSource(t *testing.T) {
 }
 
 func TestNewPrometheusDataSource(t *testing.T) {
-	server, client := gapiTestTools(200, createdDataSourceJSON)
+	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer server.Close()
 
 	ds := &DataSource{
@@ -56,7 +56,7 @@ func TestNewPrometheusDataSource(t *testing.T) {
 		Access:    "access",
 		IsDefault: true,
 		JSONData: JSONData{
-			HttpMethod:   "POST",
+			HTTPMethod:   "POST",
 			QueryTimeout: "60s",
 			TimeInterval: "1m",
 		},
@@ -64,7 +64,7 @@ func TestNewPrometheusDataSource(t *testing.T) {
 
 	created, err := client.NewDataSource(ds)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(created))

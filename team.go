@@ -18,30 +18,30 @@ type SearchTeam struct {
 // Team consists of a get response
 // It's used in  Add and Update API
 type Team struct {
-	Id          int64  `json:"id,omitempty"`
-	OrgId       int64  `json:"orgId,omitempty"`
+	ID          int64  `json:"id,omitempty"`
+	OrgID       int64  `json:"orgId,omitempty"`
 	Name        string `json:"name"`
 	Email       string `json:"email,omitempty"`
-	AvatarUrl   string `json:"avatarUrl,omitempty"`
+	AvatarURL   string `json:"avatarUrl,omitempty"`
 	MemberCount int64  `json:"memberCount,omitempty"`
 	Permission  int64  `json:"permission,omitempty"`
 }
 
 // TeamMember represents a Grafana team member.
 type TeamMember struct {
-	OrgId      int64  `json:"orgId,omitempty"`
-	TeamId     int64  `json:"teamId,omitempty"`
-	UserId     int64  `json:"userId,omitempty"`
+	OrgID      int64  `json:"orgId,omitempty"`
+	TeamID     int64  `json:"teamId,omitempty"`
+	UserID     int64  `json:"userID,omitempty"`
 	Email      string `json:"email,omitempty"`
 	Login      string `json:"login,omitempty"`
-	AvatarUrl  string `json:"avatarUrl,omitempty"`
+	AvatarURL  string `json:"avatarUrl,omitempty"`
 	Permission int64  `json:"permission,omitempty"`
 }
 
 // Preferences represents Grafana preferences.
 type Preferences struct {
 	Theme           string `json:"theme"`
-	HomeDashboardId int64  `json:"homeDashboardId"`
+	HomeDashboardID int64  `json:"homeDashboardID"`
 	Timezone        string `json:"timezone"`
 }
 
@@ -79,7 +79,9 @@ func (c *Client) Team(id int64) (*Team, error) {
 // AddTeam makes a new team
 // email arg is an optional value.
 // If you don't want to set email, please set "" (empty string).
-func (c *Client) AddTeam(name string, email string) error {
+// When team creation is successful, returns the team ID.
+func (c *Client) AddTeam(name string, email string) (int64, error) {
+	id := int64(0)
 	path := "/api/teams"
 	team := Team{
 		Name:  name,
@@ -87,10 +89,19 @@ func (c *Client) AddTeam(name string, email string) error {
 	}
 	data, err := json.Marshal(team)
 	if err != nil {
-		return err
+		return id, err
 	}
 
-	return c.request("POST", path, nil, bytes.NewBuffer(data), nil)
+	tmp := struct {
+		ID int64 `json:"teamId"`
+	}{}
+
+	err = c.request("POST", path, nil, bytes.NewBuffer(data), &tmp)
+	if err != nil {
+		return id, err
+	}
+
+	return tmp.ID, err
 }
 
 // UpdateTeam updates a Grafana team.
@@ -130,7 +141,7 @@ func (c *Client) TeamMembers(id int64) ([]*TeamMember, error) {
 // AddTeamMember adds a user to the Grafana team whose ID it's passed.
 func (c *Client) AddTeamMember(id int64, userID int64) error {
 	path := fmt.Sprintf("/api/teams/%d/members", id)
-	member := TeamMember{UserId: userID}
+	member := TeamMember{UserID: userID}
 	data, err := json.Marshal(member)
 	if err != nil {
 		return err
@@ -158,13 +169,8 @@ func (c *Client) TeamPreferences(id int64) (*Preferences, error) {
 }
 
 // UpdateTeamPreferences updates team preferences for the Grafana team whose ID it's passed.
-func (c *Client) UpdateTeamPreferences(id int64, theme string, homeDashboardID int64, timezone string) error {
-	path := fmt.Sprintf("/api/teams/%d", id)
-	preferences := Preferences{
-		Theme:           theme,
-		HomeDashboardId: homeDashboardID,
-		Timezone:        timezone,
-	}
+func (c *Client) UpdateTeamPreferences(id int64, preferences Preferences) error {
+	path := fmt.Sprintf("/api/teams/%d/preferences", id)
 	data, err := json.Marshal(preferences)
 	if err != nil {
 		return err

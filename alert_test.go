@@ -47,7 +47,7 @@ const (
 )
 
 func TestAlerts(t *testing.T) {
-	server, client := gapiTestTools(200, alertsJSON)
+	server, client := gapiTestTools(t, 200, alertsJSON)
 	defer server.Close()
 
 	params := url.Values{}
@@ -66,7 +66,7 @@ func TestAlerts(t *testing.T) {
 }
 
 func TestAlerts_500(t *testing.T) {
-	server, client := gapiTestTools(500, alertsJSON)
+	server, client := gapiTestTools(t, 500, alertsJSON)
 	defer server.Close()
 
 	params := url.Values{}
@@ -79,7 +79,7 @@ func TestAlerts_500(t *testing.T) {
 }
 
 func TestAlert(t *testing.T) {
-	server, client := gapiTestTools(200, alertJSON)
+	server, client := gapiTestTools(t, 200, alertJSON)
 	defer server.Close()
 
 	res, err := client.Alert(1)
@@ -95,7 +95,7 @@ func TestAlert(t *testing.T) {
 }
 
 func TestAlert_500(t *testing.T) {
-	server, client := gapiTestTools(500, alertJSON)
+	server, client := gapiTestTools(t, 500, alertJSON)
 	defer server.Close()
 
 	_, err := client.Alert(1)
@@ -105,7 +105,7 @@ func TestAlert_500(t *testing.T) {
 }
 
 func TestPauseAlert(t *testing.T) {
-	server, client := gapiTestTools(200, pauseAlertJSON)
+	server, client := gapiTestTools(t, 200, pauseAlertJSON)
 	defer server.Close()
 
 	res, err := client.PauseAlert(1)
@@ -121,7 +121,7 @@ func TestPauseAlert(t *testing.T) {
 }
 
 func TestPauseAlert_500(t *testing.T) {
-	server, client := gapiTestTools(500, pauseAlertJSON)
+	server, client := gapiTestTools(t, 500, pauseAlertJSON)
 	defer server.Close()
 
 	_, err := client.PauseAlert(1)
