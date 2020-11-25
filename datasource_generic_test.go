@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewDataSourceGeneric(t *testing.T) {
-	server, client := gapiTestTools(200, createdDataSourceJSON)
+	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer server.Close()
 
 	ds := &DataSourceGeneric{
@@ -42,7 +42,7 @@ func TestNewDataSourceGeneric(t *testing.T) {
 }
 
 func TestNewPrometheusDataSourceGeneric(t *testing.T) {
-	server, client := gapiTestTools(200, createdDataSourceJSON)
+	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer server.Close()
 
 	ds := &DataSourceGeneric{
