@@ -48,7 +48,7 @@ func (c *Client) NewDataSourceGeneric(s *DataSourceGeneric) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	if resp.StatusCode != 200 {
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return 0, errors.New(resp.Status)
 	}
 
