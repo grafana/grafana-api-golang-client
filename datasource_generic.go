@@ -49,7 +49,7 @@ func (c *Client) NewDataSourceGeneric(s *DataSourceGeneric) (int64, error) {
 		return 0, err
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return 0, errors.New(resp.Status)
+		return 0, fmt.Errorf("creating data source failed: %s", resp.Status)
 	}
 
 	data, err = ioutil.ReadAll(resp.Body)
