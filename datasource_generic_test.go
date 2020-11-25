@@ -60,7 +60,7 @@ func TestNewPrometheusDataSourceGeneric(t *testing.T) {
 
 	created, err := client.NewDataSourceGeneric(ds)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(created))
