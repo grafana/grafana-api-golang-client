@@ -97,8 +97,9 @@ func (c *Client) DataSourceGeneric(id int64) (*DataSourceGeneric, error) {
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode != 200 {
-		return nil, errors.New(resp.Status)
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("getting data source failed: %s", resp.Status)
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
