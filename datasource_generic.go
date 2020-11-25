@@ -80,7 +80,7 @@ func (c *Client) UpdateDataSourceGeneric(s *DataSourceGeneric) error {
 		return err
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
+		return fmt.Errorf("updating data source failed: %s", resp.Status)
 	}
 
 	return nil
