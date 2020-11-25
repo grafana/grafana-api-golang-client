@@ -122,8 +122,9 @@ func (c *Client) DeleteDataSourceGeneric(id int64) error {
 	if err != nil {
 		return err
 	}
-	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("failed deleting data source: %s", resp.Status)
 	}
 
 	return nil
