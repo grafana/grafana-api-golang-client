@@ -176,6 +176,15 @@ func (c *Client) DeleteDashboardByUID(uid string) error {
 	return c.deleteDashboard(fmt.Sprintf("/api/dashboards/uid/%s", uid))
 }
 
+// DeleteDashboardByUID deletes a dashboard by UID for a given org ID.
+func (c *Client) DeleteDashboardByUIDForOrg(uid string, orgId int64) error {
+	path := fmt.Sprintf("/api/dashboards/uid/%s", uid)
+    headers := map[string]string{
+        "X-Grafana-Org-Id": fmt.Sprintf("%d", orgId),
+    }
+	return c.requestWithHeaders("DELETE", path, nil, nil, nil, headers)
+}
+
 func (c *Client) deleteDashboard(path string) error {
 	return c.request("DELETE", path, nil, nil, nil)
 }
