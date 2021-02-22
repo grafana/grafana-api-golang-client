@@ -72,3 +72,45 @@ func (c *Client) UserUpdate(u User) error {
 	}
 	return c.request("PUT", fmt.Sprintf("/api/users/%d", u.ID), nil, bytes.NewBuffer(data), nil)
 }
+
+// NewUserRole assigns a new role to the user. Available only in Grafana Enterprise.
+func (c *Client) NewUserRole(id int64, roleUID string) error {
+	path := fmt.Sprintf("/api/access-control/users/%d/roles", id)
+	req := struct {
+		RoleUID string `json:"roleUid"`
+	}{
+		RoleUID: roleUID,
+	}
+
+	data, err := json.Marshal(req)
+	if err != nil {
+		return err
+	}
+
+	err = c.request("POST", path, nil, bytes.NewBuffer(data), nil)
+
+	return err
+}
+
+// DeleteUserRole removes role assignment from the user. Available only in Grafana Enterprise.
+func (c *Client) DeleteUserRole(id int64, roleUID string) error {
+	path := fmt.Sprintf("/api/access-control/users/%d/roles/%s", id, roleUID)
+
+	err := c.request("DELETE", path, nil, nil, nil)
+
+	return err
+}
+
+// GetUserRoles gets roles assigned to the user. Available only in Grafana Enterprise.
+func (c *Client) GetUserRoles(id int64) ([]*Role, error) {
+	roles := make([]*Role, 0)
+
+	path := fmt.Sprintf("/api/access-control/users/%d/roles", id)
+
+	err := c.request("GET", path, nil, nil, &roles)
+	if err != nil {
+		return nil, err
+	}
+
+	return roles, nil
+}
