@@ -73,3 +73,34 @@ func TestNewPrometheusDataSource(t *testing.T) {
 		t.Error("datasource creation response should return the created datasource ID")
 	}
 }
+
+func TestNewElasticsearchDataSource(t *testing.T) {
+	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
+	defer server.Close()
+
+	ds := &DataSource{
+		Name:      "foo_elasticsearch",
+		Type:      "elasticsearch",
+		URL:       "http://some-url.com",
+		IsDefault: true,
+		JSONData: JSONData{
+			EsVersion:                  70,
+			TimeField:                  "time",
+			Interval:                   "1m",
+			LogMessageField:            "message",
+			LogLevelField:              "field",
+			MaxConcurrentShardRequests: 8,
+		},
+	}
+
+	created, err := client.NewDataSource(ds)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(pretty.PrettyFormat(created))
+
+	if created != 1 {
+		t.Error("datasource creation response should return the created datasource ID")
+	}
+}
