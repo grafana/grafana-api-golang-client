@@ -58,7 +58,7 @@ func TestNewRole(t *testing.T) {
 	})
 
 	roleReq := Role{
-		Global:       false,
+		Global:      false,
 		Name:        "test:policy",
 		Description: "test:policy",
 		Permissions: []Permission{
@@ -96,7 +96,7 @@ func TestGetRole(t *testing.T) {
 	}
 
 	expected := Role{
-		Global:       false,
+		Global:      false,
 		Version:     1,
 		UID:         "vc3SCSsGz",
 		Name:        "test:policy",
@@ -114,7 +114,6 @@ func TestGetRole(t *testing.T) {
 			t.Error("Not correctly parsing returned role.")
 		}
 	})
-
 }
 
 func TestUpdateRole(t *testing.T) {
@@ -124,7 +123,7 @@ func TestUpdateRole(t *testing.T) {
 	})
 
 	roleReq := Role{
-		Global:       false,
+		Global:      false,
 		Name:        "test:policy",
 		Description: "test:policy",
 		Permissions: []Permission{
@@ -146,7 +145,6 @@ func TestDeleteRole(t *testing.T) {
 	t.Cleanup(func() {
 		server.Close()
 	})
-
 
 	err := client.DeleteRole("vc3SCSsGz", false)
 	if err != nil {

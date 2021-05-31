@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-const baseUrl = "/api/access-control/builtin-roles"
+const baseURL = "/api/access-control/builtin-roles"
 
 type BuiltInRoleAssignment struct {
 	BuiltinRole string `json:"builtInRole"`
@@ -16,8 +16,8 @@ type BuiltInRoleAssignment struct {
 
 // GetBuiltInRoleAssignments gets all built-in role assignments. Available only in Grafana Enterprise 8.+.
 func (c *Client) GetBuiltInRoleAssignments() (map[string][]*Role, error) {
-	br := make(map[string][]*Role, 0)
-	err := c.request("GET", baseUrl, nil, nil, &br)
+	br := make(map[string][]*Role)
+	err := c.request("GET", baseURL, nil, nil, &br)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (c *Client) NewBuiltInRoleAssignment(builtInRoleAssignment BuiltInRoleAssig
 
 	br := &BuiltInRoleAssignment{}
 
-	err = c.request("POST", baseUrl, nil, bytes.NewBuffer(body), &br)
+	err = c.request("POST", baseURL, nil, bytes.NewBuffer(body), &br)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *Client) DeleteBuiltInRoleAssignment(builtInRole BuiltInRoleAssignment) 
 	qp := map[string][]string{
 		"global": {fmt.Sprint(builtInRole.Global)},
 	}
-	url := fmt.Sprintf("%s/%s/roles/%s", baseUrl, builtInRole.BuiltinRole, builtInRole.RoleUID)
+	url := fmt.Sprintf("%s/%s/roles/%s", baseURL, builtInRole.BuiltinRole, builtInRole.RoleUID)
 	err = c.request("DELETE", url, qp, bytes.NewBuffer(data), nil)
 
 	return err

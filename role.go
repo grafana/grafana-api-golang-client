@@ -23,7 +23,7 @@ type Permission struct {
 // GetRole gets a role with permissions for the given UID. Available only in Grafana Enterprise 8.+.
 func (c *Client) GetRole(uid string) (*Role, error) {
 	r := &Role{}
-	err := c.request("GET", buildUrl(uid), nil, nil, r)
+	err := c.request("GET", buildURL(uid), nil, nil, r)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (c *Client) UpdateRole(role Role) error {
 		return err
 	}
 
-	err = c.request("PUT", buildUrl(role.UID), nil, bytes.NewBuffer(data), nil)
+	err = c.request("PUT", buildURL(role.UID), nil, bytes.NewBuffer(data), nil)
 
 	return err
 }
@@ -64,10 +64,10 @@ func (c *Client) DeleteRole(uid string, global bool) error {
 	qp := map[string][]string{
 		"global": {fmt.Sprint(global)},
 	}
-	return c.request("DELETE", buildUrl(uid), qp, nil, nil)
+	return c.request("DELETE", buildURL(uid), qp, nil, nil)
 }
 
-func buildUrl(uid string) string {
-	const rootUrl = "/api/access-control/roles"
-	return fmt.Sprintf("%s/%s", rootUrl, uid)
+func buildURL(uid string) string {
+	const rootURL = "/api/access-control/roles"
+	return fmt.Sprintf("%s/%s", rootURL, uid)
 }
