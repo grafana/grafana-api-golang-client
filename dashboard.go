@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/url"
 )
 
 // DashboardMeta represents Grafana dashboard meta.
@@ -21,23 +20,6 @@ type DashboardSaveResponse struct {
 	UID     string `json:"uid"`
 	Status  string `json:"status"`
 	Version int64  `json:"version"`
-}
-
-// DashboardSearchResponse represents the Grafana API dashboard search response.
-type DashboardSearchResponse struct {
-	ID          uint     `json:"id"`
-	UID         string   `json:"uid"`
-	Title       string   `json:"title"`
-	URI         string   `json:"uri"`
-	URL         string   `json:"url"`
-	Slug        string   `json:"slug"`
-	Type        string   `json:"type"`
-	Tags        []string `json:"tags"`
-	IsStarred   bool     `json:"isStarred"`
-	FolderID    uint     `json:"folderId"`
-	FolderUID   string   `json:"folderUid"`
-	FolderTitle string   `json:"folderTitle"`
-	FolderURL   string   `json:"folderUrl"`
 }
 
 // Dashboard represents a Grafana dashboard.
@@ -85,19 +67,12 @@ func (c *Client) NewDashboard(dashboard Dashboard) (*DashboardSaveResponse, erro
 	return result, err
 }
 
-// Dashboards fetches and returns Grafana dashboards.
-func (c *Client) Dashboards() ([]DashboardSearchResponse, error) {
-	dashboards := make([]DashboardSearchResponse, 0)
-	query := url.Values{}
-	// search only dashboards
-	query.Add("type", "dash-db")
-
-	err := c.request("GET", "/api/search", query, nil, &dashboards)
-	if err != nil {
-		return nil, err
+// Dashboards fetches and returns all dashboards.
+func (c *Client) Dashboards() ([]FolderDashboardSearchResponse, error) {
+	params := map[string]string{
+		"type": "dash-db",
 	}
-
-	return dashboards, err
+	return c.FolderDashboardSearch(params)
 }
 
 // Dashboard will be removed.
