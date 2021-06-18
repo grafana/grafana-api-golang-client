@@ -29,8 +29,5 @@ func (c *Client) FolderDashboardSearch(params map[string]string) (resp []FolderD
 		query.Add(p, v)
 	}
 	err = c.request("GET", "/api/search", query, nil, &resp)
-	if err != nil {
-		return nil, err
-	}
 	return
 }
