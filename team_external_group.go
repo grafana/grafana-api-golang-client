@@ -25,9 +25,9 @@ func (c *Client) TeamGroups(id int64) ([]TeamGroup, error) {
 }
 
 // NewTeamGroup creates a new Grafana Team Group .
-func (c *Client) NewTeamGroup(id int64, groupId string) error {
+func (c *Client) NewTeamGroup(id int64, groupID string) error {
 	dataMap := map[string]string{
-		"groupId": groupId,
+		"groupId": groupID,
 	}
 	data, err := json.Marshal(dataMap)
 	if err != nil {
@@ -38,6 +38,6 @@ func (c *Client) NewTeamGroup(id int64, groupId string) error {
 }
 
 // DeleteTeam deletes the Grafana team whose ID it's passed.
-func (c *Client) DeleteTeamGroup(id int64, groupId string) error {
-	return c.request("DELETE", fmt.Sprintf("/api/teams/%d/groups/%s", id, groupId), nil, nil, nil)
+func (c *Client) DeleteTeamGroup(id int64, groupID string) error {
+	return c.request("DELETE", fmt.Sprintf("/api/teams/%d/groups/%s", id, groupID), nil, nil, nil)
 }
