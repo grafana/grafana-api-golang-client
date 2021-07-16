@@ -85,6 +85,14 @@ type JSONData struct {
 	ClientEmail        string `json:"clientEmail,omitempty"`
 	DefaultProject     string `json:"defaultProject,omitempty"`
 	TokenURI           string `json:"tokenUri,omitempty"`
+
+	// Used by Prometheus and Elasticsearch
+	SigV4AssumeRoleArn string `json:"sigV4AssumeRoleArn,omitempty"`
+	SigV4Auth          bool   `json:"sigV4Auth,omitempty"`
+	SigV4AuthType      string `json:"sigV4AuthType,omitempty"`
+	SigV4ExternalID    string `json:"sigV4ExternalID,omitempty"`
+	SigV4Profile       string `json:"sigV4Profile,omitempty"`
+	SigV4Region        string `json:"sigV4Region,omitempty"`
 }
 
 // SecureJSONData is a representation of the datasource `secureJsonData` property
@@ -102,6 +110,10 @@ type SecureJSONData struct {
 
 	// Used by Stackdriver
 	PrivateKey string `json:"privateKey,omitempty"`
+
+	// Used by Prometheus and Elasticsearch
+	SigV4AccessKey string `json:"sigV4AccessKey,omitempty"`
+	SigV4SecretKey string `json:"sigV4SecretKey,omitempty"`
 }
 
 // NewDataSource creates a new Grafana data source.
