@@ -13,6 +13,28 @@ const (
 	removeOrgUserJSON = `{"message":"User removed from organization"}`
 )
 
+func TestOrgUsersCurrent(t *testing.T) {
+	server, client := gapiTestTools(t, 200, getOrgUsersJSON)
+	defer server.Close()
+
+	resp, err := client.OrgUsersCurrent()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user := OrgUser{
+		OrgID:  1,
+		UserID: 1,
+		Email:  "admin@localhost",
+		Login:  "admin",
+		Role:   "Admin",
+	}
+
+	if resp[0] != user {
+		t.Error("Not correctly parsing returned organization users.")
+	}
+}
+
 func TestOrgUsers(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getOrgUsersJSON)
 	defer server.Close()
