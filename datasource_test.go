@@ -74,6 +74,40 @@ func TestNewPrometheusDataSource(t *testing.T) {
 	}
 }
 
+func TestNewPrometheusSigV4DataSource(t *testing.T) {
+	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
+	defer server.Close()
+
+	ds := &DataSource{
+		Name:      "sigv4_prometheus",
+		Type:      "prometheus",
+		URL:       "http://some-url.com",
+		Access:    "access",
+		IsDefault: true,
+		JSONData: JSONData{
+			HTTPMethod:    "POST",
+			SigV4Auth:     true,
+			SigV4AuthType: "keys",
+			SigV4Region:   "us-east-1",
+		},
+		SecureJSONData: SecureJSONData{
+			SigV4AccessKey: "123",
+			SigV4SecretKey: "456",
+		},
+	}
+
+	created, err := client.NewDataSource(ds)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(pretty.PrettyFormat(created))
+
+	if created != 1 {
+		t.Error("datasource creation response should return the created datasource ID")
+	}
+}
+
 func TestNewElasticsearchDataSource(t *testing.T) {
 	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer server.Close()
