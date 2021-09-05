@@ -53,6 +53,23 @@ func TestNew_orgID(t *testing.T) {
 	}
 }
 
+func TestNew_HTTPHeaders(t *testing.T) {
+	const key = "foo"
+	headers := map[string]string{key: "bar"}
+	c, err := New("http://my-grafana.com", Config{HTTPHeaders: headers})
+	if err != nil {
+		t.Fatalf("expected error to be nil; got: %s", err.Error())
+	}
+
+	value, ok := c.config.HTTPHeaders[key]
+	if !ok {
+		t.Errorf("expected error: %v; got: %v", headers, c.config.HTTPHeaders)
+	}
+	if value != headers[key] {
+		t.Errorf("expected error: %s; got: %s", headers[key], value)
+	}
+}
+
 func TestNew_invalidURL(t *testing.T) {
 	_, err := New("://my-grafana.com", Config{APIKey: "123"})
 

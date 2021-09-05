@@ -120,6 +120,23 @@ func TestFolder(t *testing.T) {
 	}
 }
 
+func TestFolderByUid(t *testing.T) {
+	server, client := gapiTestTools(t, 200, getFolderJSON)
+	defer server.Close()
+
+	folder := "nErXDvCkzz"
+	resp, err := client.FolderByUID(folder)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(pretty.PrettyFormat(resp))
+
+	if resp.UID != folder || resp.Title != "Departmenet ABC" {
+		t.Error("Not correctly parsing returned folder.")
+	}
+}
+
 func TestNewFolder(t *testing.T) {
 	server, client := gapiTestTools(t, 200, createdFolderJSON)
 	defer server.Close()
