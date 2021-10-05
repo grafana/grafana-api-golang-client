@@ -45,7 +45,8 @@ type JSONData struct {
 	TimeInterval string `json:"timeInterval,omitempty"`
 
 	// Used by Elasticsearch
-	EsVersion                  int64  `json:"esVersion,omitempty"`
+	// From Grafana 8.x esVersion is the semantic version of Elasticsearch.
+	EsVersion                  string `json:"esVersion,omitempty"`
 	TimeField                  string `json:"timeField,omitempty"`
 	Interval                   string `json:"interval,omitempty"`
 	LogMessageField            string `json:"logMessageField,omitempty"`
