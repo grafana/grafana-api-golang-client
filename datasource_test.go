@@ -118,7 +118,7 @@ func TestNewElasticsearchDataSource(t *testing.T) {
 		URL:       "http://some-url.com",
 		IsDefault: true,
 		JSONData: JSONData{
-			EsVersion:                  70,
+			EsVersion:                  "7.0.0",
 			TimeField:                  "time",
 			Interval:                   "1m",
 			LogMessageField:            "message",
