@@ -33,10 +33,11 @@ type DatasourcePermissionAddPayload struct {
 
 // DatasourcePermissions fetches and returns the permissions for the datasource whose ID it's passed.
 func (c *Client) DatasourcePermissions(id int64) (*DatasourcePermissionsResponse, error) {
+	path := fmt.Sprintf("/api/datasources/%d/permissions", id)
 	var out *DatasourcePermissionsResponse
-	err := c.request("GET", fmt.Sprintf("/api/datasources/id/%d/permissions", id), nil, nil, &out)
+	err := c.request("GET", path, nil, nil, &out)
 	if err != nil {
-		return out, err
+		return out, fmt.Errorf("error getting permissions at %s: %w", path, err)
 	}
 
 	return out, nil
@@ -44,18 +45,25 @@ func (c *Client) DatasourcePermissions(id int64) (*DatasourcePermissionsResponse
 
 // AddDatasourcePermission adds the given permission item
 func (c *Client) AddDatasourcePermission(id int64, item *DatasourcePermissionAddPayload) error {
-	path := fmt.Sprintf("/api/datasources/id/%d/permissions", id)
+	path := fmt.Sprintf("/api/datasources/%d/permissions", id)
 	data, err := json.Marshal(item)
 	if err != nil {
-		return err
+		return fmt.Errorf("marshal err: %w", err)
 	}
 
-	return c.request("POST", path, nil, bytes.NewBuffer(data), nil)
+	if err = c.request("POST", path, nil, bytes.NewBuffer(data), nil); err != nil {
+		return fmt.Errorf("error adding permissions at %s: %w", path, err)
+	}
+
+	return nil
 }
 
 // RemoveDatasourcePermission removes the permission with the given id
 func (c *Client) RemoveDatasourcePermission(id, permissionID int64) error {
-	path := fmt.Sprintf("/api/datasources/id/%d/permissions/%d", id, permissionID)
+	path := fmt.Sprintf("/api/datasources/%d/permissions/%d", id, permissionID)
+	if err := c.request("DELETE", path, nil, nil, nil); err != nil {
+		return fmt.Errorf("error deleting permissions at %s: %w", path, err)
+	}
 
-	return c.request("DELETE", path, nil, nil, nil)
+	return nil
 }
