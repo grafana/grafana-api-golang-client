@@ -6,6 +6,13 @@ import (
 	"fmt"
 )
 
+type DatasourcePermissionType int
+
+const (
+	_ DatasourcePermissionType = iota // 0 is not a valid permission
+	DatasourcePermissionQuery
+)
+
 // DatasourcePermission has information such as a datasource, user, team, role and permission.
 type DatasourcePermission struct {
 	ID           int64  `json:"id"`
@@ -16,14 +23,14 @@ type DatasourcePermission struct {
 
 	// Permission levels are
 	// 1 = Query
-	Permission     int64  `json:"permission"`
-	PermissionName string `json:"permissionName"`
+	Permission     DatasourcePermissionType `json:"permission"`
+	PermissionName string                   `json:"permissionName"`
 }
 
 type DatasourcePermissionsResponse struct {
-	DatasourceID int64 `json:"datasourceId"`
-	Enabled      bool  `json:"enabled"`
-	Permissions  []*DatasourcePermission
+	DatasourceID int64                   `json:"datasourceId"`
+	Enabled      bool                    `json:"enabled"`
+	Permissions  []*DatasourcePermission `json:"permissions"`
 }
 
 type DatasourcePermissionAddPayload struct {
