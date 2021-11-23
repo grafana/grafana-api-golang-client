@@ -8,6 +8,7 @@ import (
 
 // DatasourcePermission has information such as a datasource, user, team, role and permission.
 type DatasourcePermission struct {
+	ID           int64  `json:"id"`
 	DatasourceID int64  `json:"datasourceId"`
 	UserID       int64  `json:"userId"`
 	UserEmail    string `json:"userEmail"`
