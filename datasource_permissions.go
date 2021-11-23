@@ -32,6 +32,24 @@ type DatasourcePermissionAddPayload struct {
 	Permission int64 `json:"permission"`
 }
 
+// EnableDatasourcePermissions enables the datasource permissions (this is a datasource setting)
+func (c *Client) EnableDatasourcePermissions(id int64) error {
+	path := fmt.Sprintf("/api/datasources/%d/enable-permissions", id)
+	if err := c.request("POST", path, nil, nil, nil); err != nil {
+		return fmt.Errorf("error enabling permissions at %s: %w", path, err)
+	}
+	return nil
+}
+
+// DisableDatasourcePermissions disables the datasource permissions (this is a datasource setting)
+func (c *Client) DisableDatasourcePermissions(id int64) error {
+	path := fmt.Sprintf("/api/datasources/%d/disable-permissions", id)
+	if err := c.request("POST", path, nil, nil, nil); err != nil {
+		return fmt.Errorf("error disabling permissions at %s: %w", path, err)
+	}
+	return nil
+}
+
 // DatasourcePermissions fetches and returns the permissions for the datasource whose ID it's passed.
 func (c *Client) DatasourcePermissions(id int64) (*DatasourcePermissionsResponse, error) {
 	path := fmt.Sprintf("/api/datasources/%d/permissions", id)
