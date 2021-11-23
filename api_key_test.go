@@ -25,7 +25,7 @@ const (
 	]`
 )
 
-func TestCreateApiKey(t *testing.T) {
+func TestCreateAPIKey(t *testing.T) {
 	server, client := gapiTestTools(t, 200, createAPIKeyJSON)
 	defer server.Close()
 
@@ -43,7 +43,7 @@ func TestCreateApiKey(t *testing.T) {
 	t.Log(pretty.PrettyFormat(res))
 }
 
-func TestDeleteApiKey(t *testing.T) {
+func TestDeleteAPIKey(t *testing.T) {
 	server, client := gapiTestTools(t, 200, deleteAPIKeyJSON)
 	defer server.Close()
 
@@ -55,7 +55,7 @@ func TestDeleteApiKey(t *testing.T) {
 	t.Log(pretty.PrettyFormat(res))
 }
 
-func TestGetApiKeys(t *testing.T) {
+func TestGetAPIKeys(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getAPIKeysJSON)
 	defer server.Close()
 
