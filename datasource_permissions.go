@@ -34,9 +34,9 @@ type DatasourcePermissionsResponse struct {
 }
 
 type DatasourcePermissionAddPayload struct {
-	UserID     int64 `json:"userId"`
-	TeamID     int64 `json:"teamId"`
-	Permission int64 `json:"permission"`
+	UserID     int64                    `json:"userId"`
+	TeamID     int64                    `json:"teamId"`
+	Permission DatasourcePermissionType `json:"permission"`
 }
 
 // EnableDatasourcePermissions enables the datasource permissions (this is a datasource setting)
