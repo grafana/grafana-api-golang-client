@@ -28,6 +28,7 @@ type Dashboard struct {
 	Model     map[string]interface{} `json:"dashboard"`
 	Folder    int64                  `json:"folderId"`
 	Overwrite bool                   `json:"overwrite"`
+	Message   string 								 `json:"message"`
 }
 
 // SaveDashboard is a deprecated method for saving a Grafana dashboard. Use NewDashboard.
