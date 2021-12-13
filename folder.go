@@ -35,6 +35,17 @@ func (c *Client) Folder(id int64) (*Folder, error) {
 	return folder, err
 }
 
+// Folder fetches and returns the Grafana folder whose UID it's passed.
+func (c *Client) FolderByUID(uid string) (*Folder, error) {
+	folder := &Folder{}
+	err := c.request("GET", fmt.Sprintf("/api/folders/id/%s", uid), nil, nil, folder)
+	if err != nil {
+		return folder, err
+	}
+
+	return folder, err
+}
+
 // NewFolder creates a new Grafana folder.
 func (c *Client) NewFolder(title string) (Folder, error) {
 	folder := Folder{}
