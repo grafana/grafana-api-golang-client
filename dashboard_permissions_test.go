@@ -7,11 +7,10 @@ import (
 )
 
 const (
-	getFolderPermissionsJSON = `
+	getDashboardPermissionsJSON = `
 [
   {
-    "id": 1,
-    "folderId": -1,
+    "dashboardId": 1,
     "created": "2017-06-20T02:00:00+02:00",
     "updated": "2017-06-20T02:00:00+02:00",
     "userId": 0,
@@ -26,11 +25,11 @@ const (
     "title": "",
     "slug": "",
     "isFolder": false,
-    "url": ""
+    "url": "",
+    "inherited": false
   },
   {
-    "id": 2,
-    "dashboardId": -1,
+    "dashboardId": 2,
     "created": "2017-06-20T02:00:00+02:00",
     "updated": "2017-06-20T02:00:00+02:00",
     "userId": 0,
@@ -41,71 +40,77 @@ const (
     "role": "Editor",
     "permission": 2,
     "permissionName": "Edit",
-    "uid": "",
+    "uid": "nErXDvCkzz",
     "title": "",
     "slug": "",
     "isFolder": false,
-    "url": ""
+    "url": "",
+    "inherited": true
   }
 ]
 `
-	updateFolderPermissionsJSON = `
+	updateDashboardPermissionsJSON = `
 {
-	"message": "Folder permissions updated"
+	"message": "Dashboard permissions updated"
 }
 `
 )
 
-func TestFolderPermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getFolderPermissionsJSON)
+func TestDashboardPermissions(t *testing.T) {
+	server, client := gapiTestTools(t, 200, getDashboardPermissionsJSON)
 	defer server.Close()
 
-	fid := "nErXDvCkzz"
-	resp, err := client.FolderPermissions(fid)
+	resp, err := client.DashboardPermissions(1)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	expects := []*FolderPermission{
+	expects := []*DashboardPermission{
 		{
-			ID:             1,
-			FolderUID:      "nErXDvCkzz",
+			DashboardID:    1,
+			DashboardUID:   "nErXDvCkzz",
+			Role:           "Viewer",
 			UserID:         0,
 			TeamID:         0,
-			Role:           "Viewer",
 			IsFolder:       false,
+			Inherited:      false,
 			Permission:     1,
 			PermissionName: "View",
-			FolderID:       -1,
-			DashboardID:    0,
 		},
 		{
-			ID:             2,
-			FolderUID:      "",
+			DashboardID:    2,
+			DashboardUID:   "nErXDvCkzz",
+			Role:           "Editor",
 			UserID:         0,
 			TeamID:         0,
-			Role:           "Editor",
 			IsFolder:       false,
+			Inherited:      true,
 			Permission:     2,
 			PermissionName: "Edit",
-			FolderID:       0,
-			DashboardID:    -1,
 		},
 	}
 
 	for i, expect := range expects {
 		t.Run("check data", func(t *testing.T) {
-			if resp[i].ID != expect.ID || resp[i].Role != expect.Role {
-				t.Error("Not correctly parsing returned folder permission")
+			if resp[i].DashboardID != expect.DashboardID ||
+				resp[i].DashboardUID != expect.DashboardUID ||
+				resp[i].Role != expect.Role ||
+				resp[i].UserID != expect.UserID ||
+				resp[i].TeamID != expect.TeamID ||
+				resp[i].IsFolder != expect.IsFolder ||
+				resp[i].Inherited != expect.Inherited ||
+				resp[i].Permission != expect.Permission ||
+				resp[i].PermissionName != expect.PermissionName {
+				t.Error("Not correctly parsing returned dashboard permission")
 			}
 		})
 	}
 }
 
-func TestUpdateFolderPermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateFolderPermissionsJSON)
+func TestUpdateDashboardPermissions(t *testing.T) {
+	server, client := gapiTestTools(t, 200, updateDashboardPermissionsJSON)
 	defer server.Close()
 
 	items := &PermissionItems{
@@ -128,7 +133,7 @@ func TestUpdateFolderPermissions(t *testing.T) {
 			},
 		},
 	}
-	err := client.UpdateFolderPermissions("nErXDvCkzz", items)
+	err := client.UpdateDashboardPermissions(1, items)
 	if err != nil {
 		t.Error(err)
 	}

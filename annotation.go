@@ -38,7 +38,7 @@ type GraphiteAnnotation struct {
 // Annotations fetches the annotations queried with the params it's passed
 func (c *Client) Annotations(params url.Values) ([]Annotation, error) {
 	result := []Annotation{}
-	err := c.request("GET", "/api/annotation", params, nil, &result)
+	err := c.request("GET", "/api/annotations", params, nil, &result)
 	if err != nil {
 		return nil, err
 	}

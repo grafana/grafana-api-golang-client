@@ -9,6 +9,7 @@ import (
 // DataSource represents a Grafana data source.
 type DataSource struct {
 	ID     int64  `json:"id,omitempty"`
+	UID    string `json:"uid,omitempty"`
 	Name   string `json:"name"`
 	Type   string `json:"type"`
 	URL    string `json:"url"`
@@ -45,17 +46,20 @@ type JSONData struct {
 	TimeInterval string `json:"timeInterval,omitempty"`
 
 	// Used by Elasticsearch
-	EsVersion       int64  `json:"esVersion,omitempty"`
-	TimeField       string `json:"timeField,omitempty"`
-	Interval        string `json:"inteval,omitempty"`
-	LogMessageField string `json:"logMessageField,omitempty"`
-	LogLevelField   string `json:"logLevelField,omitempty"`
+	// From Grafana 8.x esVersion is the semantic version of Elasticsearch.
+	EsVersion                  string `json:"esVersion,omitempty"`
+	TimeField                  string `json:"timeField,omitempty"`
+	Interval                   string `json:"interval,omitempty"`
+	LogMessageField            string `json:"logMessageField,omitempty"`
+	LogLevelField              string `json:"logLevelField,omitempty"`
+	MaxConcurrentShardRequests int64  `json:"maxConcurrentShardRequests,omitempty"`
 
 	// Used by Cloudwatch
 	AuthType                string `json:"authType,omitempty"`
 	AssumeRoleArn           string `json:"assumeRoleArn,omitempty"`
 	DefaultRegion           string `json:"defaultRegion,omitempty"`
 	CustomMetricsNamespaces string `json:"customMetricsNamespaces,omitempty"`
+	Profile                 string `json:"profile,omitempty"`
 
 	// Used by OpenTSDB
 	TsdbVersion    string `json:"tsdbVersion,omitempty"`
@@ -83,6 +87,14 @@ type JSONData struct {
 	ClientEmail        string `json:"clientEmail,omitempty"`
 	DefaultProject     string `json:"defaultProject,omitempty"`
 	TokenURI           string `json:"tokenUri,omitempty"`
+
+	// Used by Prometheus and Elasticsearch
+	SigV4AssumeRoleArn string `json:"sigV4AssumeRoleArn,omitempty"`
+	SigV4Auth          bool   `json:"sigV4Auth,omitempty"`
+	SigV4AuthType      string `json:"sigV4AuthType,omitempty"`
+	SigV4ExternalID    string `json:"sigV4ExternalID,omitempty"`
+	SigV4Profile       string `json:"sigV4Profile,omitempty"`
+	SigV4Region        string `json:"sigV4Region,omitempty"`
 }
 
 // SecureJSONData is a representation of the datasource `secureJsonData` property
@@ -100,6 +112,10 @@ type SecureJSONData struct {
 
 	// Used by Stackdriver
 	PrivateKey string `json:"privateKey,omitempty"`
+
+	// Used by Prometheus and Elasticsearch
+	SigV4AccessKey string `json:"sigV4AccessKey,omitempty"`
+	SigV4SecretKey string `json:"sigV4SecretKey,omitempty"`
 }
 
 // NewDataSource creates a new Grafana data source.

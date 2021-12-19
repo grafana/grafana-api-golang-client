@@ -14,10 +14,7 @@ local pipeline(name, trigger) = {
       name: 'test',
       image: image,
       commands: [
-        'go version',
-        'golangci-lint --version',
-        'golangci-lint run ./...',
-        'go test -cover -race -vet all -mod readonly ./...',
+        'make test',
       ],
     },
   ],
@@ -29,6 +26,7 @@ local pipeline(name, trigger) = {
       'pull_request',
     ],
   }),
+
   pipeline('test-master', {
     branch: 'master',
     event: [
