@@ -104,6 +104,22 @@ func TestRequest_500(t *testing.T) {
 	}
 }
 
+func TestRequest_badURL(t *testing.T) {
+	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
+	baseURL, err := url.Parse("bad-url")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	client.baseURL = *baseURL
+	defer server.Close()
+
+	expected := `Get "bad-url/foo": unsupported protocol scheme ""`
+	err = client.request("GET", "/foo", url.Values{}, nil, nil)
+	if err.Error() != expected {
+		t.Errorf("expected error: %v; got: %s", expected, err.Error())
+	}
+}
+
 func TestRequest_200Unmarshal(t *testing.T) {
 	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
 	defer server.Close()

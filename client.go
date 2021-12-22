@@ -68,7 +68,8 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 
 	// retry logic
 	for n := 0; n <= c.config.NumRetries; n++ {
-		r, err := c.newRequest(method, requestPath, query, body)
+		var r *http.Request
+		r, err = c.newRequest(method, requestPath, query, body)
 		if err != nil {
 			return err
 		}
