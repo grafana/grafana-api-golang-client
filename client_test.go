@@ -108,7 +108,7 @@ func TestRequest_badURL(t *testing.T) {
 	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
 	baseURL, err := url.Parse("bad-url")
 	if err != nil {
-		t.Fatal(err.Error())
+		t.Fatal(err)
 	}
 	client.baseURL = *baseURL
 	defer server.Close()
