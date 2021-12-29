@@ -95,6 +95,13 @@ type JSONData struct {
 	SigV4ExternalID    string `json:"sigV4ExternalID,omitempty"`
 	SigV4Profile       string `json:"sigV4Profile,omitempty"`
 	SigV4Region        string `json:"sigV4Region,omitempty"`
+
+	// Used by Prometheus and Loki
+	ManageAlerts    bool   `json:"manageAlerts,omitempty"`
+	AlertmanagerUID string `json:"alertmanagerUid,omitempty"`
+
+	// Used by Alertmanager
+	Implementation string `json:"implementation,omitempty"`
 }
 
 // SecureJSONData is a representation of the datasource `secureJsonData` property
