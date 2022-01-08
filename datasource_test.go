@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	createdDataSourceJSON = `{"id":1,"message":"Datasource added", "name": "test_datasource"}`
+	createdDataSourceJSON = `{"id":1,"uid":"myuid0001","message":"Datasource added", "name": "test_datasource"}`
 )
 
 func TestNewDataSource(t *testing.T) {
@@ -118,7 +118,7 @@ func TestNewElasticsearchDataSource(t *testing.T) {
 		URL:       "http://some-url.com",
 		IsDefault: true,
 		JSONData: JSONData{
-			EsVersion:                  70,
+			EsVersion:                  "7.0.0",
 			TimeField:                  "time",
 			Interval:                   "1m",
 			LogMessageField:            "message",

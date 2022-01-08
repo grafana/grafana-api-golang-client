@@ -1,17 +1,9 @@
-# DEPRECATED
+# Grafana HTTP API Client for Go
 
-:warning: :warning: :warning:
+This library provides a low-level client to access Grafana [HTTP API](https://grafana.com/docs/grafana/latest/http_api/).
 
-**This repository is no longer being maintained.**
-
-We're in the process of creating our next generation API clients.
-
-In the interim, further changes to this repository should only be to support
-[grafana/terraform-provider-grafana](https://github.com/grafana/terraform-provider-grafana).
-
----
-
-Grafana HTTP API Client for Go
+:warning: This repository is still active but not under heavy development.
+Contributions to this library offering support for the [Terraform provider for Grafana](https://github.com/grafana/terraform-provider-grafana) will be prioritized over generic ones.
 
 ## Tests
 
