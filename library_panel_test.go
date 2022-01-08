@@ -51,7 +51,7 @@ func TestLibraryPanelCreate(t *testing.T) {
 			"type": "",
 		},
 		Folder:    0,
-		Name: "API docs Example"
+		Name: "API docs Example",
 		UID: "V--OrYHnz"
 	}
 
