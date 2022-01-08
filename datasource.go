@@ -3,11 +3,12 @@ package gapi
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
 )
+
+var headerNameRegex = regexp.MustCompile(`^httpHeaderName(\d+)$`)
 
 // DataSource represents a Grafana data source.
 type DataSource struct {
@@ -43,14 +44,10 @@ type _DataSource DataSource
 
 // Marshal DataSource
 func (ds *DataSource) MarshalJSON() ([]byte, error) {
-	var index int64
 	dataSource := _DataSource(*ds)
-	dataSource.JSONData.httpHeaderNames = make(map[int64]string, len(ds.HTTPHeaders))
-	dataSource.SecureJSONData.httpHeaderValues = make(map[int64]string, len(ds.HTTPHeaders))
 	for name, value := range ds.HTTPHeaders {
-		dataSource.JSONData.httpHeaderNames[index] = name
-		dataSource.SecureJSONData.httpHeaderValues[index] = value
-		index++
+		dataSource.JSONData.httpHeaderNames = append(dataSource.JSONData.httpHeaderNames, name)
+		dataSource.SecureJSONData.httpHeaderValues = append(dataSource.SecureJSONData.httpHeaderValues, value)
 	}
 	return json.Marshal(dataSource)
 }
@@ -61,11 +58,9 @@ func (ds *DataSource) UnmarshalJSON(b []byte) (err error) {
 	if err = json.Unmarshal(b, &dataSource); err == nil {
 		*ds = DataSource(dataSource)
 	}
-	if len(ds.JSONData.httpHeaderNames) != len(ds.SecureJSONData.httpHeaderValues) {
-		return errors.New("HTTP headers names length doesn't match HTTP header values length")
-	}
-	for index, value := range ds.JSONData.httpHeaderNames {
-		ds.HTTPHeaders[value] = ds.SecureJSONData.httpHeaderValues[index]
+	ds.HTTPHeaders = make(map[string]string)
+	for _, value := range ds.JSONData.httpHeaderNames {
+		ds.HTTPHeaders[value] = "true" // HTTP Headers are not returned by the API
 	}
 	return err
 }
@@ -76,7 +71,7 @@ type JSONData struct {
 	TLSAuth           bool `json:"tlsAuth,omitempty"`
 	TLSAuthWithCACert bool `json:"tlsAuthWithCACert,omitempty"`
 	TLSSkipVerify     bool `json:"tlsSkipVerify,omitempty"`
-	httpHeaderNames   map[int64]string
+	httpHeaderNames   []string
 
 	// Used by Graphite
 	GraphiteVersion string `json:"graphiteVersion,omitempty"`
@@ -164,11 +159,19 @@ func (jd *JSONData) UnmarshalJSON(b []byte) (err error) {
 	}
 	fields := make(map[string]interface{})
 	if err = json.Unmarshal(b, &fields); err == nil {
+		headerCount := 0
+		for name := range fields {
+			match := headerNameRegex.FindStringSubmatch(name)
+			if len(match) > 0 {
+				headerCount++
+			}
+		}
+
+		jd.httpHeaderNames = make([]string, headerCount)
 		for name, value := range fields {
-			re := regexp.MustCompile("httpHeaderName([0-9]+)")
-			match := re.FindStringSubmatch(name)
-			if len(match) == 1 {
-				index, err := strconv.ParseInt(match[0], 10, 64)
+			match := headerNameRegex.FindStringSubmatch(name)
+			if len(match) == 2 {
+				index, err := strconv.ParseInt(match[1], 10, 64)
 				if err != nil {
 					return err
 				}
@@ -186,8 +189,8 @@ type SecureJSONData struct {
 	TLSClientCert     string `json:"tlsClientCert,omitempty"`
 	TLSClientKey      string `json:"tlsClientKey,omitempty"`
 	Password          string `json:"password,omitempty"`
-	BasicAuthPassword string `json:"basicAuthPassword,omitempty"`
-	httpHeaderValues  map[int64]string
+	BasicAuthPassword string `json:"basicAuthPassword,om itempty"`
+	httpHeaderValues  []string
 
 	// Used by Cloudwatch
 	AccessKey string `json:"accessKey,omitempty"`
