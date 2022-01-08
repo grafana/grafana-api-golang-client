@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 )
@@ -61,6 +62,7 @@ func (ds *DataSource) UnmarshalJSON(b []byte) (err error) {
 	if err = json.Unmarshal(b, &dataSource); err == nil {
 		*ds = DataSource(dataSource)
 	}
+	log.Printf("%+v", ds)
 	if len(ds.JSONData.httpHeaderNames) != len(ds.SecureJSONData.httpHeaderValues) {
 		return errors.New("HTTP headers names length doesn't match HTTP header values length")
 	}
@@ -164,10 +166,12 @@ func (jd *JSONData) UnmarshalJSON(b []byte) (err error) {
 	}
 	fields := make(map[string]interface{})
 	if err = json.Unmarshal(b, &fields); err == nil {
+		log.Printf("%+v", fields)
 		for name, value := range fields {
 			re := regexp.MustCompile("httpHeaderName([0-9]+)")
 			match := re.FindStringSubmatch(name)
 			if len(match) == 1 {
+				log.Printf("matches")
 				index, err := strconv.ParseInt(match[0], 10, 64)
 				if err != nil {
 					return err
