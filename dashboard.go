@@ -28,6 +28,9 @@ type Dashboard struct {
 	Model     map[string]interface{} `json:"dashboard"`
 	Folder    int64                  `json:"folderId"`
 	Overwrite bool                   `json:"overwrite"`
+
+	// This is only used when creating a new dashboard, it will always be empty when getting a dashboard.
+	Message string `json:"message"`
 }
 
 // SaveDashboard is a deprecated method for saving a Grafana dashboard. Use NewDashboard.
@@ -84,6 +87,21 @@ func (c *Client) Dashboard(slug string) (*Dashboard, error) {
 // DashboardByUID gets a dashboard by UID.
 func (c *Client) DashboardByUID(uid string) (*Dashboard, error) {
 	return c.dashboard(fmt.Sprintf("/api/dashboards/uid/%s", uid))
+}
+
+// DashboardsByIDs uses the folder and dashboard search endpoint to find
+// dashboards by list of dashboard IDs.
+func (c *Client) DashboardsByIDs(ids []int64) ([]FolderDashboardSearchResponse, error) {
+	dashboardIdsJSON, err := json.Marshal(ids)
+	if err != nil {
+		return nil, err
+	}
+
+	params := map[string]string{
+		"type":         "dash-db",
+		"dashboardIds": string(dashboardIdsJSON),
+	}
+	return c.FolderDashboardSearch(params)
 }
 
 func (c *Client) dashboard(path string) (*Dashboard, error) {
