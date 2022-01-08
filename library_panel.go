@@ -52,7 +52,7 @@ type LibraryPanelDeleteResponse struct {
 
 // NewLibraryPanel creates a new Grafana library panel.
 func (c *Client) NewLibraryPanel(panel LibraryPanel) (*LibraryPanelCreateResponse, error) {
-	panel.Kind := 1  // library element Kind=1 for panel or Kind=2 for library variable
+	panel.Kind := int64(1)  // library element. 1 for library panel or 2 for library variable
 	data, err := json.Marshal(panel)
 	if err != nil {
 		return nil, err
