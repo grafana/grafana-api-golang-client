@@ -4,11 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"regexp"
+	"strconv"
 )
+
+var headerNameRegex = regexp.MustCompile(`^httpHeaderName(\d+)$`)
 
 // DataSource represents a Grafana data source.
 type DataSource struct {
 	ID     int64  `json:"id,omitempty"`
+	UID    string `json:"uid,omitempty"`
 	Name   string `json:"name"`
 	Type   string `json:"type"`
 	URL    string `json:"url"`
@@ -27,8 +32,37 @@ type DataSource struct {
 	// Deprecated: Use secureJsonData.basicAuthPassword instead.
 	BasicAuthPassword string `json:"basicAuthPassword,omitempty"`
 
+	// Helper to read/write http headers
+	HTTPHeaders map[string]string `json:"-"`
+
 	JSONData       JSONData       `json:"jsonData,omitempty"`
 	SecureJSONData SecureJSONData `json:"secureJsonData,omitempty"`
+}
+
+// Required to avoid recursion during (un)marshal
+type _DataSource DataSource
+
+// Marshal DataSource
+func (ds *DataSource) MarshalJSON() ([]byte, error) {
+	dataSource := _DataSource(*ds)
+	for name, value := range ds.HTTPHeaders {
+		dataSource.JSONData.httpHeaderNames = append(dataSource.JSONData.httpHeaderNames, name)
+		dataSource.SecureJSONData.httpHeaderValues = append(dataSource.SecureJSONData.httpHeaderValues, value)
+	}
+	return json.Marshal(dataSource)
+}
+
+// Unmarshal DataSource
+func (ds *DataSource) UnmarshalJSON(b []byte) (err error) {
+	dataSource := _DataSource(*ds)
+	if err = json.Unmarshal(b, &dataSource); err == nil {
+		*ds = DataSource(dataSource)
+	}
+	ds.HTTPHeaders = make(map[string]string)
+	for _, value := range ds.JSONData.httpHeaderNames {
+		ds.HTTPHeaders[value] = "true" // HTTP Headers are not returned by the API
+	}
+	return err
 }
 
 // JSONData is a representation of the datasource `jsonData` property
@@ -37,6 +71,7 @@ type JSONData struct {
 	TLSAuth           bool `json:"tlsAuth,omitempty"`
 	TLSAuthWithCACert bool `json:"tlsAuthWithCACert,omitempty"`
 	TLSSkipVerify     bool `json:"tlsSkipVerify,omitempty"`
+	httpHeaderNames   []string
 
 	// Used by Graphite
 	GraphiteVersion string `json:"graphiteVersion,omitempty"`
@@ -96,6 +131,57 @@ type JSONData struct {
 	SigV4Region        string `json:"sigV4Region,omitempty"`
 }
 
+// Required to avoid recursion during (un)marshal
+type _JSONData JSONData
+
+// Marshal JSONData
+func (jd JSONData) MarshalJSON() ([]byte, error) {
+	jsonData := _JSONData(jd)
+	b, err := json.Marshal(jsonData)
+	if err != nil {
+		return nil, err
+	}
+	fields := make(map[string]interface{})
+	if err = json.Unmarshal(b, &fields); err != nil {
+		return nil, err
+	}
+	for index, name := range jd.httpHeaderNames {
+		fields[fmt.Sprintf("httpHeaderName%d", index+1)] = name
+	}
+	return json.Marshal(fields)
+}
+
+// Unmarshal JSONData
+func (jd *JSONData) UnmarshalJSON(b []byte) (err error) {
+	jsonData := _JSONData(*jd)
+	if err = json.Unmarshal(b, &jsonData); err == nil {
+		*jd = JSONData(jsonData)
+	}
+	fields := make(map[string]interface{})
+	if err = json.Unmarshal(b, &fields); err == nil {
+		headerCount := 0
+		for name := range fields {
+			match := headerNameRegex.FindStringSubmatch(name)
+			if len(match) > 0 {
+				headerCount++
+			}
+		}
+
+		jd.httpHeaderNames = make([]string, headerCount)
+		for name, value := range fields {
+			match := headerNameRegex.FindStringSubmatch(name)
+			if len(match) == 2 {
+				index, err := strconv.ParseInt(match[1], 10, 64)
+				if err != nil {
+					return err
+				}
+				jd.httpHeaderNames[index-1] = value.(string)
+			}
+		}
+	}
+	return err
+}
+
 // SecureJSONData is a representation of the datasource `secureJsonData` property
 type SecureJSONData struct {
 	// Used by all datasources
@@ -104,6 +190,7 @@ type SecureJSONData struct {
 	TLSClientKey      string `json:"tlsClientKey,omitempty"`
 	Password          string `json:"password,omitempty"`
 	BasicAuthPassword string `json:"basicAuthPassword,omitempty"`
+	httpHeaderValues  []string
 
 	// Used by Cloudwatch
 	AccessKey string `json:"accessKey,omitempty"`
@@ -115,6 +202,26 @@ type SecureJSONData struct {
 	// Used by Prometheus and Elasticsearch
 	SigV4AccessKey string `json:"sigV4AccessKey,omitempty"`
 	SigV4SecretKey string `json:"sigV4SecretKey,omitempty"`
+}
+
+// Required to avoid recursion during unmarshal
+type _SecureJSONData SecureJSONData
+
+// Marshal SecureJSONData
+func (sjd SecureJSONData) MarshalJSON() ([]byte, error) {
+	secureJSONData := _SecureJSONData(sjd)
+	b, err := json.Marshal(secureJSONData)
+	if err != nil {
+		return nil, err
+	}
+	fields := make(map[string]interface{})
+	if err = json.Unmarshal(b, &fields); err != nil {
+		return nil, err
+	}
+	for index, value := range sjd.httpHeaderValues {
+		fields[fmt.Sprintf("httpHeaderValue%d", index+1)] = value
+	}
+	return json.Marshal(fields)
 }
 
 // NewDataSource creates a new Grafana data source.
