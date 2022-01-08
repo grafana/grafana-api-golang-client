@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+var headerNameRegex = regexp.MustCompile(`^httpHeaderName(\d+)$`)
+
 // DataSource represents a Grafana data source.
 type DataSource struct {
 	ID     int64  `json:"id,omitempty"`
