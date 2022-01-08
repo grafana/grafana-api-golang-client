@@ -114,15 +114,11 @@ func TestLibraryPanelPatch(t *testing.T) {
 		Name:   "Updated library panel name",
 		Model:  map[string]interface{}{"description": "new description", "type": ""},
 	}
-	_, err := client.PatchLibraryPanelByUID("V--OrYHnz", panel)
+	resp, err := client.PatchLibraryPanelByUID("V--OrYHnz", panel)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	resp, err := client.LibraryPanelByUID("V--OrYHnz")
-	if err != nil {
-		t.Fatal(err)
-	}
 	if resp.Name != "Updated library panel name" {
 		t.Fatalf("Invalid Name - %s, Expected %s", resp.Name, "Updated library panel name")
 	}
