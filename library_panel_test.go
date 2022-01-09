@@ -169,7 +169,7 @@ func TestPatchLibraryPanel(t *testing.T) {
 		Name:   "Updated library panel name",
 		Model:  map[string]interface{}{"description": "new description", "type": ""},
 	}
-	resp, err := client.PatchLibraryPanelByUID("V--OrYHnz", panel)
+	resp, err := client.PatchLibraryPanel("V--OrYHnz", panel)
 	if err != nil {
 		t.Fatal(err)
 	}
