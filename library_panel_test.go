@@ -72,6 +72,11 @@ const (
 			}
 	 	}
 	}`
+
+	deleteLibraryPanelResponse = `{
+		"message": "Library element deleted",
+		"id": 28
+	}`
 )
 
 func TestLibraryPanelCreate(t *testing.T) {
