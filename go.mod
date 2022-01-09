@@ -1,4 +1,4 @@
-module github.com/justinTM/grafana-api-golang-client@terraform-provider
+module github.com/grafana/grafana-api-golang-client
 
 go 1.14
 
