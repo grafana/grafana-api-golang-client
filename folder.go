@@ -38,7 +38,7 @@ func (c *Client) Folder(id int64) (*Folder, error) {
 // Folder fetches and returns the Grafana folder whose UID it's passed.
 func (c *Client) FolderByUID(uid string) (*Folder, error) {
 	folder := &Folder{}
-	err := c.request("GET", fmt.Sprintf("/api/folders/id/%s", uid), nil, nil, folder)
+	err := c.request("GET", fmt.Sprintf("/api/folders/%s", uid), nil, nil, folder)
 	if err != nil {
 		return folder, err
 	}
