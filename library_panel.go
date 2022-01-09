@@ -104,7 +104,15 @@ func (c *Client) PatchLibraryPanelByUID(uid string, p *LibraryPanel) (*LibraryPa
 	return &resp.Result, err
 }
 
-// DeleteLibraryPanelByUID deletes a panel by UID.
-func (c *Client) DeleteLibraryPanelByUID(uid string) error {
-	return c.request("DELETE", fmt.Sprintf("/api/library-elements/%s", uid), nil, nil, nil)
+// DeleteLibraryPanel deletes a panel by UID.
+func (c *Client) DeleteLibraryPanel(uid string) (*LibraryPanelDeleteResponse, error) {
+	path := fmt.Sprintf("/api/library-elements/%s", uid)
+
+	resp := &LibraryPanelDeleteResponse{}
+	err := c.request("DELETE", path, nil, bytes.NewBuffer(nil), &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, err
 }

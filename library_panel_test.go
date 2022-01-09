@@ -170,20 +170,15 @@ func TestPatchLibraryPanel(t *testing.T) {
 }
 
 func TestLibraryPanelDelete(t *testing.T) {
-	server, client := gapiTestTools(t, 200, "")
+	server, client := gapiTestTools(t, 200, deleteLibraryPanelResponse)
 	defer server.Close()
 
-	err := client.DeleteLibraryPanelByUID("V--OrYHnz")
+	resp, err := client.DeleteLibraryPanel("V--OrYHnz")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	for _, code := range []int{401, 403, 404} {
-		server.code = code
-
-		err = client.DeleteLibraryPanelByUID("V--OrYHnz")
-		if err == nil {
-			t.Errorf("%d not detected", code)
-		}
+	if resp.Message != "Library element deleted" {
+		t.Error("Failed to delete. Response should contain the correct response message")
 	}
 }
