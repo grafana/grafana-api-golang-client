@@ -39,6 +39,39 @@ const (
 			}
 	 }
 	}`
+
+	patchLibraryPanelResponse = `{
+		"result": {
+			"id": 25,
+			"orgId": 1,
+			"folderId": 0,
+			"uid": "V--OrYHnz",
+			"name": "Updated library panel name",
+			"kind": 1,
+			"model": {
+				"description": "new description",
+				"type": ""
+			},
+			"version": 1,
+			"meta": {
+				"folderName": "General",
+				"folderUid": "",
+				"connectedDashboards": 1,
+				"created": "2021-09-27T09:56:17+02:00",
+				"updated": "2021-09-27T09:56:17+02:00",
+				"createdBy": {
+					"id": 1,
+					"name": "admin",
+					"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56"
+				},
+				"updatedBy": {
+					"id": 1,
+					"name": "admin",
+					"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56"
+				}
+			}
+	 	}
+	}`
 )
 
 func TestLibraryPanelCreate(t *testing.T) {
@@ -105,8 +138,8 @@ func TestLibraryPanelGet(t *testing.T) {
 	}
 }
 
-func TestLibraryPanelPatch(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getLibraryPanelResponse)
+func TestPatchLibraryPanel(t *testing.T) {
+	server, client := gapiTestTools(t, 200, patchLibraryPanelResponse)
 	defer server.Close()
 
 	panel := &LibraryPanel{

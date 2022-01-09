@@ -95,13 +95,13 @@ func (c *Client) PatchLibraryPanelByUID(uid string, p *LibraryPanel) (*LibraryPa
 		return nil, err
 	}
 
-	result := &LibraryPanelCreateResponse{}
-	err = c.request("PATCH", path, nil, bytes.NewBuffer(data), &result)
+	resp := &LibraryPanelCreateResponse{}
+	err = c.request("PATCH", path, nil, bytes.NewBuffer(data), &resp)
 	if err != nil {
 		return nil, err
 	}
 
-	return &result.Result, err
+	return &resp.Result, err
 }
 
 // DeleteLibraryPanelByUID deletes a panel by UID.
