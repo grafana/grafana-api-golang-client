@@ -37,7 +37,7 @@ const (
 					"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56"
 				}
 			}
-	 }
+	 	}
 	}`
 
 	patchLibraryPanelResponse = `{
