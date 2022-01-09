@@ -50,6 +50,16 @@ type LibraryPanelDeleteResponse struct {
 	ID      int64  `json:"id,omitempty"`
 }
 
+// LibraryPanelConnection represents Grafana library panel connections to dashboard.
+type LibraryPanelConnection struct {
+	ID           int64                `json:"id"`
+	Kind         int64                `json:"kind"`
+	PanelID      int64                `json:"elementId"`
+	ConnectionID int64                `json:"connectionId"`
+	Created      time.Time            `json:"created"`
+	CreatedBy    LibraryPanelMetaUser `json:"createdBy"`
+}
+
 // NewLibraryPanel creates a new Grafana library panel.
 func (c *Client) NewLibraryPanel(panel LibraryPanel) (*LibraryPanel, error) {
 	panel.Kind = int64(1)
@@ -115,4 +125,21 @@ func (c *Client) DeleteLibraryPanel(uid string) (*LibraryPanelDeleteResponse, er
 	}
 
 	return resp, err
+}
+
+// LibraryPanelConnections gets a library panel by name.
+func (c *Client) LibraryPanelConnections(uid string) (*[]LibraryPanelConnection, error) {
+	path := fmt.Sprintf("/api/library-elements/%s/connections", uid)
+
+	resp := struct {
+		Result []LibraryPanelConnection `json:"result"`
+	}{}
+
+	// resp := &LibraryPanelConnectionResponse{}
+	err := c.request("POST", path, nil, bytes.NewBuffer(nil), &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resp.Result, err
 }

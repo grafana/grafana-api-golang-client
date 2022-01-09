@@ -77,6 +77,23 @@ const (
 		"message": "Library element deleted",
 		"id": 28
 	}`
+
+	getLibraryPanelConnectionsResponse = `{
+    "result": [
+        {
+            "id": 148,
+            "kind": 1,
+            "elementId": 25,
+            "connectionId": 527,
+            "created": "2021-09-27T10:00:07+02:00",
+            "createdBy": {
+                "id": 1,
+                "name": "admin",
+                "avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56"
+            }
+        }
+    ]
+	}`
 )
 
 func TestLibraryPanelCreate(t *testing.T) {
@@ -171,6 +188,20 @@ func TestPatchLibraryPanel(t *testing.T) {
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
+	}
+}
+
+func TestLibraryPanelGetConnections(t *testing.T) {
+	server, client := gapiTestTools(t, 200, getLibraryPanelConnectionsResponse)
+	defer server.Close()
+
+	resp, err := client.LibraryPanelConnections("V--OrYHnz")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if (*resp)[0].ID != int64(148) {
+		t.Fatalf("Invalid connection id - %d, Expected %d", (*resp)[0].ID, 148)
 	}
 }
 
