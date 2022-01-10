@@ -127,7 +127,7 @@ func (c *Client) DeleteLibraryPanel(uid string) (*LibraryPanelDeleteResponse, er
 	return resp, err
 }
 
-// LibraryPanelConnections gets a library panel by name.
+// LibraryPanelConnections gets library panel connections by UID.
 func (c *Client) LibraryPanelConnections(uid string) (*[]LibraryPanelConnection, error) {
 	path := fmt.Sprintf("/api/library-elements/%s/connections", uid)
 
@@ -144,7 +144,7 @@ func (c *Client) LibraryPanelConnections(uid string) (*[]LibraryPanelConnection,
 	return &resp.Result, err
 }
 
-// LibraryPanelConnectedDashboards gets a library panel by UID.
+// LibraryPanelConnectedDashboards gets Dashboards using this Library Panel.
 func (c *Client) LibraryPanelConnectedDashboards(uid string) (dashboards []*Dashboard, err error) {
 	connections, err := c.LibraryPanelConnections(uid)
 	if err != nil {
