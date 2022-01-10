@@ -80,18 +80,18 @@ const (
 
 	getLibraryPanelConnectionsResponse = `{
     "result": [
-        {
-            "id": 148,
-            "kind": 1,
-            "elementId": 25,
-            "connectionId": 527,
-            "created": "2021-09-27T10:00:07+02:00",
-            "createdBy": {
-                "id": 1,
-                "name": "admin",
-                "avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56"
-            }
+      {
+        "id": 148,
+        "kind": 1,
+        "elementId": 25,
+        "connectionId": 527,
+        "created": "2021-09-27T10:00:07+02:00",
+        "createdBy": {
+            "id": 1,
+            "name": "admin",
+            "avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56"
         }
+      }
     ]
 	}`
 
@@ -115,7 +115,7 @@ const (
 			"tags":["prod"],
 			"isStarred":true,
 			"uri":"db/production-overview"
-		},
+		}
 	]`
 )
 
@@ -229,16 +229,27 @@ func TestLibraryPanelGetConnections(t *testing.T) {
 }
 
 func TestLibraryPanelConnectedDashboards(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getLibraryPanelConnectedDashboardsResponse)
+	server, client := gapiTestTools(t, 200, getLibraryPanelConnectionsResponse)
 	defer server.Close()
 
-	resp, err := client.LibraryPanelConnectedDashboards("V--OrYHnz")
+	connections, err := client.LibraryPanelConnections("V--OrYHnz")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if resp[0].Title != "Production Overview" {
-		t.Fatalf("Invalid title from connected dashboard 0 - %s, Expected %s", resp[0].Title, "Production Overview")
+	var dashboardIds []int64
+	for _, connection := range *connections {
+		dashboardIds = append(dashboardIds, connection.DashboardID)
+	}
+
+	server, client = gapiTestTools(t, 200, getLibraryPanelConnectedDashboardsResponse)
+	dashboards, err := client.DashboardsByIDs(dashboardIds)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if dashboards[0].Title != "Production Overview" {
+		t.Fatalf("Invalid title from connected dashboard 0 - %s, Expected %s", dashboards[0].Title, "Production Overview")
 	}
 }
 
