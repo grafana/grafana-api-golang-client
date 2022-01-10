@@ -52,12 +52,12 @@ type LibraryPanelDeleteResponse struct {
 
 // LibraryPanelConnection represents Grafana library panel connections to dashboard.
 type LibraryPanelConnection struct {
-	ID           int64                `json:"id"`
-	Kind         int64                `json:"kind"`
-	PanelID      int64                `json:"elementId"`
-	ConnectionID int64                `json:"connectionId"`
-	Created      time.Time            `json:"created"`
-	CreatedBy    LibraryPanelMetaUser `json:"createdBy"`
+	ID          int64                `json:"id"`
+	Kind        int64                `json:"kind"`
+	PanelID     int64                `json:"elementId"`
+	DashboardID int64                `json:"connectionId"`
+	Created     time.Time            `json:"created"`
+	CreatedBy   LibraryPanelMetaUser `json:"createdBy"`
 }
 
 // NewLibraryPanel creates a new Grafana library panel.
@@ -142,4 +142,24 @@ func (c *Client) LibraryPanelConnections(uid string) (*[]LibraryPanelConnection,
 	}
 
 	return &resp.Result, err
+}
+
+// LibraryPanelConnectedDashboards gets a library panel by UID.
+func (c *Client) LibraryPanelConnectedDashboards(uid string) (dashboards []*Dashboard, err error) {
+	connections, err := c.LibraryPanelConnections(uid)
+	if err != nil {
+		return nil, err
+	}
+
+	var dashboardIds []int64
+	for _, this_connection := range *connections {
+		dashboardIds = append(dashboardIds, this_connection.DashboardID)
+	}
+
+	dashboards, err = c.DashboardsByIDs(dashboardIds)
+	if err != nil {
+		return nil, err
+	}
+
+	return dashboards, err
 }
