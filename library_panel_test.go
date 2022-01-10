@@ -242,7 +242,7 @@ func TestLibraryPanelConnectedDashboards(t *testing.T) {
 		dashboardIds = append(dashboardIds, connection.DashboardID)
 	}
 
-	server, client = gapiTestTools(t, 200, getLibraryPanelConnectedDashboardsResponse)
+	_, client = gapiTestTools(t, 200, getLibraryPanelConnectedDashboardsResponse)
 	dashboards, err := client.DashboardsByIDs(dashboardIds)
 	if err != nil {
 		t.Fatal(err)
