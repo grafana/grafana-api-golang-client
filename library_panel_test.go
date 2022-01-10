@@ -94,6 +94,29 @@ const (
         }
     ]
 	}`
+
+	getLibraryPanelConnectedDashboardsResponse = `[
+		{
+			"id":1,
+			"uid": "cIBgcSjkk",
+			"title":"Production Overview",
+			"url": "/d/cIBgcSjkk/production-overview",
+			"type":"dash-db",
+			"tags":["prod"],
+			"isStarred":true,
+			"uri":"db/production-overview"
+		},
+		{
+			"id":2,
+			"uid": "SjkkcIBgc",
+			"title":"Production Overview 2",
+			"url": "/d/SjkkcIBgc/production-overview-2",
+			"type":"dash-db",
+			"tags":["prod"],
+			"isStarred":true,
+			"uri":"db/production-overview"
+		},
+	]`
 )
 
 func TestLibraryPanelCreate(t *testing.T) {
@@ -202,6 +225,20 @@ func TestLibraryPanelGetConnections(t *testing.T) {
 
 	if (*resp)[0].ID != int64(148) {
 		t.Fatalf("Invalid connection id - %d, Expected %d", (*resp)[0].ID, 148)
+	}
+}
+
+func TestLibraryPanelConnectedDashboards(t *testing.T) {
+	server, client := gapiTestTools(t, 200, getLibraryPanelConnectedDashboardsResponse)
+	defer server.Close()
+
+	resp, err := client.LibraryPanelConnectedDashboards("V--OrYHnz")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp[0].Title != "Production Overview" {
+		t.Fatalf("Invalid title from connected dashboard 0 - %s, Expected %s", resp[0].Title, "Production Overview")
 	}
 }
 

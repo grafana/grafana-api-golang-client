@@ -145,21 +145,16 @@ func (c *Client) LibraryPanelConnections(uid string) (*[]LibraryPanelConnection,
 }
 
 // LibraryPanelConnectedDashboards gets Dashboards using this Library Panel.
-func (c *Client) LibraryPanelConnectedDashboards(uid string) (dashboards []*Dashboard, err error) {
+func (c *Client) LibraryPanelConnectedDashboards(uid string) ([]FolderDashboardSearchResponse, error) {
 	connections, err := c.LibraryPanelConnections(uid)
 	if err != nil {
 		return nil, err
 	}
 
 	var dashboardIds []int64
-	for _, this_connection := range *connections {
-		dashboardIds = append(dashboardIds, this_connection.DashboardID)
+	for _, connection := range *connections {
+		dashboardIds = append(dashboardIds, connection.DashboardID)
 	}
 
-	dashboards, err = c.DashboardsByIDs(dashboardIds)
-	if err != nil {
-		return nil, err
-	}
-
-	return dashboards, err
+	return c.DashboardsByIDs(dashboardIds)
 }

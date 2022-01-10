@@ -91,7 +91,7 @@ func (c *Client) DashboardByUID(uid string) (*Dashboard, error) {
 
 // DashboardsByIDs uses the folder and dashboard search endpoint to find
 // dashboards by list of dashboard IDs.
-func (c *Client) DashboardsByIDs(ids []int64) (dashboards []*Dashboard, err error) {
+func (c *Client) DashboardsByIDs(ids []int64) ([]FolderDashboardSearchResponse, error) {
 	dashboardIdsJSON, err := json.Marshal(ids)
 	if err != nil {
 		return nil, err
@@ -101,15 +101,7 @@ func (c *Client) DashboardsByIDs(ids []int64) (dashboards []*Dashboard, err erro
 		"type":         "dash-db",
 		"dashboardIds": string(dashboardIdsJSON),
 	}
-	resp, err := c.FolderDashboardSearch(params)
-	for _, searchResult := range resp {
-		dashboard, err := c.DashboardByUID(searchResult.UID)
-		if err != nil {
-			return nil, err
-		}
-		dashboards = append(dashboards, dashboard)
-	}
-	return dashboards, err
+	return c.FolderDashboardSearch(params)
 }
 
 func (c *Client) dashboard(path string) (*Dashboard, error) {
