@@ -98,9 +98,9 @@ func (c *Client) panel(path string) (*LibraryPanel, error) {
 }
 
 // PatchLibraryPanel updates one or more properties of an existing panel that matches the specified UID.
-func (c *Client) PatchLibraryPanel(uid string, p *LibraryPanel) (*LibraryPanel, error) {
+func (c *Client) PatchLibraryPanel(uid string, panel *LibraryPanel) (*LibraryPanel, error) {
 	path := fmt.Sprintf("/api/library-elements/%s", uid)
-	data, err := json.Marshal(p)
+	data, err := json.Marshal(panel)
 	if err != nil {
 		return nil, err
 	}
