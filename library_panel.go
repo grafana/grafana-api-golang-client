@@ -44,13 +44,13 @@ type LibraryPanelCreateResponse struct {
 	Result LibraryPanel `json:"result"`
 }
 
-// LibraryPanelDeleteResponse represents the Grafana API response to creating or saving a library panel.
+// LibraryPanelDeleteResponse represents the Grafana API response to deleting a library panel.
 type LibraryPanelDeleteResponse struct {
 	Message string `json:"message"`
 	ID      int64  `json:"id,omitempty"`
 }
 
-// LibraryPanelConnection represents Grafana library panel connections to dashboard.
+// LibraryPanelConnection represents a Grafana connection between a library panel and a dashboard.
 type LibraryPanelConnection struct {
 	ID          int64                `json:"id"`
 	Kind        int64                `json:"kind"`
@@ -135,7 +135,6 @@ func (c *Client) LibraryPanelConnections(uid string) (*[]LibraryPanelConnection,
 		Result []LibraryPanelConnection `json:"result"`
 	}{}
 
-	// resp := &LibraryPanelConnectionResponse{}
 	err := c.request("POST", path, nil, bytes.NewBuffer(nil), &resp)
 	if err != nil {
 		return nil, err
