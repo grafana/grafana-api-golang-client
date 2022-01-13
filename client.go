@@ -62,13 +62,16 @@ func New(baseURL string, cfg Config) (*Client, error) {
 }
 
 func (c *Client) request(method, requestPath string, query url.Values, body io.Reader, responseStruct interface{}) error {
-	var resp *http.Response
-	var err error
-	var bodyContents []byte
+	var (
+		req          *http.Request
+		resp         *http.Response
+		err          error
+		bodyContents []byte
+	)
 
 	// retry logic
 	for n := 0; n <= c.config.NumRetries; n++ {
-		r, err := c.newRequest(method, requestPath, query, body)
+		req, err = c.newRequest(method, requestPath, query, body)
 		if err != nil {
 			return err
 		}
@@ -78,7 +81,7 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 			time.Sleep(time.Second * 5)
 		}
 
-		resp, err = c.client.Do(r)
+		resp, err = c.client.Do(req)
 
 		// If err is not nil, retry again
 		// That's either caused by client policy, or failure to speak HTTP (such as network connectivity problem). A

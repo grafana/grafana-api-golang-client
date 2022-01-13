@@ -58,7 +58,7 @@ func TestNew_invalidURL(t *testing.T) {
 
 	expected := "parse \"://my-grafana.com\": missing protocol scheme"
 	if err.Error() != expected {
-		t.Errorf("expected error: %v; got: %s", expected, err.Error())
+		t.Errorf("expected error: %v; got: %s", expected, err)
 	}
 }
 
@@ -68,7 +68,7 @@ func TestRequest_200(t *testing.T) {
 
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
 	}
 }
 
@@ -78,7 +78,7 @@ func TestRequest_201(t *testing.T) {
 
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
 	}
 }
 
@@ -89,7 +89,7 @@ func TestRequest_400(t *testing.T) {
 	expected := `status: 400, body: {"foo":"bar"}`
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
 	if err.Error() != expected {
-		t.Errorf("expected error: %v; got: %s", expected, err.Error())
+		t.Errorf("expected error: %v; got: %s", expected, err)
 	}
 }
 
@@ -100,7 +100,23 @@ func TestRequest_500(t *testing.T) {
 	expected := `status: 500, body: {"foo":"bar"}`
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
 	if err.Error() != expected {
-		t.Errorf("expected error: %v; got: %s", expected, err.Error())
+		t.Errorf("expected error: %v; got: %s", expected, err)
+	}
+}
+
+func TestRequest_badURL(t *testing.T) {
+	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
+	baseURL, err := url.Parse("bad-url")
+	if err != nil {
+		t.Fatal(err)
+	}
+	client.baseURL = *baseURL
+	defer server.Close()
+
+	expected := `Get "bad-url/foo": unsupported protocol scheme ""`
+	err = client.request("GET", "/foo", url.Values{}, nil, nil)
+	if err.Error() != expected {
+		t.Errorf("expected error: %v; got: %s", expected, err)
 	}
 }
 
@@ -113,7 +129,7 @@ func TestRequest_200Unmarshal(t *testing.T) {
 	}{}
 	err := client.request("GET", "/foo", url.Values{}, nil, &result)
 	if err != nil {
-		t.Fatal(err.Error())
+		t.Fatal(err)
 	}
 
 	if result.Foo != "bar" {
@@ -130,7 +146,7 @@ func TestRequest_200UnmarshalPut(t *testing.T) {
 	}
 	data, err := json.Marshal(u)
 	if err != nil {
-		t.Fatal(err.Error())
+		t.Fatal(err)
 	}
 
 	result := struct {
@@ -140,7 +156,7 @@ func TestRequest_200UnmarshalPut(t *testing.T) {
 	q.Add("a", "b")
 	err = client.request("PUT", "/foo", q, bytes.NewBuffer(data), &result)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
 	}
 
 	if result.Name != "mike" {
