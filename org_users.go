@@ -15,6 +15,17 @@ type OrgUser struct {
 	Role   string `json:"role"`
 }
 
+// OrgUsersCurrent returns all org users within the current organization.
+// This endpoint is accessible to users with org admin role.
+func (c *Client) OrgUsersCurrent() ([]OrgUser, error) {
+	users := make([]OrgUser, 0)
+	err := c.request("GET", "/api/org/users", nil, nil, &users)
+	if err != nil {
+		return nil, err
+	}
+	return users, err
+}
+
 // OrgUsers fetches and returns the users for the org whose ID it's passed.
 func (c *Client) OrgUsers(orgID int64) ([]OrgUser, error) {
 	users := make([]OrgUser, 0)

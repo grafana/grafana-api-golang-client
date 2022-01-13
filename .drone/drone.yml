@@ -1,0 +1,45 @@
+---
+kind: pipeline
+type: docker
+name: test-pr
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: test
+  image: grafana/build-container:1.2.27
+  commands:
+  - make test
+
+trigger:
+  event:
+  - pull_request
+
+---
+kind: pipeline
+type: docker
+name: test-master
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: test
+  image: grafana/build-container:1.2.27
+  commands:
+  - make test
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
+
+---
+kind: signature
+hmac: 4b9e92aa0df11523a1df89ec418113152fa135a012967f3c9e11a9fbc27a7dea
+
+...

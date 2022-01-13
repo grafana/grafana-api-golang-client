@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/hashicorp/go-cleanhttp"
 )
@@ -35,6 +36,8 @@ type Config struct {
 	Client *http.Client
 	// OrgID provides an optional organization ID, ignored when using APIKey, BasicAuth defaults to last used org
 	OrgID int64
+	// NumRetries contains the number of attempted retries
+	NumRetries int
 }
 
 // New creates a new Grafana client.
@@ -61,18 +64,49 @@ func New(baseURL string, cfg Config) (*Client, error) {
 }
 
 func (c *Client) request(method, requestPath string, query url.Values, body io.Reader, responseStruct interface{}) error {
-	r, err := c.newRequest(method, requestPath, query, body)
-	if err != nil {
-		return err
-	}
+	var (
+		req          *http.Request
+		resp         *http.Response
+		err          error
+		bodyContents []byte
+	)
 
-	resp, err := c.client.Do(r)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
+	// retry logic
+	for n := 0; n <= c.config.NumRetries; n++ {
+		req, err = c.newRequest(method, requestPath, query, body)
+		if err != nil {
+			return err
+		}
 
-	bodyContents, err := ioutil.ReadAll(resp.Body)
+		// Wait a bit if that's not the first request
+		if n != 0 {
+			time.Sleep(time.Second * 5)
+		}
+
+		resp, err = c.client.Do(req)
+
+		// If err is not nil, retry again
+		// That's either caused by client policy, or failure to speak HTTP (such as network connectivity problem). A
+		// non-2xx status code doesn't cause an error.
+		if err != nil {
+			continue
+		}
+
+		defer resp.Body.Close()
+
+		// read the body (even on non-successful HTTP status codes), as that's what the unit tests expect
+		bodyContents, err = ioutil.ReadAll(resp.Body)
+
+		// if there was an error reading the body, try again
+		if err != nil {
+			continue
+		}
+
+		// Exit the loop if we have something final to return. This is anything < 500, if it's not a 429.
+		if resp.StatusCode < http.StatusInternalServerError && resp.StatusCode != http.StatusTooManyRequests {
+			break
+		}
+	}
 	if err != nil {
 		return err
 	}
@@ -81,6 +115,7 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 		log.Printf("response status %d with body %v", resp.StatusCode, string(bodyContents))
 	}
 
+	// check status code.
 	if resp.StatusCode >= 400 {
 		return fmt.Errorf("status: %d, body: %v", resp.StatusCode, string(bodyContents))
 	}
