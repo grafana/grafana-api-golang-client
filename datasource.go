@@ -73,6 +73,9 @@ type JSONData struct {
 	TLSSkipVerify     bool `json:"tlsSkipVerify,omitempty"`
 	httpHeaderNames   []string
 
+	// Used by Github
+	GitHubURL string `json:"githubUrl,omitempty"`
+
 	// Used by Graphite
 	GraphiteVersion string `json:"graphiteVersion,omitempty"`
 
@@ -209,6 +212,9 @@ type SecureJSONData struct {
 	// Used by Prometheus and Elasticsearch
 	SigV4AccessKey string `json:"sigV4AccessKey,omitempty"`
 	SigV4SecretKey string `json:"sigV4SecretKey,omitempty"`
+
+	// Used by GitHub
+	AccessToken string `json:"accessToken,omitempty"`
 }
 
 // Required to avoid recursion during unmarshal
