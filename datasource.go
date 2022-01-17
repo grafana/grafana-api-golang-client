@@ -212,6 +212,9 @@ type SecureJSONData struct {
 	// Used by Prometheus and Elasticsearch
 	SigV4AccessKey string `json:"sigV4AccessKey,omitempty"`
 	SigV4SecretKey string `json:"sigV4SecretKey,omitempty"`
+
+	// Used by GitHub
+	AccessToken string `json:"accessToken,omitempty"`
 }
 
 // Required to avoid recursion during unmarshal
