@@ -74,7 +74,7 @@ type JSONData struct {
 	httpHeaderNames   []string
 
 	// Used by Github
-	GitHubUrl string `json:"githubUrl,omitempty"`
+	GitHubURL string `json:"githubUrl,omitempty"`
 
 	// Used by Graphite
 	GraphiteVersion string `json:"graphiteVersion,omitempty"`
