@@ -91,7 +91,6 @@ const (
 )
 
 func TestStacks(t *testing.T) {
-
 	server, client := gapiTestTools(t, 200, getStacksJSON)
 	defer server.Close()
 
@@ -108,42 +107,39 @@ func TestStacks(t *testing.T) {
 		t.Errorf("Length of returned stacks - Actual Stacks Count: %d, Expected Stacks Count: %d", actualItemCound, expectedItemCount)
 	}
 
-	actualStackId := stacks.Items[0].ID
-	expectedStackId := int64(1)
+	actualStackID := stacks.Items[0].ID
+	expectedStackID := int64(1)
 
-	if actualStackId != expectedStackId {
-		t.Errorf("Unexpected Stack ID - Actual Stack ID: %d, Expected Stack ID: %d", actualStackId, expectedStackId)
+	if actualStackID != expectedStackID {
+		t.Errorf("Unexpected Stack ID - Actual Stack ID: %d, Expected Stack ID: %d", actualStackID, expectedStackID)
 	}
 
 	actualSlug := stacks.Items[0].Slug
 	expectedSlug := "mystack"
 	if actualSlug != expectedSlug {
-		t.Errorf("Unexpected Stack Slug - Actual Slug: %d, Expected Slug: %d", actualStackId, expectedStackId)
+		t.Errorf("Unexpected Stack Slug - Actual Slug: %d, Expected Slug: %d", actualStackID, expectedStackID)
 	}
-
 }
 
 func TestCreateStack(t *testing.T) {
-
 	server, client := gapiTestTools(t, 200, createStackJSON)
 	defer server.Close()
 
-	stackId, err := client.NewStack("mystack", "mystack", "eu")
+	stackID, err := client.NewStack("mystack", "mystack", "eu")
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expectedStackId := int64(1)
-	actualStackId := stackId
+	expectedStackID := int64(1)
+	actualStackID := stackID
 
-	if actualStackId != expectedStackId {
-		t.Errorf("Unexpected Stack ID - Actual: %d, Expected: %d", actualStackId, expectedStackId)
+	if actualStackID != expectedStackID {
+		t.Errorf("Unexpected Stack ID - Actual: %d, Expected: %d", actualStackID, expectedStackID)
 	}
 }
 
 func TestStackBySlug(t *testing.T) {
-
 	server, client := gapiTestTools(t, 200, getStackJSON)
 	defer server.Close()
 
@@ -162,26 +158,24 @@ func TestStackBySlug(t *testing.T) {
 }
 
 func TestStackByID(t *testing.T) {
-
 	server, client := gapiTestTools(t, 200, getStackJSON)
 	defer server.Close()
 
-	expectedStackId := int64(1)
-	resp, err := client.StackByID(expectedStackId)
+	expectedStackID := int64(1)
+	resp, err := client.StackByID(expectedStackID)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	actualStackId := resp.ID
+	actualStackID := resp.ID
 
-	if actualStackId != expectedStackId {
-		t.Errorf("Unexpected Stack ID - Actual: %d, Expected: %d", actualStackId, expectedStackId)
+	if actualStackID != expectedStackID {
+		t.Errorf("Unexpected Stack ID - Actual: %d, Expected: %d", actualStackID, expectedStackID)
 	}
 }
 
 func TestUpdateStack(t *testing.T) {
-
 	server, client := gapiTestTools(t, 200, getStacksJSON)
 	defer server.Close()
 
@@ -192,7 +186,6 @@ func TestUpdateStack(t *testing.T) {
 }
 
 func TestDeleteStack(t *testing.T) {
-
 	server, client := gapiTestTools(t, 200, getStacksJSON)
 	defer server.Close()
 

@@ -106,7 +106,6 @@ func (c *Client) Stacks() (StackItems, error) {
 
 // StackByName fetches and returns the stack whose slug it's passed.
 func (c *Client) StackBySlug(slug string) (Stack, error) {
-
 	stack := Stack{}
 	err := c.request("GET", fmt.Sprintf("/api/instances/%s", slug), nil, nil, &stack)
 
@@ -120,7 +119,6 @@ func (c *Client) StackBySlug(slug string) (Stack, error) {
 // StackByID fetches and returns the stack whose name it's passed.
 // This returns deleted instances as well with `status=deleted`.
 func (c *Client) StackByID(id int64) (Stack, error) {
-
 	stack := Stack{}
 	err := c.request("GET", fmt.Sprintf("/api/instances/%d", id), nil, nil, &stack)
 
