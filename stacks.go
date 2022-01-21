@@ -21,17 +21,17 @@ type Stack struct {
 	Gateway                  string      `json:"gateway"`
 	CreatedAt                time.Time   `json:"createdAt"`
 	CreatedBy                string      `json:"createdBy"`
-	UpdatedAt                interface{} `json:"updatedAt"`
+	UpdatedAt                time.Time `json:"updatedAt"`
 	UpdatedBy                string      `json:"updatedBy"`
 	Trial                    int         `json:"trial"`
-	TrialExpiresAt           interface{} `json:"trialExpiresAt"`
+	TrialExpiresAt           time.Time `json:"trialExpiresAt"`
 	ClusterID                int         `json:"clusterId"`
 	ClusterSlug              string      `json:"clusterSlug"`
 	ClusterName              string      `json:"clusterName"`
 	Plan                     string      `json:"plan"`
 	PlanName                 string      `json:"planName"`
 	BillingStartDate         time.Time   `json:"billingStartDate"`
-	BillingEndDate           interface{} `json:"billingEndDate"`
+	BillingEndDate           time.Time `json:"billingEndDate"`
 	BillingActiveUsers       int         `json:"billingActiveUsers"`
 	CurrentActiveUsers       int         `json:"currentActiveUsers"`
 	CurrentActiveAdminUsers  int         `json:"currentActiveAdminUsers"`

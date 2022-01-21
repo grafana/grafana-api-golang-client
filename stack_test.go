@@ -179,9 +179,9 @@ func TestUpdateStack(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getStacksJSON)
 	defer server.Close()
 
-	errr := client.UpdateStack(1, "mystack-update", "This is a test stack")
-	if errr != nil {
-		t.Error(errr)
+	err := client.UpdateStack(1, "mystack-update", "This is a test stack")
+	if err != nil {
+		t.Error(err)
 	}
 }
 
