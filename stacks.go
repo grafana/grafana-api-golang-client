@@ -7,42 +7,43 @@ import (
 	"time"
 )
 
+// https://grafana.com/docs/grafana-cloud/reference/cloud-api/#stacks
 type Stack struct {
-	ID                       int64       `json:"id"`
-	OrgID                    int64       `json:"orgId"`
-	OrgSlug                  string      `json:"orgSlug"`
-	OrgName                  string      `json:"orgName"`
-	Name                     string      `json:"name"`
-	URL                      string      `json:"url"`
-	Slug                     string      `json:"slug"`
-	Version                  string      `json:"version"`
-	Description              string      `json:"description"`
-	Status                   string      `json:"status"`
-	Gateway                  string      `json:"gateway"`
-	CreatedAt                time.Time   `json:"createdAt"`
-	CreatedBy                string      `json:"createdBy"`
+	ID                       int64     `json:"id"`
+	OrgID                    int64     `json:"orgId"`
+	OrgSlug                  string    `json:"orgSlug"`
+	OrgName                  string    `json:"orgName"`
+	Name                     string    `json:"name"`
+	URL                      string    `json:"url"`
+	Slug                     string    `json:"slug"`
+	Version                  string    `json:"version"`
+	Description              string    `json:"description"`
+	Status                   string    `json:"status"`
+	Gateway                  string    `json:"gateway"`
+	CreatedAt                time.Time `json:"createdAt"`
+	CreatedBy                string    `json:"createdBy"`
 	UpdatedAt                time.Time `json:"updatedAt"`
-	UpdatedBy                string      `json:"updatedBy"`
-	Trial                    int         `json:"trial"`
+	UpdatedBy                string    `json:"updatedBy"`
+	Trial                    int       `json:"trial"`
 	TrialExpiresAt           time.Time `json:"trialExpiresAt"`
-	ClusterID                int         `json:"clusterId"`
-	ClusterSlug              string      `json:"clusterSlug"`
-	ClusterName              string      `json:"clusterName"`
-	Plan                     string      `json:"plan"`
-	PlanName                 string      `json:"planName"`
-	BillingStartDate         time.Time   `json:"billingStartDate"`
+	ClusterID                int       `json:"clusterId"`
+	ClusterSlug              string    `json:"clusterSlug"`
+	ClusterName              string    `json:"clusterName"`
+	Plan                     string    `json:"plan"`
+	PlanName                 string    `json:"planName"`
+	BillingStartDate         time.Time `json:"billingStartDate"`
 	BillingEndDate           time.Time `json:"billingEndDate"`
-	BillingActiveUsers       int         `json:"billingActiveUsers"`
-	CurrentActiveUsers       int         `json:"currentActiveUsers"`
-	CurrentActiveAdminUsers  int         `json:"currentActiveAdminUsers"`
-	CurrentActiveEditorUsers int         `json:"currentActiveEditorUsers"`
-	CurrentActiveViewerUsers int         `json:"currentActiveViewerUsers"`
-	DailyUserCnt             int         `json:"dailyUserCnt"`
-	DailyAdminCnt            int         `json:"dailyAdminCnt"`
-	DailyEditorCnt           int         `json:"dailyEditorCnt"`
-	DailyViewerCnt           int         `json:"dailyViewerCnt"`
-	BillableUserCnt          int         `json:"billableUserCnt"`
-	DashboardCnt             int         `json:"dashboardCnt"`
+	BillingActiveUsers       int       `json:"billingActiveUsers"`
+	CurrentActiveUsers       int       `json:"currentActiveUsers"`
+	CurrentActiveAdminUsers  int       `json:"currentActiveAdminUsers"`
+	CurrentActiveEditorUsers int       `json:"currentActiveEditorUsers"`
+	CurrentActiveViewerUsers int       `json:"currentActiveViewerUsers"`
+	DailyUserCnt             int       `json:"dailyUserCnt"`
+	DailyAdminCnt            int       `json:"dailyAdminCnt"`
+	DailyEditorCnt           int       `json:"dailyEditorCnt"`
+	DailyViewerCnt           int       `json:"dailyViewerCnt"`
+	BillableUserCnt          int       `json:"billableUserCnt"`
+	DashboardCnt             int       `json:"dashboardCnt"`
 	DatasourceCnts           struct {
 	} `json:"datasourceCnts"`
 	UserQuota                         int    `json:"userQuota"`
@@ -126,31 +127,11 @@ func (c *Client) StackByID(id int64) (Stack, error) {
 		return stack, err
 	}
 
-	// If we are getting a deleted stack then return an empty stack
-	if stack.Status == "deleted" {
-		return Stack{}, err
-	}
-
 	return stack, err
 }
 
 // NewStack creates a new Grafana Stack
 func (c *Client) NewStack(stackName string, stackSlug string, region string) (int64, error) {
-	id := int64(0)
-
-	// Check if this stack already exists
-	stack, stackErr := c.StackBySlug(stackSlug)
-
-	if stackErr != nil {
-		return id, nil
-	}
-
-	// If the stack already exist then return the existing ID
-	// There is currently no API for updating a stack so if one exists already we just return its ID
-	if stack.ID != 0 {
-		return stack.ID, nil
-	}
-
 	dataMap := map[string]string{
 		"name":   stackName,
 		"slug":   stackSlug,
@@ -159,7 +140,7 @@ func (c *Client) NewStack(stackName string, stackSlug string, region string) (in
 
 	data, err := json.Marshal(dataMap)
 	if err != nil {
-		return id, err
+		return 0, err
 	}
 
 	result := struct {
@@ -171,7 +152,7 @@ func (c *Client) NewStack(stackName string, stackSlug string, region string) (in
 		return 0, err
 	}
 
-	return result.ID, err
+	return result.ID, nil
 }
 
 // UpdateOrg updates a Grafana stack.
