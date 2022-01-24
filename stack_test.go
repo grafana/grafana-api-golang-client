@@ -103,8 +103,10 @@ func TestStacks(t *testing.T) {
 
 	var expectedStacks StackItems
 
-	UnmarshalJSONToStruct(getStacksJSON, &expectedStacks)
-
+	err = UnmarshalJSONToStruct(getStacksJSON, &expectedStacks)
+	if err != nil {
+		t.Fatal(err)
+	}
 	actualItemCount := len(stacks.Items)
 	expectedItemCount := len(expectedStacks.Items)
 
@@ -140,7 +142,10 @@ func TestCreateStack(t *testing.T) {
 	}
 
 	var expectedStack Stack
-	UnmarshalJSONToStruct(createStackJSON, &expectedStack)
+	err = UnmarshalJSONToStruct(createStackJSON, &expectedStack)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if actualStackID != expectedStack.ID {
 		t.Errorf("Unexpected Stack ID - Actual: %d, Expected: %d", actualStackID, expectedStack.ID)
@@ -186,7 +191,7 @@ func TestUpdateStack(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getStacksJSON)
 	defer server.Close()
 
-	err := client.UpdateStack(1, "mystack-update", "This is a test stack")
+	err := client.UpdateStack(1, "mystack2", "mystack2", "This is a test stack update")
 	if err != nil {
 		t.Error(err)
 	}

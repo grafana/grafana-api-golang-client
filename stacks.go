@@ -157,9 +157,10 @@ func (c *Client) NewStack(stackName string, stackSlug string, region string) (in
 
 // UpdateOrg updates a Grafana stack.
 // Only the name can be updated. No other parameters of the stack are updatable
-func (c *Client) UpdateStack(id int64, name string, description string) error {
+func (c *Client) UpdateStack(id int64, name string, slug string, description string) error {
 	dataMap := map[string]string{
 		"name":        name,
+		"slug":        slug,
 		"description": description,
 	}
 	data, err := json.Marshal(dataMap)
