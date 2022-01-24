@@ -94,6 +94,20 @@ type StackItems struct {
 	Items []*Stack `json:"items"`
 }
 
+type CreateStackInput struct {
+	Name        string `json:"name"`
+	Slug        string `json:"slug"`
+	URL         string `json:"url"`
+	Region      string `json:"region"`
+	Description string `json:"description"`
+}
+
+type UpdateStackInput struct {
+	Name        string `json:"name"`
+	Slug        string `json:"slug"`
+	Description string `json:"description"`
+}
+
 // Stacks fetches and returns the Grafana stacks.
 func (c *Client) Stacks() (StackItems, error) {
 	stacks := StackItems{}
@@ -131,14 +145,8 @@ func (c *Client) StackByID(id int64) (Stack, error) {
 }
 
 // NewStack creates a new Grafana Stack
-func (c *Client) NewStack(stackName string, stackSlug string, region string) (int64, error) {
-	dataMap := map[string]string{
-		"name":   stackName,
-		"slug":   stackSlug,
-		"region": region,
-	}
-
-	data, err := json.Marshal(dataMap)
+func (c *Client) NewStack(stack *CreateStackInput) (int64, error) {
+	data, err := json.Marshal(stack)
 	if err != nil {
 		return 0, err
 	}
@@ -157,13 +165,8 @@ func (c *Client) NewStack(stackName string, stackSlug string, region string) (in
 
 // UpdateOrg updates a Grafana stack.
 // Only name, slug and description can be updated. No other parameters of the stack are updateable
-func (c *Client) UpdateStack(id int64, name string, slug string, description string) error {
-	dataMap := map[string]string{
-		"name":        name,
-		"slug":        slug,
-		"description": description,
-	}
-	data, err := json.Marshal(dataMap)
+func (c *Client) UpdateStack(id int64, stack *UpdateStackInput) error {
+	data, err := json.Marshal(stack)
 	if err != nil {
 		return err
 	}

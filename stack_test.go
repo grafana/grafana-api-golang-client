@@ -135,7 +135,14 @@ func TestCreateStack(t *testing.T) {
 	server, client := gapiTestTools(t, 200, createStackJSON)
 	defer server.Close()
 
-	actualStackID, err := client.NewStack("mystack", "mystack", "eu")
+	stack := &CreateStackInput{
+		Name:   "mystack",
+		Slug:   "mystack",
+		Region: "eu",
+		URL:    "",
+	}
+
+	actualStackID, err := client.NewStack(stack)
 
 	if err != nil {
 		t.Fatal(err)
@@ -191,7 +198,13 @@ func TestUpdateStack(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getStacksJSON)
 	defer server.Close()
 
-	err := client.UpdateStack(1, "mystack2", "mystack2", "This is a test stack update")
+	stack := &UpdateStackInput{
+		Name:        "mystack2",
+		Slug:        "mystack2",
+		Description: "Stack update",
+	}
+
+	err := client.UpdateStack(1, stack)
 	if err != nil {
 		t.Error(err)
 	}
