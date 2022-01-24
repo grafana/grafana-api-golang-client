@@ -73,6 +73,12 @@ type JSONData struct {
 	TLSSkipVerify     bool `json:"tlsSkipVerify,omitempty"`
 	httpHeaderNames   []string
 
+	// Used by Athena
+	Catalog        string `json:"catalog,omitempty"`
+	Database       string `json:"database,omitempty"`
+	OutputLocation string `json:"outputLocation,omitempty"`
+	Workgroup      string `json:"workgroup,omitempty"`
+
 	// Used by Github
 	GitHubURL string `json:"githubUrl,omitempty"`
 
@@ -92,11 +98,15 @@ type JSONData struct {
 	MaxConcurrentShardRequests int64  `json:"maxConcurrentShardRequests,omitempty"`
 
 	// Used by Cloudwatch
-	AuthType                string `json:"authType,omitempty"`
-	AssumeRoleArn           string `json:"assumeRoleArn,omitempty"`
-	DefaultRegion           string `json:"defaultRegion,omitempty"`
 	CustomMetricsNamespaces string `json:"customMetricsNamespaces,omitempty"`
-	Profile                 string `json:"profile,omitempty"`
+
+	// Used by Cloudwatch, Athena
+	AuthType      string `json:"authType,omitempty"`
+	AssumeRoleArn string `json:"assumeRoleArn,omitempty"`
+	DefaultRegion string `json:"defaultRegion,omitempty"`
+	Endpoint      string `json:"endpoint,omitempty"`
+	ExternalID    string `json:"externalId,omitempty"`
+	Profile       string `json:"profile,omitempty"`
 
 	// Used by OpenTSDB
 	TsdbVersion    string `json:"tsdbVersion,omitempty"`
@@ -202,7 +212,7 @@ type SecureJSONData struct {
 	BasicAuthPassword string `json:"basicAuthPassword,omitempty"`
 	httpHeaderValues  []string
 
-	// Used by Cloudwatch
+	// Used by Cloudwatch, Athena
 	AccessKey string `json:"accessKey,omitempty"`
 	SecretKey string `json:"secretKey,omitempty"`
 
