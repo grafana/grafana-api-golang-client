@@ -187,7 +187,7 @@ func TestPatchLibraryPanel(t *testing.T) {
 	server, client := gapiTestTools(t, 200, patchLibraryPanelResponse)
 	defer server.Close()
 
-	panel := &LibraryPanel{
+	panel := LibraryPanel{
 		Folder: 1,
 		Name:   "Updated library panel name",
 		Model:  map[string]interface{}{"description": "new description", "type": ""},
