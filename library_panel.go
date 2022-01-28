@@ -45,6 +45,14 @@ type LibraryPanelCreateResponse struct {
 	Result LibraryPanel `json:"result"`
 }
 
+// LibraryPanelGetAllResponse represents the Grafana API response to getting all library panels.
+type LibraryPanelGetAllResponse struct {
+	TotalCount int64          `json:"totalCount"`
+	Page       int64          `json:"page"`
+	PerPage    int64          `json:"perPage"`
+	Elements   []LibraryPanel `json:"elements"`
+}
+
 // LibraryPanelDeleteResponse represents the Grafana API response to deleting a library panel.
 type LibraryPanelDeleteResponse struct {
 	Message string `json:"message"`
@@ -76,6 +84,19 @@ func (c *Client) NewLibraryPanel(panel LibraryPanel) (*LibraryPanel, error) {
 	}
 
 	return &resp.Result, err
+}
+
+// Dashboards fetches and returns all dashboards.
+func (c *Client) LibraryPanels() ([]LibraryPanel, error) {
+	resp := &struct {
+		Result LibraryPanelGetAllResponse `json:"result"`
+	}{}
+	err := c.request("GET", "/api/library-elements", nil, nil, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Result.Elements, err
 }
 
 // LibraryPanelByUID gets a library panel by UID.
