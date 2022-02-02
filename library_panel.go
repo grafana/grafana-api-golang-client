@@ -113,7 +113,7 @@ func (c *Client) LibraryPanelByUID(uid string) (*LibraryPanel, error) {
 }
 
 // LibraryPanelByName gets library panels by name.
-func (c *Client) LibraryPanelByName(name string) (*[]LibraryPanel, error) {
+func (c *Client) LibraryPanelByName(name string) (*LibraryPanel, error) {
 	resp := &struct {
 		Result []LibraryPanel `json:"result"`
 	}{}
@@ -124,7 +124,7 @@ func (c *Client) LibraryPanelByName(name string) (*[]LibraryPanel, error) {
 		return nil, err
 	}
 
-	return &resp.Result, err
+	return &(resp.Result[0]), err
 }
 
 // PatchLibraryPanel updates one or more properties of an existing panel that matches the specified UID.
