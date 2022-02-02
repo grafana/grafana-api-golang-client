@@ -101,16 +101,24 @@ func (c *Client) LibraryPanels() ([]LibraryPanel, error) {
 
 // LibraryPanelByUID gets a library panel by UID.
 func (c *Client) LibraryPanelByUID(uid string) (*LibraryPanel, error) {
-	return c.panel(fmt.Sprintf("/api/library-elements/%s", uid))
-}
-
-// LibraryPanelByName gets a library panel by name.
-func (c *Client) LibraryPanelByName(name string) (*LibraryPanel, error) {
-	return c.panel(fmt.Sprintf("/api/library-elements/name/%s", name))
-}
-
-func (c *Client) panel(path string) (*LibraryPanel, error) {
 	resp := &LibraryPanelCreateResponse{}
+	path := fmt.Sprintf("/api/library-elements/%s", uid)
+
+	err := c.request("GET", path, nil, nil, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resp.Result, err
+}
+
+// LibraryPanelByName gets library panels by name.
+func (c *Client) LibraryPanelByName(name string) (*[]LibraryPanel, error) {
+	resp := &struct {
+		Result []LibraryPanel `json:"result"`
+	}{}
+	path := fmt.Sprintf("/api/library-elements/name/%s", name)
+
 	err := c.request("GET", path, nil, nil, &resp)
 	if err != nil {
 		return nil, err
