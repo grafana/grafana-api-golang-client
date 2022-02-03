@@ -124,6 +124,10 @@ func (c *Client) LibraryPanelByName(name string) (*LibraryPanel, error) {
 		return nil, err
 	}
 
+	if len(resp.Result) != 1 {
+		return nil, fmt.Errorf("error: expected 1 panel from GET library panel by name, got: %v", resp.Result)
+	}
+
 	return &(resp.Result[0]), err
 }
 
