@@ -176,7 +176,7 @@ func (c *Client) LibraryPanelConnections(uid string) (*[]LibraryPanelConnection,
 		Result []LibraryPanelConnection `json:"result"`
 	}{}
 
-	err := c.request("POST", path, nil, bytes.NewBuffer(nil), &resp)
+	err := c.request("GET", path, nil, bytes.NewBuffer(nil), &resp)
 	if err != nil {
 		return nil, err
 	}
