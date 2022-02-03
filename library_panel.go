@@ -114,9 +114,9 @@ func (c *Client) LibraryPanelByUID(uid string) (*LibraryPanel, error) {
 
 // LibraryPanelByName gets library panels by name.
 func (c *Client) LibraryPanelByName(name string) (*LibraryPanel, error) {
-	resp := &struct {
+	var resp struct {
 		Result []LibraryPanel `json:"result"`
-	}{}
+	}
 	path := fmt.Sprintf("/api/library-elements/name/%s", name)
 
 	err := c.request("GET", path, nil, nil, &resp)
