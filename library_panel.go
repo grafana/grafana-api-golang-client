@@ -112,7 +112,7 @@ func (c *Client) LibraryPanelByUID(uid string) (*LibraryPanel, error) {
 	return &resp.Result, err
 }
 
-// LibraryPanelByName gets library panels by name.
+// LibraryPanelByName gets a library panel by name.
 func (c *Client) LibraryPanelByName(name string) (*LibraryPanel, error) {
 	resp := &struct {
 		Result []LibraryPanel `json:"result"`
