@@ -109,7 +109,7 @@ func (c *Client) LibraryPanelByUID(uid string) (*LibraryPanel, error) {
 		return nil, err
 	}
 
-	return &resp.Result, err
+	return &resp.Result, nil
 }
 
 // LibraryPanelByName gets a library panel by name.
