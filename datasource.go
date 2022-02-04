@@ -149,6 +149,9 @@ type JSONData struct {
 
 	// Used by Alertmanager
 	Implementation string `json:"implementation,omitempty"`
+
+	// Used by Sentry
+	OrgSlug string `json:"orgSlug,omitempty"`
 }
 
 // Required to avoid recursion during (un)marshal
@@ -225,6 +228,9 @@ type SecureJSONData struct {
 
 	// Used by GitHub
 	AccessToken string `json:"accessToken,omitempty"`
+
+	// Used by Sentry
+	AuthToken string `json:"authToken,omitempty"`
 }
 
 // Required to avoid recursion during unmarshal
