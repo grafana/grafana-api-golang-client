@@ -7,7 +7,42 @@ import (
 )
 
 const (
-	getLibraryPanelResponse = `{
+	getLibraryPanelNameResponse = `{
+		"result": [
+	    {
+				"id": 25,
+				"orgId": 1,
+				"folderId": 0,
+				"uid": "V--OrYHnz",
+				"name": "API docs Example",
+				"kind": 1,
+				"model": {
+					"description": "",
+					"type": ""
+				},
+				"version": 1,
+				"meta": {
+					"folderName": "General",
+					"folderUid": "",
+					"connectedDashboards": 1,
+					"created": "2021-09-27T09:56:17+02:00",
+					"updated": "2021-09-27T09:56:17+02:00",
+					"createdBy": {
+						"id": 1,
+						"name": "admin",
+						"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56"
+					},
+					"updatedBy": {
+						"id": 1,
+						"name": "admin",
+						"avatarUrl": "/avatar/46d229b033af06a191ff2267bca9ae56"
+					}
+				}
+	 		}
+		]
+	}`
+
+	getLibraryPanelUIDResponse = `{
 		"result": {
 			"id": 25,
 			"orgId": 1,
@@ -120,7 +155,7 @@ const (
 )
 
 func TestLibraryPanelCreate(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getLibraryPanelResponse)
+	server, client := gapiTestTools(t, 200, getLibraryPanelUIDResponse)
 	defer server.Close()
 
 	panel := LibraryPanel{
@@ -149,8 +184,8 @@ func TestLibraryPanelCreate(t *testing.T) {
 	}
 }
 
-func TestLibraryPanelGet(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getLibraryPanelResponse)
+func TestLibraryPanelGetByName(t *testing.T) {
+	server, client := gapiTestTools(t, 200, getLibraryPanelNameResponse)
 	defer server.Close()
 
 	resp, err := client.LibraryPanelByName("API docs Example")
@@ -161,7 +196,20 @@ func TestLibraryPanelGet(t *testing.T) {
 		t.Errorf("Invalid uid - %s, Expected %s", resp.UID, "V--OrYHnz")
 	}
 
-	resp, err = client.LibraryPanelByUID("V--OrYHnz")
+	for _, code := range []int{401, 403, 404} {
+		server.code = code
+		_, err = client.LibraryPanelByName("test")
+		if err == nil {
+			t.Errorf("%d not detected", code)
+		}
+	}
+}
+
+func TestLibraryPanelGetByUID(t *testing.T) {
+	server, client := gapiTestTools(t, 200, getLibraryPanelUIDResponse)
+	defer server.Close()
+
+	resp, err := client.LibraryPanelByUID("V--OrYHnz")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -171,11 +219,6 @@ func TestLibraryPanelGet(t *testing.T) {
 
 	for _, code := range []int{401, 403, 404} {
 		server.code = code
-		_, err = client.LibraryPanelByName("test")
-		if err == nil {
-			t.Errorf("%d not detected", code)
-		}
-
 		_, err = client.LibraryPanelByUID("V--OrYHnz")
 		if err == nil {
 			t.Errorf("%d not detected", code)

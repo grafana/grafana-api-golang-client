@@ -101,22 +101,34 @@ func (c *Client) LibraryPanels() ([]LibraryPanel, error) {
 
 // LibraryPanelByUID gets a library panel by UID.
 func (c *Client) LibraryPanelByUID(uid string) (*LibraryPanel, error) {
-	return c.panel(fmt.Sprintf("/api/library-elements/%s", uid))
-}
-
-// LibraryPanelByName gets a library panel by name.
-func (c *Client) LibraryPanelByName(name string) (*LibraryPanel, error) {
-	return c.panel(fmt.Sprintf("/api/library-elements/name/%s", name))
-}
-
-func (c *Client) panel(path string) (*LibraryPanel, error) {
 	resp := &LibraryPanelCreateResponse{}
+	path := fmt.Sprintf("/api/library-elements/%s", uid)
+
 	err := c.request("GET", path, nil, nil, &resp)
 	if err != nil {
 		return nil, err
 	}
 
-	return &resp.Result, err
+	return &resp.Result, nil
+}
+
+// LibraryPanelByName gets a library panel by name.
+func (c *Client) LibraryPanelByName(name string) (*LibraryPanel, error) {
+	var resp struct {
+		Result []LibraryPanel `json:"result"`
+	}
+	path := fmt.Sprintf("/api/library-elements/name/%s", name)
+
+	err := c.request("GET", path, nil, nil, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(resp.Result) != 1 {
+		return nil, fmt.Errorf("expected 1 panel from GET library panel by name, got: %v", resp.Result)
+	}
+
+	return &resp.Result[0], err
 }
 
 // PatchLibraryPanel updates one or more properties of an existing panel that matches the specified UID.
@@ -168,7 +180,7 @@ func (c *Client) LibraryPanelConnections(uid string) (*[]LibraryPanelConnection,
 		Result []LibraryPanelConnection `json:"result"`
 	}{}
 
-	err := c.request("POST", path, nil, bytes.NewBuffer(nil), &resp)
+	err := c.request("GET", path, nil, bytes.NewBuffer(nil), &resp)
 	if err != nil {
 		return nil, err
 	}
