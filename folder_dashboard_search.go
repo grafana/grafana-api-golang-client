@@ -1,6 +1,7 @@
 package gapi
 
 import (
+	"fmt"
 	"net/url"
 )
 
@@ -29,7 +30,7 @@ func (c *Client) FolderDashboardSearch(params map[string]interface{}) (resp []Fo
 		switch c := v.(type) {
 		case []interface{}:
 			for _, listElement := range c {
-				query.Add(p, listElement.(string))
+				query.Add(p, fmt.Sprint(listElement))
 			}
 		case string:
 			query.Add(p, c)

@@ -49,7 +49,7 @@ const (
 func TestFolderDashboardSearch(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getFolderDashboardSearchResponse)
 	defer server.Close()
-	resp, err := client.FolderDashboardSearch(map[string]string{})
+	resp, err := client.FolderDashboardSearch(map[string]interface{}{})
 	if err != nil {
 		t.Fatal(err)
 	}
