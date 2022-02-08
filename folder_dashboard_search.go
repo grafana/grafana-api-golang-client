@@ -27,9 +27,9 @@ func (c *Client) FolderDashboardSearch(params map[string]interface{}) (resp []Fo
 	query := url.Values{}
 	for p, v := range params {
 		switch c := v.(type) {
-		case []string:
+		case []interface{}:
 			for _, listElement := range c {
-				query.Add(p, listElement)
+				query.Add(p, listElement.(string))
 			}
 		case string:
 			query.Add(p, c)
