@@ -109,7 +109,7 @@ func (c *Client) LibraryPanelByUID(uid string) (*LibraryPanel, error) {
 		return nil, err
 	}
 
-	return &resp.Result, err
+	return &resp.Result, nil
 }
 
 // LibraryPanelByName gets a library panel by name.
@@ -125,7 +125,7 @@ func (c *Client) LibraryPanelByName(name string) (*LibraryPanel, error) {
 	}
 
 	if len(resp.Result) != 1 {
-		return nil, fmt.Errorf("error: expected 1 panel from GET library panel by name, got: %v", resp.Result)
+		return nil, fmt.Errorf("expected 1 panel from GET library panel by name, got: %v", resp.Result)
 	}
 
 	return &resp.Result[0], err

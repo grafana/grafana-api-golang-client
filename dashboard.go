@@ -72,7 +72,7 @@ func (c *Client) NewDashboard(dashboard Dashboard) (*DashboardSaveResponse, erro
 
 // Dashboards fetches and returns all dashboards.
 func (c *Client) Dashboards() ([]FolderDashboardSearchResponse, error) {
-	params := map[string]string{
+	params := map[string]interface{}{
 		"type": "dash-db",
 	}
 	return c.FolderDashboardSearch(params)
@@ -97,7 +97,7 @@ func (c *Client) DashboardsByIDs(ids []int64) ([]FolderDashboardSearchResponse, 
 		return nil, err
 	}
 
-	params := map[string]string{
+	params := map[string]interface{}{
 		"type":         "dash-db",
 		"dashboardIds": string(dashboardIdsJSON),
 	}
