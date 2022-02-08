@@ -49,6 +49,14 @@ func (ds *DataSource) MarshalJSON() ([]byte, error) {
 		dataSource.JSONData.httpHeaderNames = append(dataSource.JSONData.httpHeaderNames, name)
 		dataSource.SecureJSONData.httpHeaderValues = append(dataSource.SecureJSONData.httpHeaderValues, value)
 	}
+
+	// Sentry provider expects this value in the JSON data payload,
+	// ignoring the url attribute. This hack allows passing the URL as
+	// an attribute but then sends it in the payload.
+	if ds.Type == "grafana-sentry-datasource" {
+		dataSource.JSONData.URL = ds.URL
+	}
+
 	return json.Marshal(dataSource)
 }
 
@@ -152,6 +160,7 @@ type JSONData struct {
 
 	// Used by Sentry
 	OrgSlug string `json:"orgSlug,omitempty"`
+	URL     string `json:"url,omitempty"` // Sentry is not using the datasource URL attribute
 }
 
 // Required to avoid recursion during (un)marshal
