@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 // DashboardMeta represents Grafana dashboard meta.
@@ -72,8 +73,8 @@ func (c *Client) NewDashboard(dashboard Dashboard) (*DashboardSaveResponse, erro
 
 // Dashboards fetches and returns all dashboards.
 func (c *Client) Dashboards() ([]FolderDashboardSearchResponse, error) {
-	params := map[string]interface{}{
-		"type": "dash-db",
+	params := url.Values{
+		"type": {"dash-db"},
 	}
 	return c.FolderDashboardSearch(params)
 }
@@ -97,9 +98,9 @@ func (c *Client) DashboardsByIDs(ids []int64) ([]FolderDashboardSearchResponse, 
 		return nil, err
 	}
 
-	params := map[string]interface{}{
-		"type":         "dash-db",
-		"dashboardIds": string(dashboardIdsJSON),
+	params := url.Values{
+		"type":         {"dash-db"},
+		"dashboardIds": {string(dashboardIdsJSON)},
 	}
 	return c.FolderDashboardSearch(params)
 }

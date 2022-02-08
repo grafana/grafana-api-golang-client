@@ -1,7 +1,6 @@
 package gapi
 
 import (
-	"fmt"
 	"net/url"
 )
 
@@ -24,18 +23,7 @@ type FolderDashboardSearchResponse struct {
 
 // FolderDashboardSearch uses the folder and dashboard search endpoint to find
 // dashboards based on the params passed in.
-func (c *Client) FolderDashboardSearch(params map[string]interface{}) (resp []FolderDashboardSearchResponse, err error) {
-	query := url.Values{}
-	for p, v := range params {
-		switch c := v.(type) {
-		case []interface{}:
-			for _, listElement := range c {
-				query.Add(p, fmt.Sprint(listElement))
-			}
-		case string:
-			query.Add(p, c)
-		}
-	}
-	err = c.request("GET", "/api/search", query, nil, &resp)
+func (c *Client) FolderDashboardSearch(params url.Values) (resp []FolderDashboardSearchResponse, err error) {
+	err = c.request("GET", "/api/search", params, nil, &resp)
 	return
 }
