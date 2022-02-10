@@ -149,9 +149,13 @@ func TestNewInfluxDBDataSource(t *testing.T) {
 		URL:       "http://some-url.com",
 		IsDefault: true,
 		JSONData: JSONData{
-			DefaultBucket: "telegraf",
-			Organization:  "acme",
-			Version:       "Flux",
+			DefaultBucket:   "telegraf",
+			httpHeaderNames: []string{"Authorization"},
+			Organization:    "acme",
+			Version:         "Flux",
+		},
+		SecureJSONData: SecureJSONData{
+			httpHeaderValues: []string{"Bearer eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY0NDUwNjM3MywiaWF0IjoxNjQ0NTA2MzczfQ.FyYlVnMgzcP3CoNCHf2GFW49Ng_wLQsrXrUdSNGiShU"},
 		},
 	}
 

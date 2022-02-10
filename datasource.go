@@ -245,9 +245,6 @@ type SecureJSONData struct {
 
 	// Used by Sentry
 	AuthToken string `json:"authToken,omitempty"`
-
-	// Used by InfluxDB
-	Token string `json:"token,omitempty"`
 }
 
 // Required to avoid recursion during unmarshal
