@@ -161,6 +161,11 @@ type JSONData struct {
 	// Used by Sentry
 	OrgSlug string `json:"orgSlug,omitempty"`
 	URL     string `json:"url,omitempty"` // Sentry is not using the datasource URL attribute
+
+	// Used by InfluxDB
+	DefaultBucket string `json:"defaultBucket,omitempty"`
+	Organization  string `json:"organization,omitempty"`
+	Version       string `json:"version,omitempty"`
 }
 
 // Required to avoid recursion during (un)marshal
@@ -240,6 +245,9 @@ type SecureJSONData struct {
 
 	// Used by Sentry
 	AuthToken string `json:"authToken,omitempty"`
+
+	// Used by InfluxDB
+	Token string `json:"token,omitempty"`
 }
 
 // Required to avoid recursion during unmarshal

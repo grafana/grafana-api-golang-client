@@ -138,3 +138,31 @@ func TestNewElasticsearchDataSource(t *testing.T) {
 		t.Error("datasource creation response should return the created datasource ID")
 	}
 }
+
+func TestNewInfluxDBDataSource(t *testing.T) {
+	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
+	defer server.Close()
+
+	ds := &DataSource{
+		Name:      "foo_influxdb",
+		Type:      "influxdb",
+		URL:       "http://some-url.com",
+		IsDefault: true,
+		JSONData: JSONData{
+			DefaultBucket: "telegraf",
+			Organization:  "acme",
+			Version:       "Flux",
+		},
+	}
+
+	created, err := client.NewDataSource(ds)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(pretty.PrettyFormat(created))
+
+	if created != 1 {
+		t.Error("datasource creation response should return the created datasource ID")
+	}
+}
