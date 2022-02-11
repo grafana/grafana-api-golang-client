@@ -1,4 +1,4 @@
-module github.com/albeego/grafana-api-golang-client
+module github.com/grafana/grafana-api-golang-client
 
 go 1.14
 
