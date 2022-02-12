@@ -9,9 +9,11 @@ import (
 
 // DashboardMeta represents Grafana dashboard meta.
 type DashboardMeta struct {
-	IsStarred bool   `json:"isStarred"`
-	Slug      string `json:"slug"`
-	Folder    int64  `json:"folderId"`
+	IsStarred             bool   `json:"isStarred"`
+	Slug                  string `json:"slug"`
+	Folder                int64  `json:"folderId"`
+	Provisioned           bool   `json:"provisioned"`
+	ProvisionedExternalID string `json:"provisionedExternalId"`
 }
 
 // DashboardSaveResponse represents the Grafana API response to creating or saving a dashboard.

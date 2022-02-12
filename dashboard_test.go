@@ -25,7 +25,9 @@ const (
 		"meta": {
 			"isStarred": false,
 			"url": "/d/cIBgcSjkk/production-overview",
-			"slug": "production-overview"
+			"slug": "production-overview",
+			"provisioned": false,
+			"provisionedExternalId": ""
 		}
 	}`
 
