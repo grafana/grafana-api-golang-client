@@ -17,7 +17,8 @@ const (
 			"type": "dash-folder",
 			"tags": [],
 			"isStarred": false,
-			"uri":"db/folder"
+			"uri":"db/folder",
+			"sortMeta": 0
 		},
 		{
 			"id":1,
@@ -27,7 +28,8 @@ const (
 			"type":"dash-db",
 			"tags":["prod"],
 			"isStarred":true,
-			"uri":"db/production-overview"
+			"uri":"db/production-overview",
+			"sortMeta": 0
 		},
 		{
 			"id":1,
@@ -41,7 +43,8 @@ const (
 			"folderUid": "000000163",
 			"folderTitle": "Folder",
 			"folderUrl": "/dashboards/f/000000163/folder",
-			"uri":"db/production-overview"
+			"uri":"db/production-overview",
+			"sortMeta": 0
 		}
 	]`
 )
