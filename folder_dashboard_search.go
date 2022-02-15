@@ -11,14 +11,14 @@ type FolderDashboardSearchResponse struct {
 	Title       string   `json:"title"`
 	URI         string   `json:"uri"`
 	URL         string   `json:"url"`
-	Slug        string   `json:"slug"`
+	Slug        string   `json:"slug,omitempty"`
 	Type        string   `json:"type"`
 	Tags        []string `json:"tags"`
 	IsStarred   bool     `json:"isStarred"`
-	FolderID    uint     `json:"folderId"`
-	FolderUID   string   `json:"folderUid"`
-	FolderTitle string   `json:"folderTitle"`
-	FolderURL   string   `json:"folderUrl"`
+	FolderID    uint     `json:"folderId,omitempty"`
+	FolderUID   string   `json:"folderUid,omitempty"`
+	FolderTitle string   `json:"folderTitle,omitempty"`
+	FolderURL   string   `json:"folderUrl,omitempty"`
 }
 
 // FolderDashboardSearch uses the folder and dashboard search endpoint to find
