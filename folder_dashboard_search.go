@@ -24,11 +24,7 @@ type FolderDashboardSearchResponse struct {
 
 // FolderDashboardSearch uses the folder and dashboard search endpoint to find
 // dashboards based on the params passed in.
-func (c *Client) FolderDashboardSearch(params map[string]string) (resp []FolderDashboardSearchResponse, err error) {
-	query := url.Values{}
-	for p, v := range params {
-		query.Add(p, v)
-	}
-	err = c.request("GET", "/api/search", query, nil, &resp)
+func (c *Client) FolderDashboardSearch(params url.Values) (resp []FolderDashboardSearchResponse, err error) {
+	err = c.request("GET", "/api/search", params, nil, &resp)
 	return
 }
