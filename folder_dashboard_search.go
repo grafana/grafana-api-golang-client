@@ -19,6 +19,7 @@ type FolderDashboardSearchResponse struct {
 	FolderUID   string   `json:"folderUid,omitempty"`
 	FolderTitle string   `json:"folderTitle,omitempty"`
 	FolderURL   string   `json:"folderUrl,omitempty"`
+	SortMeta    uint     `json:"sortMeta"`
 }
 
 // FolderDashboardSearch uses the folder and dashboard search endpoint to find
