@@ -116,6 +116,15 @@ type JSONData struct {
 	ExternalID    string `json:"externalId,omitempty"`
 	Profile       string `json:"profile,omitempty"`
 
+	// Used by Loki
+	DerivedFields []struct {
+		Name          string `json:"name"`
+		MatcherRegex  string `json:"matcherRegex"`
+		URL           string `json:"url"`
+		DatasourceUID string `json:"datasourceUid,omitempty"`
+	} `json:"derivedFields,omitempty"`
+	MaxLines int `json:"maxLines,omitempty"`
+
 	// Used by OpenTSDB
 	TsdbVersion    string `json:"tsdbVersion,omitempty"`
 	TsdbResolution string `json:"tsdbResolution,omitempty"`
