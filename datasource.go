@@ -309,6 +309,18 @@ func (c *Client) DataSource(id int64) (*DataSource, error) {
 	return result, err
 }
 
+// DataSourceByUID fetches and returns the Grafana data source whose UID is passed.
+func (c *Client) DataSourceByUID(uid string) (*DataSource, error) {
+	path := fmt.Sprintf("/api/datasources/uid/%s", uid)
+	result := &DataSource{}
+	err := c.request("GET", path, nil, nil, result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, err
+}
+
 // DeleteDataSource deletes the Grafana data source whose ID it's passed.
 func (c *Client) DeleteDataSource(id int64) error {
 	path := fmt.Sprintf("/api/datasources/%d", id)
