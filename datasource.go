@@ -73,6 +73,13 @@ func (ds *DataSource) UnmarshalJSON(b []byte) (err error) {
 	return err
 }
 
+type LokiDerivedField struct {
+	Name          string `json:"name"`
+	MatcherRegex  string `json:"matcherRegex"`
+	URL           string `json:"url"`
+	DatasourceUID string `json:"datasourceUid,omitempty"`
+}
+
 // JSONData is a representation of the datasource `jsonData` property
 type JSONData struct {
 	// Used by all datasources
@@ -115,6 +122,10 @@ type JSONData struct {
 	Endpoint      string `json:"endpoint,omitempty"`
 	ExternalID    string `json:"externalId,omitempty"`
 	Profile       string `json:"profile,omitempty"`
+
+	// Used by Loki
+	DerivedFields []LokiDerivedField `json:"derivedFields,omitempty"`
+	MaxLines      int                `json:"maxLines,omitempty"`
 
 	// Used by OpenTSDB
 	TsdbVersion    int64 `json:"tsdbVersion,omitempty"`
