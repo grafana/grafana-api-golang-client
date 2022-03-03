@@ -83,10 +83,11 @@ type LokiDerivedField struct {
 // JSONData is a representation of the datasource `jsonData` property
 type JSONData struct {
 	// Used by all datasources
-	TLSAuth           bool `json:"tlsAuth,omitempty"`
-	TLSAuthWithCACert bool `json:"tlsAuthWithCACert,omitempty"`
-	TLSSkipVerify     bool `json:"tlsSkipVerify,omitempty"`
-	httpHeaderNames   []string
+	TLSAuth                bool   `json:"tlsAuth,omitempty"`
+	TLSAuthWithCACert      bool   `json:"tlsAuthWithCACert,omitempty"`
+	TLSConfigurationMethod string `json:"tlsConfigurationMethod,omitempty"`
+	TLSSkipVerify          bool   `json:"tlsSkipVerify,omitempty"`
+	httpHeaderNames        []string
 
 	// Used by Athena
 	Catalog        string `json:"catalog,omitempty"`
