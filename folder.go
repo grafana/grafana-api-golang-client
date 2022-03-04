@@ -47,10 +47,17 @@ func (c *Client) FolderByUID(uid string) (*Folder, error) {
 }
 
 // NewFolder creates a new Grafana folder.
-func (c *Client) NewFolder(title string) (Folder, error) {
+func (c *Client) NewFolder(title string, uid ...string) (Folder, error) {
+	if len(uid) > 1 {
+		return Folder{}, fmt.Errorf("too many arguments. Expected 1 or 2")
+	}
+
 	folder := Folder{}
 	dataMap := map[string]string{
 		"title": title,
+	}
+	if len(uid) == 1 {
+		dataMap["uid"] = uid[0]
 	}
 	data, err := json.Marshal(dataMap)
 	if err != nil {
