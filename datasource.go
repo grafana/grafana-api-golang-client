@@ -178,6 +178,16 @@ type JSONData struct {
 	DefaultBucket string `json:"defaultBucket,omitempty"`
 	Organization  string `json:"organization,omitempty"`
 	Version       string `json:"version,omitempty"`
+
+	// Used by Azure Monitor
+	AzureLogAnalyticsSameAs      bool   `json:"azureLogAnalyticsSameAs,omitempty"`
+	ClientID                     string `json:"clientId,omitempty"`
+	CloudName                    string `json:"cloudName,omitempty"`
+	LogAnalyticsClientID         string `json:"logAnalyticsClientId,omitempty"`
+	LogAnalyticsDefaultWorkspace string `json:"logAnalyticsDefaultWorkspace,omitempty"`
+	LogAnalyticsTenantID         string `json:"logAnalyticsTenantId,omitempty"`
+	SubscriptionID               string `json:"subscriptionId,omitempty"`
+	TenantID                     string `json:"tenantId,omitempty"`
 }
 
 // Required to avoid recursion during (un)marshal
@@ -257,6 +267,9 @@ type SecureJSONData struct {
 
 	// Used by Sentry
 	AuthToken string `json:"authToken,omitempty"`
+
+	// Used by Azure Monitor
+	ClientSecret string `json:"clientSecret,omitempty"`
 }
 
 // Required to avoid recursion during unmarshal
