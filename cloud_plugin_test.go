@@ -46,7 +46,7 @@ func TestInstallCloudPlugin(t *testing.T) {
 	server, client := gapiTestTools(t, 200, installPluginJSON)
 	defer server.Close()
 
-	err := client.InstallCloudPlugin(int64(1), "some-plugin", "1.2.3")
+	err := client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
 	if err != nil {
 		t.Error(err)
 	}
@@ -54,7 +54,7 @@ func TestInstallCloudPlugin(t *testing.T) {
 	for _, code := range []int{401, 403, 404, 412} {
 		server.code = code
 
-		err = client.InstallCloudPlugin(int64(1), "some-plugin", "1.2.3")
+		err = client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
@@ -65,7 +65,7 @@ func TestUninstallCloudPlugin(t *testing.T) {
 	server, client := gapiTestTools(t, 200, uninstallPluginJSON)
 	defer server.Close()
 
-	err := client.UninstallCloudPlugin(int64(1), "some-plugin")
+	err := client.UninstallCloudPlugin("some-stack", "some-plugin")
 	if err != nil {
 		t.Error(err)
 	}
@@ -73,7 +73,7 @@ func TestUninstallCloudPlugin(t *testing.T) {
 	for _, code := range []int{401, 403, 404, 412} {
 		server.code = code
 
-		err = client.UninstallCloudPlugin(int64(1), "some-plugin")
+		err = client.UninstallCloudPlugin("some-stack", "some-plugin")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
@@ -83,7 +83,7 @@ func TestUninstallCloudPlugin(t *testing.T) {
 func TestIsCloudPluginInstalled(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getPluginJSON)
 
-	ok, err := client.IsCloudPluginInstalled(int64(1), "some-plugin")
+	ok, err := client.IsCloudPluginInstalled("some-stack", "some-plugin")
 	if err != nil {
 		t.Error(err)
 	}
@@ -93,7 +93,7 @@ func TestIsCloudPluginInstalled(t *testing.T) {
 	}
 
 	server.code = 404
-	ok, err = client.IsCloudPluginInstalled(int64(1), "some-plugin")
+	ok, err = client.IsCloudPluginInstalled("some-stack", "some-plugin")
 	if err != nil {
 		t.Error(err)
 	}
@@ -105,7 +105,7 @@ func TestIsCloudPluginInstalled(t *testing.T) {
 	for _, code := range []int{401, 403, 412} {
 		server.code = code
 
-		_, err := client.IsCloudPluginInstalled(int64(1), "some-plugin")
+		_, err := client.IsCloudPluginInstalled("some-stack", "some-plugin")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
