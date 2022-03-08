@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -15,8 +15,8 @@ type Plugin struct {
 	Description string `json:"description"`
 }
 
-// InstallPlugin installs the specified plugin to the given stack.
-func (c *Client) InstallPlugin(stackID int64, pluginSlug string, pluginVersion string) error {
+// InstallCloudPlugin installs the specified plugin to the given stack.
+func (c *Client) InstallCloudPlugin(stackID int64, pluginSlug string, pluginVersion string) error {
 	installPluginRequest := struct {
 		Plugin  string `json:"plugin"`
 		Version string `json:"version"`
@@ -38,12 +38,12 @@ func (c *Client) InstallPlugin(stackID int64, pluginSlug string, pluginVersion s
 	return nil
 }
 
-// UninstallPlugin uninstalls the specified plugin to the given stack.
-func (c *Client) UninstallPlugin(stackID int64, pluginSlug string) error {
+// UninstallCloudPlugin uninstalls the specified plugin to the given stack.
+func (c *Client) UninstallCloudPlugin(stackID int64, pluginSlug string) error {
 	return c.request("DElETE", fmt.Sprintf("/api/instances/%d/plugins/%s", stackID, pluginSlug), nil, nil, nil)
 }
 
-func (c *Client) IsPluginInstalled(stackID int64, pluginSlug string) (bool, error) {
+func (c *Client) IsCloudPluginInstalled(stackID int64, pluginSlug string) (bool, error) {
 	req, err := c.newRequest("GET", fmt.Sprintf("/api/instances/%d/plugins/%s", stackID, pluginSlug), nil, nil)
 	if err != nil {
 		return false, err
@@ -60,7 +60,7 @@ func (c *Client) IsPluginInstalled(stackID int64, pluginSlug string) (bool, erro
 		if resp.StatusCode == http.StatusNotFound {
 			return false, nil
 		}
-		bodyContents, err := io.ReadAll(resp.Body)
+		bodyContents, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return false, err
 		}
