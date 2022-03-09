@@ -90,11 +90,11 @@ var (
 		HTClusterURL:              "https://tempo-us-central1.grafana.net"}
 )
 
-func TestCloudsRegions(t *testing.T) {
+func TestCloudRegions(t *testing.T) {
 	server, client := gapiTestTools(t, 200, cloudRegionsResponse)
 	defer server.Close()
 
-	regions, err := client.CloudsRegions()
+	regions, err := client.GetCloudRegions()
 
 	if err != nil {
 		t.Fatalf("expected error to be nil; got: %s", err.Error())
@@ -110,11 +110,11 @@ func TestCloudsRegions(t *testing.T) {
 	}
 }
 
-func TestCloudsRegionBySlug(t *testing.T) {
+func TestCloudRegionBySlug(t *testing.T) {
 	server, client := gapiTestTools(t, 200, cloudRegionResponse)
 	defer server.Close()
 
-	resp, err := client.CloudsRegionBySlug("us")
+	resp, err := client.GetCloudRegionBySlug("us")
 	if err != nil {
 		t.Fatal(err)
 	}
