@@ -16,7 +16,7 @@ type Plugin struct {
 }
 
 // InstallCloudPlugin installs the specified plugin to the given stack.
-func (c *Client) InstallCloudPlugin(stackSlug string, pluginSlug string, pluginVersion string) error {
+func (c *Client) InstallCloudPlugin(stackSlug string, pluginSlug string, pluginVersion string) (int64, error) {
 	installPluginRequest := struct {
 		Plugin  string `json:"plugin"`
 		Version string `json:"version"`
@@ -27,15 +27,19 @@ func (c *Client) InstallCloudPlugin(stackSlug string, pluginSlug string, pluginV
 
 	data, err := json.Marshal(installPluginRequest)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	err = c.request("POST", fmt.Sprintf("/api/instances/%s/plugins", stackSlug), nil, bytes.NewBuffer(data), nil)
+	resp := struct {
+		ID int64 `json:"id"`
+	}{}
+
+	err = c.request("POST", fmt.Sprintf("/api/instances/%s/plugins", stackSlug), nil, bytes.NewBuffer(data), &resp)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return resp.ID, nil
 }
 
 // UninstallCloudPlugin uninstalls the specified plugin to the given stack.

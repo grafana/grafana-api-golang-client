@@ -5,6 +5,7 @@ import (
 )
 
 const (
+	installPluginID   = 123
 	installPluginJSON = `
 	{
 		"id": 123,
@@ -46,17 +47,24 @@ func TestInstallCloudPlugin(t *testing.T) {
 	server, client := gapiTestTools(t, 200, installPluginJSON)
 	defer server.Close()
 
-	err := client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
+	id, err := client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
 	if err != nil {
 		t.Error(err)
+	}
+
+	if id != installPluginID {
+		t.Errorf("unexpected ID received: %d", id)
 	}
 
 	for _, code := range []int{401, 403, 404, 412} {
 		server.code = code
 
-		err = client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
+		id, err = client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
 		if err == nil {
 			t.Errorf("%d not detected", code)
+		}
+		if id != 0 {
+			t.Errorf("unexpected ID received: %d", id)
 		}
 	}
 }
