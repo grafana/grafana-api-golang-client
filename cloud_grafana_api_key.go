@@ -12,14 +12,14 @@ import (
 //
 // See https://grafana.com/docs/grafana-cloud/api/#create-grafana-api-keys for more information.
 func (c *Client) CreateGrafanaAPIKeyFromCloud(stack string, input *CreateAPIKeyRequest) (*CreateAPIKeyResponse, error) {
-	resp := CreateAPIKeyResponse{}
 	data, err := json.Marshal(input)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.request("POST", fmt.Sprintf("/api/instances/%s/api/auth/keys", stack), nil, bytes.NewBuffer(data), &resp)
-	return &resp, err
+	resp := &CreateAPIKeyResponse{}
+	err = c.request("POST", fmt.Sprintf("/api/instances/%s/api/auth/keys", stack), nil, bytes.NewBuffer(data), resp)
+	return resp, err
 }
 
 // The Grafana Cloud API is disconnected from the Grafana API on the stacks unfortunately. That's why we can't use
@@ -50,11 +50,7 @@ func (c *Client) CreateTemporaryStackGrafanaClient(stackSlug, tempKeyPrefix stri
 
 	cleanup = func() error {
 		_, err = client.DeleteAPIKey(apiKey.ID)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return err
 	}
 
 	return client, cleanup, nil
