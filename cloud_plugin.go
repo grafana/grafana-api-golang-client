@@ -19,7 +19,7 @@ type Plugin struct {
 type CloudPluginInstallation struct {
 	ID           int    `json:"id"`
 	InstanceID   int    `json:"instanceId"`
-	InstanceUrl  string `json:"instanceUrl"`
+	InstanceURL  string `json:"instanceUrl"`
 	InstanceSlug string `json:"instanceSlug"`
 	PluginID     int    `json:"pluginId"`
 	PluginSlug   string `json:"pluginSlug"`

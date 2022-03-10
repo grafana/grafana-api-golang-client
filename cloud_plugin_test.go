@@ -5,7 +5,6 @@ import (
 )
 
 const (
-	installPluginID   = 123
 	installPluginJSON = `
 	{
 		"id": 123,
