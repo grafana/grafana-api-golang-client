@@ -36,6 +36,7 @@ const (
 	}`
 	getPluginJSON = `
 	{
+		"id": 34,
 		"name": "Some Plugin",
 		"slug": "some-plugin",
 		"version": "1.2.3",
@@ -47,24 +48,30 @@ func TestInstallCloudPlugin(t *testing.T) {
 	server, client := gapiTestTools(t, 200, installPluginJSON)
 	defer server.Close()
 
-	id, err := client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
+	installation, err := client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
 	if err != nil {
 		t.Error(err)
 	}
 
-	if id != installPluginID {
-		t.Errorf("unexpected ID received: %d", id)
+	expectedInstallation := CloudPluginInstallation{}
+	err = UnmarshalJSONToStruct(installPluginJSON, &expectedInstallation)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if *installation != expectedInstallation {
+		t.Errorf("Unexpected installation - Actual: %v, Expected: %v", installation, expectedInstallation)
 	}
 
 	for _, code := range []int{401, 403, 404, 412} {
 		server.code = code
 
-		id, err = client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
+		installation, err = client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
-		if id != 0 {
-			t.Errorf("unexpected ID received: %d", id)
+		if installation != nil {
+			t.Errorf("Expected empty installation, got %v", installation)
 		}
 	}
 }
@@ -116,6 +123,38 @@ func TestIsCloudPluginInstalled(t *testing.T) {
 		_, err := client.IsCloudPluginInstalled("some-stack", "some-plugin")
 		if err == nil {
 			t.Errorf("%d not detected", code)
+		}
+	}
+}
+
+func TestGetCloudPluginInstallation(t *testing.T) {
+	server, client := gapiTestTools(t, 200, installPluginJSON)
+	defer server.Close()
+
+	installation, err := client.GetCloudPluginInstallation("some-stack", "some-plugin")
+	if err != nil {
+		t.Error(err)
+	}
+
+	expectedInstallation := CloudPluginInstallation{}
+	err = UnmarshalJSONToStruct(installPluginJSON, &expectedInstallation)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if *installation != expectedInstallation {
+		t.Errorf("Unexpected installation - Actual: %v, Expected: %v", installation, expectedInstallation)
+	}
+
+	for _, code := range []int{401, 403, 404, 412} {
+		server.code = code
+
+		installation, err = client.GetCloudPluginInstallation("some-stack", "some-plugin")
+		if err == nil {
+			t.Errorf("%d not detected", code)
+		}
+		if installation != nil {
+			t.Errorf("Expected empty installation, got %v", installation)
 		}
 	}
 }

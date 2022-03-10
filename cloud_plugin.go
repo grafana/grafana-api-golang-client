@@ -9,14 +9,26 @@ import (
 )
 
 type Plugin struct {
+	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	Slug        string `json:"slug"`
 	Version     string `json:"version"`
 	Description string `json:"description"`
 }
 
+type CloudPluginInstallation struct {
+	ID           int    `json:"id"`
+	InstanceID   int    `json:"instanceId"`
+	InstanceUrl  string `json:"instanceUrl"`
+	InstanceSlug string `json:"instanceSlug"`
+	PluginID     int    `json:"pluginId"`
+	PluginSlug   string `json:"pluginSlug"`
+	PluginName   string `json:"pluginName"`
+	Version      string `json:"version"`
+}
+
 // InstallCloudPlugin installs the specified plugin to the given stack.
-func (c *Client) InstallCloudPlugin(stackSlug string, pluginSlug string, pluginVersion string) (int64, error) {
+func (c *Client) InstallCloudPlugin(stackSlug string, pluginSlug string, pluginVersion string) (*CloudPluginInstallation, error) {
 	installPluginRequest := struct {
 		Plugin  string `json:"plugin"`
 		Version string `json:"version"`
@@ -27,19 +39,17 @@ func (c *Client) InstallCloudPlugin(stackSlug string, pluginSlug string, pluginV
 
 	data, err := json.Marshal(installPluginRequest)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	resp := struct {
-		ID int64 `json:"id"`
-	}{}
+	var installation CloudPluginInstallation
 
-	err = c.request("POST", fmt.Sprintf("/api/instances/%s/plugins", stackSlug), nil, bytes.NewBuffer(data), &resp)
+	err = c.request("POST", fmt.Sprintf("/api/instances/%s/plugins", stackSlug), nil, bytes.NewBuffer(data), &installation)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return resp.ID, nil
+	return &installation, nil
 }
 
 // UninstallCloudPlugin uninstalls the specified plugin to the given stack.
@@ -47,6 +57,7 @@ func (c *Client) UninstallCloudPlugin(stackSlug string, pluginSlug string) error
 	return c.request("DELETE", fmt.Sprintf("/api/instances/%s/plugins/%s", stackSlug, pluginSlug), nil, nil, nil)
 }
 
+// IsCloudPluginInstalled returns a boolean if the specified plugin is installed on the stack.
 func (c *Client) IsCloudPluginInstalled(stackSlug string, pluginSlug string) (bool, error) {
 	req, err := c.newRequest("GET", fmt.Sprintf("/api/instances/%s/plugins/%s", stackSlug, pluginSlug), nil, nil)
 	if err != nil {
@@ -73,6 +84,18 @@ func (c *Client) IsCloudPluginInstalled(stackSlug string, pluginSlug string) (bo
 	}
 
 	return true, nil
+}
+
+// GetCloudPluginInstallation returns the cloud plugin installation details for the specified plugin.
+func (c *Client) GetCloudPluginInstallation(stackSlug string, pluginSlug string) (*CloudPluginInstallation, error) {
+	var installation CloudPluginInstallation
+
+	err := c.request("GET", fmt.Sprintf("/api/instances/%s/plugins/%s", stackSlug, pluginSlug), nil, nil, &installation)
+	if err != nil {
+		return nil, err
+	}
+
+	return &installation, nil
 }
 
 // PluginBySlug returns the plugin with the given slug.
