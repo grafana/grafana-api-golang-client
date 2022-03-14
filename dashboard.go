@@ -12,6 +12,7 @@ type DashboardMeta struct {
 	IsStarred bool   `json:"isStarred"`
 	Slug      string `json:"slug"`
 	Folder    int64  `json:"folderId"`
+	URL       string `json:"url"`
 }
 
 // DashboardSaveResponse represents the Grafana API response to creating or saving a dashboard.
