@@ -11,6 +11,7 @@ type Folder struct {
 	ID    int64  `json:"id"`
 	UID   string `json:"uid"`
 	Title string `json:"title"`
+	URL   string `json:"url"`
 }
 
 // Folders fetches and returns Grafana folders.
