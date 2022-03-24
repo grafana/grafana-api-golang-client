@@ -12,12 +12,13 @@ var headerNameRegex = regexp.MustCompile(`^httpHeaderName(\d+)$`)
 
 // DataSource represents a Grafana data source.
 type DataSource struct {
-	ID     int64  `json:"id,omitempty"`
-	UID    string `json:"uid,omitempty"`
-	Name   string `json:"name"`
-	Type   string `json:"type"`
-	URL    string `json:"url"`
-	Access string `json:"access"`
+	ID       int64  `json:"id,omitempty"`
+	UID      string `json:"uid,omitempty"`
+	Name     string `json:"name"`
+	Type     string `json:"type"`
+	URL      string `json:"url"`
+	Access   string `json:"access"`
+	ReadOnly bool   `json:"readOnly"`
 
 	Database string `json:"database,omitempty"`
 	User     string `json:"user,omitempty"`
