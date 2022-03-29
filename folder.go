@@ -14,6 +14,12 @@ type Folder struct {
 	URL   string `json:"url"`
 }
 
+type FolderPayload struct {
+	Title     string `json:"title"`
+	UID       string `json:"uid,omitempty"`
+	Overwrite bool   `json:"overwrite,omitempty"`
+}
+
 // Folders fetches and returns Grafana folders.
 func (c *Client) Folders() ([]Folder, error) {
 	folders := make([]Folder, 0)
@@ -54,13 +60,13 @@ func (c *Client) NewFolder(title string, uid ...string) (Folder, error) {
 	}
 
 	folder := Folder{}
-	dataMap := map[string]string{
-		"title": title,
+	payload := FolderPayload{
+		Title: title,
 	}
 	if len(uid) == 1 {
-		dataMap["uid"] = uid[0]
+		payload.UID = uid[0]
 	}
-	data, err := json.Marshal(dataMap)
+	data, err := json.Marshal(payload)
 	if err != nil {
 		return folder, err
 	}
@@ -73,17 +79,21 @@ func (c *Client) NewFolder(title string, uid ...string) (Folder, error) {
 	return folder, err
 }
 
-// UpdateFolder updates the folder whose ID it's passed.
-func (c *Client) UpdateFolder(id string, name string) error {
-	dataMap := map[string]string{
-		"name": name,
+// UpdateFolder updates the folder whose UID it's passed.
+func (c *Client) UpdateFolder(uid string, title string, newUID ...string) error {
+	payload := FolderPayload{
+		Title:     title,
+		Overwrite: true,
 	}
-	data, err := json.Marshal(dataMap)
+	if len(newUID) == 1 {
+		payload.UID = newUID[0]
+	}
+	data, err := json.Marshal(payload)
 	if err != nil {
 		return err
 	}
 
-	return c.request("PUT", fmt.Sprintf("/api/folders/%s", id), nil, bytes.NewBuffer(data), nil)
+	return c.request("PUT", fmt.Sprintf("/api/folders/%s", uid), nil, bytes.NewBuffer(data), nil)
 }
 
 // DeleteFolder deletes the folder whose ID it's passed.
