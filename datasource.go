@@ -19,6 +19,9 @@ type DataSource struct {
 	URL    string `json:"url"`
 	Access string `json:"access"`
 
+	// This is only returned by the API. It can only be set through the `editable` attribute of provisioned data sources.
+	ReadOnly bool `json:"readOnly"`
+
 	Database string `json:"database,omitempty"`
 	User     string `json:"user,omitempty"`
 	// Deprecated: Use secureJsonData.password instead.
