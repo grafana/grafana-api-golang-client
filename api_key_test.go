@@ -1,9 +1,11 @@
 package gapi
 
 import (
+	"context"
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient"
 )
 
 const (
@@ -25,21 +27,26 @@ const (
 	]`
 )
 
+func getContextWithBasicAuth() context.Context {
+	return context.WithValue(context.Background(), goclient.ContextBasicAuth, goclient.BasicAuth{
+		UserName: "admin",
+		Password: "admin",
+	})
+}
+
 func TestCreateAPIKey(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createAPIKeyJSON)
-	defer server.Close()
+	cfg := goclient.NewConfiguration()
+	client := goclient.NewAPIClient(cfg)
 
-	req := CreateAPIKeyRequest{
-		Name:          "key-name",
-		Role:          "Viewer",
-		SecondsToLive: 0,
-	}
+	ctx := getContextWithBasicAuth()
 
-	res, err := client.CreateAPIKey(req)
+	_, res, err := client.ApiKeysApi.AddAPIkey(ctx, goclient.AddApiKeyCommandModel{
+		Name: "key-name",
+		Role: "Viewer",
+	})
 	if err != nil {
 		t.Error(err)
 	}
-
 	t.Log(pretty.PrettyFormat(res))
 }
 
