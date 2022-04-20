@@ -52,7 +52,7 @@ type Configuration struct {
 
 func NewConfiguration() *Configuration {
 	cfg := &Configuration{
-		BasePath:      "{{{basePath}}}",
+		BasePath:      "{{{hostWithoutBasePath}}}:3000{{{basePathWithoutHost}}}",
 		DefaultHeader: make(map[string]string),
 		UserAgent:     "{{#httpUserAgent}}{{{.}}}{{/httpUserAgent}}{{^httpUserAgent}}Swagger-Codegen/{{{packageVersion}}}/go{{/httpUserAgent}}",
 	}
