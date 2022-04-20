@@ -25,9 +25,14 @@ drone:
 	drone lint .drone/drone.yml
 	drone sign --save grafana/grafana-api-golang-client .drone/drone.yml
 
-test:
-	go version
-	golangci-lint --version
-	golangci-lint run ./...
-	go test -cover -race -vet all -mod readonly ./...
+clean-test:
+	go clean -testcache
 
+.PHONY: run-test-image-locally
+run-test-image-locally:
+	docker rm -f test-grafana
+	docker run --name test-grafana -d -p 3000:3000 grafana/grafana:latest
+
+test: clean-test run-test-image-locally
+	sleep 3
+	go test -cover -race -vet all -mod readonly ./... 	
