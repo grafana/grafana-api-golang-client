@@ -14,6 +14,9 @@ const (
     "name": "test:policy",
 	"version": 1,
     "description": "Test policy description",
+	"displayName": "test display",
+	"group": "test group",
+    "hidden": false,
     "permissions": [
         {
             "id": 6,
@@ -34,6 +37,9 @@ const (
     "name": "test:policy",
 	"version": 1,
     "description": "Test policy description",
+	"displayName": "test display",
+	"group": "test group",
+    "hidden": false,
     "permissions": [
         {
             "permission": "test:self",
@@ -101,6 +107,9 @@ func TestGetRole(t *testing.T) {
 		UID:         "vc3SCSsGz",
 		Name:        "test:policy",
 		Description: "Test policy description",
+		Group:       "test group",
+		DisplayName: "test display",
+		Hidden:      false,
 		Permissions: []Permission{
 			{
 				Action: "test:self",
