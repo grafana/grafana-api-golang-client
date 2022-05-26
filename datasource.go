@@ -115,6 +115,7 @@ type JSONData struct {
 	LogMessageField            string `json:"logMessageField,omitempty"`
 	LogLevelField              string `json:"logLevelField,omitempty"`
 	MaxConcurrentShardRequests int64  `json:"maxConcurrentShardRequests,omitempty"`
+	XpackEnabled               bool   `json:"xpack"`
 
 	// Used by Cloudwatch
 	CustomMetricsNamespaces string `json:"customMetricsNamespaces,omitempty"`
@@ -142,7 +143,7 @@ type JSONData struct {
 	// Used by PostgreSQL
 	Sslmode         string `json:"sslmode,omitempty"`
 	PostgresVersion int64  `json:"postgresVersion,omitempty"`
-	Timescaledb     bool   `json:"timescaledb,omitempty"`
+	Timescaledb     bool   `json:"timescaledb"`
 
 	// Used by MySQL, PostgreSQL and MSSQL
 	MaxOpenConns    int64 `json:"maxOpenConns,omitempty"`
@@ -161,14 +162,14 @@ type JSONData struct {
 
 	// Used by Prometheus and Elasticsearch
 	SigV4AssumeRoleArn string `json:"sigV4AssumeRoleArn,omitempty"`
-	SigV4Auth          bool   `json:"sigV4Auth,omitempty"`
+	SigV4Auth          bool   `json:"sigV4Auth"`
 	SigV4AuthType      string `json:"sigV4AuthType,omitempty"`
 	SigV4ExternalID    string `json:"sigV4ExternalID,omitempty"`
 	SigV4Profile       string `json:"sigV4Profile,omitempty"`
 	SigV4Region        string `json:"sigV4Region,omitempty"`
 
 	// Used by Prometheus and Loki
-	ManageAlerts    bool   `json:"manageAlerts,omitempty"`
+	ManageAlerts    bool   `json:"manageAlerts"`
 	AlertmanagerUID string `json:"alertmanagerUid,omitempty"`
 
 	// Used by Alertmanager
@@ -184,7 +185,7 @@ type JSONData struct {
 	Version       string `json:"version,omitempty"`
 
 	// Used by Azure Monitor
-	AzureLogAnalyticsSameAs      bool   `json:"azureLogAnalyticsSameAs,omitempty"`
+	AzureLogAnalyticsSameAs      bool   `json:"azureLogAnalyticsSameAs"`
 	ClientID                     string `json:"clientId,omitempty"`
 	CloudName                    string `json:"cloudName,omitempty"`
 	LogAnalyticsClientID         string `json:"logAnalyticsClientId,omitempty"`
