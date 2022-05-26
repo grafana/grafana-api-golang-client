@@ -118,6 +118,7 @@ type JSONData struct {
 
 	// Used by Cloudwatch
 	CustomMetricsNamespaces string `json:"customMetricsNamespaces,omitempty"`
+	TracingDatasourceUID    string `json:"tracingDatasourceUid,omitempty"`
 
 	// Used by Cloudwatch, Athena
 	AuthType      string `json:"authType,omitempty"`
