@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/go-cleanhttp"
 	"io"
 	"io/ioutil"
 	"log"
@@ -13,8 +14,6 @@ import (
 	"path"
 	"strconv"
 	"time"
-
-	"github.com/hashicorp/go-cleanhttp"
 )
 
 // Client is a Grafana API client.
@@ -117,7 +116,7 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 
 	// check status code.
 	if resp.StatusCode >= 400 {
-		return fmt.Errorf("status: %d, body: %v", resp.StatusCode, string(bodyContents))
+		return &GApiError{statusCode: resp.StatusCode, message: string(bodyContents)}
 	}
 
 	if responseStruct == nil {
