@@ -351,6 +351,32 @@ func (c *Client) DataSourceByUID(uid string) (*DataSource, error) {
 	return result, err
 }
 
+// DataSourceIdByName returns the Grafana data source id by name.
+func (c *Client) DataSourceIdByName(name string) (int64, error) {
+	path := fmt.Sprintf("/api/datasources/id/%s", name)
+
+	result := struct {
+		ID int64 `json:"id"`
+	}{}
+	err := c.request("GET", path, nil, nil, &result)
+	if err != nil {
+		return result.ID, err
+	}
+
+	return result.ID, err
+}
+
+// DataSources returns all data sources as defined in Grafana.
+func (c *Client) DataSources() ([]*DataSource, error) {
+	result := make([]*DataSource, 0)
+	err := c.request("GET", "/api/datasources", nil, nil, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
 // DeleteDataSource deletes the Grafana data source whose ID it's passed.
 func (c *Client) DeleteDataSource(id int64) error {
 	path := fmt.Sprintf("/api/datasources/%d", id)
