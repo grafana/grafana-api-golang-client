@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/go-cleanhttp"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,6 +13,8 @@ import (
 	"path"
 	"strconv"
 	"time"
+
+	"github.com/hashicorp/go-cleanhttp"
 )
 
 // Client is a Grafana API client.

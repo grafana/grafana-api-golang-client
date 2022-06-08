@@ -8,8 +8,8 @@ import (
 
 const (
 	createdDataSourceJSON = `{"id":1,"uid":"myuid0001","message":"Datasource added", "name": "test_datasource"}`
-	getDataSourceJSON = `{"id":1}`
-	getDataSourcesJSON = `[{"id":1,"name":"foo","type":"cloudwatch","url":"http://some-url.com","access":"access","isDefault":true}]`
+	getDataSourceJSON     = `{"id":1}`
+	getDataSourcesJSON    = `[{"id":1,"name":"foo","type":"cloudwatch","url":"http://some-url.com","access":"access","isDefault":true}]`
 )
 
 func TestNewDataSource(t *testing.T) {
@@ -257,16 +257,16 @@ func TestDataSources(t *testing.T) {
 	}
 }
 
-func TestDataSourceIdByName(t *testing.T) {
+func TestDataSourceIDByName(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getDataSourceJSON)
 	defer server.Close()
 
-	datasourceId, err := client.DataSourceIdByName("foo")
+	datasourceID, err := client.DataSourceIDByName("foo")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if datasourceId != 1 {
+	if datasourceID != 1 {
 		t.Error("Not correctly parsing returned datasources.")
 	}
 }
