@@ -358,12 +358,13 @@ func (c *Client) DataSourceIDByName(name string) (int64, error) {
 	result := struct {
 		ID int64 `json:"id"`
 	}{}
+
 	err := c.request("GET", path, nil, nil, &result)
 	if err != nil {
-		return result.ID, err
+		return 0, err
 	}
 
-	return result.ID, err
+	return result.ID, nil
 }
 
 // DataSources returns all data sources as defined in Grafana.
