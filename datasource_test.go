@@ -8,8 +8,8 @@ import (
 
 const (
 	createdDataSourceJSON = `{"id":1,"uid":"myuid0001","message":"Datasource added", "name": "test_datasource"}`
-	getDataSourceJSON = `{"id":1}`
-	getDataSourcesJSON = `[{"id":1,"name":"foo","type":"cloudwatch","url":"http://some-url.com","access":"access","isDefault":true}]`
+	getDataSourceJSON     = `{"id":1}`
+	getDataSourcesJSON    = `[{"id":1,"name":"foo","type":"cloudwatch","url":"http://some-url.com","access":"access","isDefault":true}]`
 )
 
 func TestNewDataSource(t *testing.T) {
