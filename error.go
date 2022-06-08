@@ -7,12 +7,12 @@ import (
 
 type GApiError struct {
 	statusCode int
-	message string
+	message    string
 }
 
 // Error implements the error interface.
 func (e *GApiError) Error() string {
-	return fmt.Sprintf("status: %d, body: %v", e.statusCode, string(e.message))
+	return fmt.Sprintf("status: %d, body: %v", e.statusCode, e.message)
 }
 
 // IsNotFound returns a boolean indicating whether the error is a not found error.

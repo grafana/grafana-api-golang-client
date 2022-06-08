@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	someErrorJSON = `{"message":"some unknown error occured"}`
+	someErrorJSON          = `{"message":"some unknown error occurred"}`
 	dataSourceNotFoundJSON = `{"message":"datasource not found"}`
 )
 
@@ -14,8 +14,8 @@ func TestGAPIError(t *testing.T) {
 	defer server.Close()
 
 	_, err := client.DataSource(100)
-	gapiErr := GetGApiError(err);
-	if  gapiErr == nil {
+	gapiErr := GetGApiError(err)
+	if gapiErr == nil {
 		t.Fatal("Error should be a GApiError")
 	}
 	if gapiErr.StatusCode() != 500 {
