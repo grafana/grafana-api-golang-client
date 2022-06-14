@@ -43,7 +43,7 @@ func TestContactPoints(t *testing.T) {
 		}
 	})
 
-	t.Run("get non-existant contact point fails", func(t *testing.T) {
+	t.Run("get non-existent contact point fails", func(t *testing.T) {
 		server, client := gapiTestTools(t, 200, getContactPointsJSON)
 		defer server.Close()
 
