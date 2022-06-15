@@ -100,7 +100,7 @@ func createContactPoint() ContactPoint {
 		Name:                  "slack-receiver-123",
 		Type:                  "slack",
 		DisableResolveMessage: false,
-		Settings: map[string]string{
+		Settings: map[string]interface{}{
 			"recipient": "@zxcv",
 			"token":     "test-token",
 			"url":       "https://test-url",

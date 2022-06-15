@@ -8,12 +8,12 @@ import (
 
 // ContactPoint represents a Grafana Alerting contact point.
 type ContactPoint struct {
-	UID                   string      `json:"uid"`
-	Name                  string      `json:"name"`
-	Type                  string      `json:"type"`
-	Settings              interface{} `json:"settings"`
-	DisableResolveMessage bool        `json:"disableResolveMessage"`
-	Provenance            string      `json:"provenance"`
+	UID                   string                 `json:"uid"`
+	Name                  string                 `json:"name"`
+	Type                  string                 `json:"type"`
+	Settings              map[string]interface{} `json:"settings"`
+	DisableResolveMessage bool                   `json:"disableResolveMessage"`
+	Provenance            string                 `json:"provenance"`
 }
 
 // ContactPoints fetches all contact points.
