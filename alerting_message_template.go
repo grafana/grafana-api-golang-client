@@ -34,16 +34,16 @@ func (c *Client) MessageTemplate(name string) (*AlertingMessageTemplate, error) 
 }
 
 // SetMessageTemplate creates or updates a message template.
-func (c *Client) SetMessageTemplate(t *AlertingMessageTemplate) error {
+func (c *Client) SetMessageTemplate(name, content string) error {
 	req := struct {
 		Template string `json:"template"`
-	}{Template: t.Template}
+	}{Template: content}
 	body, err := json.Marshal(req)
 	if err != nil {
 		return err
 	}
 
-	uri := fmt.Sprintf("/api/v1/provisioning/templates/%s", t.Name)
+	uri := fmt.Sprintf("/api/v1/provisioning/templates/%s", name)
 	return c.request("PUT", uri, nil, bytes.NewBuffer(body), nil)
 }
 
