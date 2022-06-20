@@ -7,6 +7,7 @@ import (
 )
 
 // AlertNotification represents a Grafana alert notification.
+// Deprecated: Grafana Legacy Alerting is deprecated as of 9.0 and will be removed in the future. Use ContactPoint instead.
 type AlertNotification struct {
 	ID                    int64       `json:"id,omitempty"`
 	UID                   string      `json:"uid"`
@@ -22,6 +23,7 @@ type AlertNotification struct {
 }
 
 // AlertNotifications fetches and returns Grafana alert notifications.
+// Deprecated: Grafana Legacy Alerting is deprecated as of 9.0 and will be removed in the future. Use ContactPoints instead.
 func (c *Client) AlertNotifications() ([]AlertNotification, error) {
 	alertnotifications := make([]AlertNotification, 0)
 
@@ -34,6 +36,7 @@ func (c *Client) AlertNotifications() ([]AlertNotification, error) {
 }
 
 // AlertNotification fetches and returns a Grafana alert notification.
+// Deprecated: Grafana Legacy Alerting is deprecated as of 9.0 and will be removed in the future. Use ContactPoint instead.
 func (c *Client) AlertNotification(id int64) (*AlertNotification, error) {
 	path := fmt.Sprintf("/api/alert-notifications/%d", id)
 	result := &AlertNotification{}
@@ -46,6 +49,7 @@ func (c *Client) AlertNotification(id int64) (*AlertNotification, error) {
 }
 
 // NewAlertNotification creates a new Grafana alert notification.
+// Deprecated: Grafana Legacy Alerting is deprecated as of 9.0 and will be removed in the future. Use NewContactPoint instead.
 func (c *Client) NewAlertNotification(a *AlertNotification) (int64, error) {
 	data, err := json.Marshal(a)
 	if err != nil {
@@ -64,6 +68,7 @@ func (c *Client) NewAlertNotification(a *AlertNotification) (int64, error) {
 }
 
 // UpdateAlertNotification updates a Grafana alert notification.
+// Deprecated: Grafana Legacy Alerting is deprecated as of 9.0 and will be removed in the future. Use UpdateContactPoint instead.
 func (c *Client) UpdateAlertNotification(a *AlertNotification) error {
 	path := fmt.Sprintf("/api/alert-notifications/%d", a.ID)
 	data, err := json.Marshal(a)
@@ -76,6 +81,7 @@ func (c *Client) UpdateAlertNotification(a *AlertNotification) error {
 }
 
 // DeleteAlertNotification deletes a Grafana alert notification.
+// Deprecated: Grafana Legacy Alerting is deprecated as of 9.0 and will be removed in the future. Use DeleteContactPoint instead.
 func (c *Client) DeleteAlertNotification(id int64) error {
 	path := fmt.Sprintf("/api/alert-notifications/%d", id)
 
