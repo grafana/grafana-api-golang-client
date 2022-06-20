@@ -8,8 +8,41 @@ import (
 )
 
 const (
+	serviceAccountJSON = `{
+	"id": 8,
+	"name": "newSA",
+	"login": "sa-newsa",
+	"orgId": 1,
+	"isDisabled": false,
+	"role": "",
+	"tokens": 0,
+	"avatarUrl": ""
+}`
+	searchServiceAccountsJSON = `[
+		{
+			"id": 8,
+			"name": "newSA",
+			"login": "sa-newsa",
+			"orgId": 1,
+			"isDisabled": false,
+			"role": "",
+			"tokens": 1,
+			"avatarUrl": "/avatar/0e94f33c929884a5163d953582f27fec"
+		},
+		{
+			"id": 9,
+			"name": "newnewSA",
+			"login": "sa-newnewsa",
+			"orgId": 1,
+			"isDisabled": true,
+			"role": "Admin",
+			"tokens": 2,
+			"avatarUrl": "/avatar/0e29f33c929824a5163d953582e83abe"
+		}
+	]`
 	createServiceAccountTokenJSON = `{"name":"key-name", "key":"mock-api-key"}`   //#nosec
 	deleteServiceAccountTokenJSON = `{"message":"Service account token deleted"}` //#nosec
+	deleteServiceAccountJSON      = `{"message":"service account deleted"}`
 
 	getServiceAccountTokensJSON = `[
 		{
@@ -56,11 +89,70 @@ func TestCreateServiceAccountToken(t *testing.T) {
 	t.Log(pretty.PrettyFormat(res))
 }
 
+func TestCreateServiceAccount(t *testing.T) {
+	server, client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
+	defer server.Close()
+
+	req := CreateServiceAccountRequest{
+		Name: "newSA",
+	}
+
+	res, err := client.CreateServiceAccount(req)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(res))
+}
+
+func TestUpdateServiceAccount(t *testing.T) {
+	server, client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
+	defer server.Close()
+
+	isDisabled := false
+	req := UpdateServiceAccountRequest{
+		Name:       "",
+		Role:       "Admin",
+		IsDisabled: &isDisabled,
+	}
+
+	res, err := client.UpdateServiceAccount(5, req)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(res))
+}
+
+func TestDeleteServiceAccount(t *testing.T) {
+	server, client := gapiTestTools(t, http.StatusOK, deleteServiceAccountJSON)
+	defer server.Close()
+
+	res, err := client.DeleteServiceAccount(int64(1))
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(res))
+}
+
 func TestDeleteServiceAccountToken(t *testing.T) {
 	server, client := gapiTestTools(t, http.StatusOK, deleteServiceAccountTokenJSON)
 	defer server.Close()
 
 	res, err := client.DeleteServiceAccountToken(int64(1), int64(1))
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(pretty.PrettyFormat(res))
+}
+
+func TestGetServiceAccounts(t *testing.T) {
+	server, client := gapiTestTools(t, http.StatusOK, searchServiceAccountsJSON)
+	defer server.Close()
+
+	res, err := client.GetServiceAccounts()
 	if err != nil {
 		t.Error(err)
 	}
