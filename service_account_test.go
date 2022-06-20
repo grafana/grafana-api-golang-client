@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	createServiceAccountTokenJSON = `{"name":"key-name", "key":"mock-api-key"}`
-	deleteServiceAccountTokenJSON = `{"message":"Service account token deleted"}`
+	createServiceAccountTokenJSON = `{"name":"key-name", "key":"mock-api-key"}`   //#nosec
+	deleteServiceAccountTokenJSON = `{"message":"Service account token deleted"}` //#nosec
 
 	getServiceAccountTokensJSON = `[
 		{
@@ -36,7 +36,7 @@ const (
 			"secondsUntilExpiration": 0,
 			"hasExpired": false
 		}
-	]`
+	]`  //#nosec
 )
 
 func TestCreateServiceAccountToken(t *testing.T) {
@@ -60,7 +60,7 @@ func TestDeleteServiceAccountToken(t *testing.T) {
 	server, client := gapiTestTools(t, http.StatusOK, deleteServiceAccountTokenJSON)
 	defer server.Close()
 
-	res, err := client.DeleteServiceAccountToken(int64(1))
+	res, err := client.DeleteServiceAccountToken(int64(1), int64(1))
 	if err != nil {
 		t.Error(err)
 	}
