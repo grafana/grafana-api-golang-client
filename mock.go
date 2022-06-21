@@ -6,6 +6,8 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/grafana/grafana-api-golang-client/goclient"
 )
 
 type mockServer struct {
@@ -25,8 +27,8 @@ func gapiTestTools(t *testing.T, code int, body string) (*mockServer, *Client) {
 	}
 
 	mock.server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(mock.code)
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(mock.code)
 		fmt.Fprint(w, body)
 	}))
 
@@ -43,4 +45,12 @@ func gapiTestTools(t *testing.T, code int, body string) (*mockServer, *Client) {
 		t.Fatal(err)
 	}
 	return mock, client
+}
+
+func getClient(serverURL string) *goclient.APIClient {
+	cfg := goclient.Configuration{
+		BasePath: fmt.Sprintf("%s/api", serverURL),
+	}
+	cfg.HTTPClient = &http.Client{}
+	return goclient.NewAPIClient(&cfg)
 }

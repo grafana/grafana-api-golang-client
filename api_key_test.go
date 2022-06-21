@@ -35,15 +35,18 @@ func getContextWithBasicAuth() context.Context {
 }
 
 func TestCreateAPIKey(t *testing.T) {
-	cfg := goclient.NewConfiguration()
-	client := goclient.NewAPIClient(cfg)
+	mocksrv, _ := gapiTestTools(t, 200, createAPIKeyJSON)
+	defer mocksrv.Close()
 
-	ctx := getContextWithBasicAuth()
+	req := goclient.AddApiKeyCommandModel{
+		Name:          "key-name",
+		Role:          "Viewer",
+		SecondsToLive: 0,
+	}
 
-	_, res, err := client.ApiKeysApi.AddAPIkey(ctx, goclient.AddApiKeyCommandModel{
-		Name: "key-name",
-		Role: "Viewer",
-	})
+	client := getClient(mocksrv.server.URL)
+
+	_, res, err := client.ApiKeysApi.AddAPIkey(context.Background(), req)
 	if err != nil {
 		t.Error(err)
 	}
