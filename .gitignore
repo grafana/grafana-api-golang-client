@@ -26,3 +26,5 @@ _testmain.go
 # vim swap files
 .*.sw?
 .idea
+
+/goclient

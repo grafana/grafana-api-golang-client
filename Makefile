@@ -1,21 +1,20 @@
+include .bingo/Variables.mk
+
 .PHONY: drone, test
 
 GRAFANA_TARGET_VERSION ?= main
-SWAGGER_CODEGEN_CLI_TAG ?= latest
 SWAGGER_SPEC_LOCAL ?= $$(pwd)/../grafana/public/api-merged.json
 
 generate:
-	docker run --rm \
-	--user $$(id -u):$$(id -g) \
-	-v $$(pwd):$$(pwd) \
-	swaggerapi/swagger-codegen-cli:${SWAGGER_CODEGEN_CLI_TAG} generate \
-	-i https://raw.githubusercontent.com/grafana/grafana/${GRAFANA_TARGET_VERSION}/public/api-merged.json \
-	-l go \
-	-o $$(pwd)/goclient \
-	--model-name-suffix=Model \
-	--additional-properties packageName=goclient \
-	-t $$(pwd)/codegen/templates
-	goimports -w -v $$(pwd)/goclient
+	mkdir -p ./goclient
+	$(SWAGGER) generate client \
+	-f https://raw.githubusercontent.com/grafana/grafana/${GRAFANA_TARGET_VERSION}/public/api-merged.json \
+	-t ./goclient \
+	--skip-validation \
+	--with-flatten=verbose \
+	--with-flatten=remove-unused \
+	--additional-initialism=DTO,API,OK \
+	--keep-spec-order
 
 clean:
 	rm -rf $$(pwd)/goclient

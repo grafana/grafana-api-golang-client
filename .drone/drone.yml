@@ -27,6 +27,11 @@ platform:
   arch: amd64
 
 steps:
+- name: generate
+  image: grafana/build-container:1.2.27
+  commands:
+  - make generate
+
 - name: test
   image: grafana/build-container:1.2.27
   commands:
