@@ -12,6 +12,9 @@ type Role struct {
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
 	Global      bool         `json:"global"`
+	Group       string       `json:"group"`
+	DisplayName string       `json:"displayName"`
+	Hidden      bool         `json:"hidden"`
 	Permissions []Permission `json:"permissions,omitempty"`
 }
 

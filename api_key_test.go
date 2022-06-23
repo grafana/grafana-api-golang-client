@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	createAPIKeyJSON = `{"name":"key-name", "key":"mock-api-key"}`
-	deleteAPIKeyJSON = `{"message":"API key deleted"}`
+	createAPIKeyJSON = `{"name":"key-name", "key":"mock-api-key"}` //#nosec
+	deleteAPIKeyJSON = `{"message":"API key deleted"}`             //#nosec
 
 	getAPIKeysJSON = `[
 		{
@@ -24,7 +24,7 @@ const (
 			"role": "Admin",
 			"expiration": "2021-10-30T10:52:03+03:00"
 		}
-	]`
+	]`  //#nosec
 )
 
 func getContextWithBasicAuth() context.Context {

@@ -11,6 +11,8 @@ import (
 
 const (
 	createdDataSourceJSON = `{"id":1,"uid":"myuid0001","message":"Datasource added", "name": "test_datasource"}`
+	getDataSourceJSON     = `{"id":1}`
+	getDataSourcesJSON    = `[{"id":1,"name":"foo","type":"cloudwatch","url":"http://some-url.com","access":"access","isDefault":true}]`
 )
 
 func TestNewDataSource(t *testing.T) {
@@ -277,5 +279,38 @@ func TestNewAzureDataSource(t *testing.T) {
 
 	if *created != int64(1) {
 		t.Error("datasource creation response should return the created datasource ID")
+	}
+}
+
+func TestDataSources(t *testing.T) {
+	server, client := gapiTestTools(t, 200, getDataSourcesJSON)
+	defer server.Close()
+
+	datasources, err := client.DataSources()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(pretty.PrettyFormat(datasources))
+
+	if len(datasources) != 1 {
+		t.Error("Length of returned datasources should be 1")
+	}
+	if datasources[0].ID != 1 || datasources[0].Name != "foo" {
+		t.Error("Not correctly parsing returned datasources.")
+	}
+}
+
+func TestDataSourceIDByName(t *testing.T) {
+	server, client := gapiTestTools(t, 200, getDataSourceJSON)
+	defer server.Close()
+
+	datasourceID, err := client.DataSourceIDByName("foo")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if datasourceID != 1 {
+		t.Error("Not correctly parsing returned datasources.")
 	}
 }
