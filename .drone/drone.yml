@@ -1,50 +1,48 @@
 ---
 kind: pipeline
-type: docker
 name: test-pr
-
 platform:
-  os: linux
   arch: amd64
-
+  os: linux
 steps:
-- name: test
+- commands:
+  - make generate
   image: grafana/build-container:1.2.27
-  commands:
+  name: generate
+- commands:
   - make test
-
+  depends_on:
+  - generate
+  image: grafana/build-container:1.2.27
+  name: test
 trigger:
   event:
   - pull_request
-
+type: docker
 ---
 kind: pipeline
-type: docker
 name: test-master
-
 platform:
-  os: linux
   arch: amd64
-
+  os: linux
 steps:
-- name: generate
-  image: grafana/build-container:1.2.27
-  commands:
+- commands:
   - make generate
-
-- name: test
   image: grafana/build-container:1.2.27
-  commands:
+  name: generate
+- commands:
   - make test
-
+  depends_on:
+  - generate
+  image: grafana/build-container:1.2.27
+  name: test
 trigger:
-  branch:
-  - master
+  branch: master
   event:
   - push
-
+type: docker
 ---
 kind: signature
-hmac: 4b9e92aa0df11523a1df89ec418113152fa135a012967f3c9e11a9fbc27a7dea
+hmac: c7f3f21d16ec45a1faacbc3aa92198a399bd67966aee0acc6f4efde868bbdc19
 
 ...

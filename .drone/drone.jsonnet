@@ -11,10 +11,20 @@ local pipeline(name, trigger) = {
   trigger: trigger,
   steps: [
     {
+      name: 'generate',
+      image: image,
+      commands: [
+        'make generate',
+      ],
+    },
+    {
       name: 'test',
       image: image,
       commands: [
         'make test',
+      ],
+      depends_on: [
+        'generate'
       ],
     },
   ],
