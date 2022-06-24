@@ -15,6 +15,7 @@ generate:
 	--with-flatten=remove-unused \
 	--additional-initialism=DTO,API,OK \
 	--keep-spec-order
+	go get -u ./goclient/...
 
 clean:
 	rm -rf $$(pwd)/goclient
