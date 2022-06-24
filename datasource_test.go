@@ -283,34 +283,42 @@ func TestNewAzureDataSource(t *testing.T) {
 }
 
 func TestDataSources(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDataSourcesJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, getDataSourcesJSON)
+	defer mocksrv.Close()
 
-	datasources, err := client.DataSources()
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+
+	datasources, err := client.Datasources.GetDatasources(&datasources.GetDatasourcesParams{}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(datasources))
 
-	if len(datasources) != 1 {
+	if len(datasources.Payload) != 1 {
 		t.Error("Length of returned datasources should be 1")
 	}
-	if datasources[0].ID != 1 || datasources[0].Name != "foo" {
+	if datasources.Payload[0].ID != 1 || datasources.Payload[0].Name != "foo" {
 		t.Error("Not correctly parsing returned datasources.")
 	}
 }
 
 func TestDataSourceIDByName(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDataSourceJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, getDataSourceJSON)
+	defer mocksrv.Close()
 
-	datasourceID, err := client.DataSourceIDByName("foo")
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+
+	datasourceResp, err := client.Datasources.GetDatasourceIDByName(&datasources.GetDatasourceIDByNameParams{
+		Name: "foo",
+	}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if datasourceID != 1 {
+	if *datasourceResp.Payload.ID != 1 {
 		t.Error("Not correctly parsing returned datasources.")
 	}
 }

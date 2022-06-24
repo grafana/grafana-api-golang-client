@@ -1,11 +1,12 @@
 package gapi
 
 import (
-	"context"
 	"testing"
 
 	"github.com/gobs/pretty"
-	"github.com/grafana/grafana-api-golang-client/goclient"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/api_keys"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -27,30 +28,26 @@ const (
 	]`  //#nosec
 )
 
-func getContextWithBasicAuth() context.Context {
-	return context.WithValue(context.Background(), goclient.ContextBasicAuth, goclient.BasicAuth{
-		UserName: "admin",
-		Password: "admin",
-	})
-}
-
 func TestCreateAPIKey(t *testing.T) {
 	mocksrv, _ := gapiTestTools(t, 200, createAPIKeyJSON)
 	defer mocksrv.Close()
 
-	req := goclient.AddApiKeyCommandModel{
-		Name:          "key-name",
-		Role:          "Viewer",
-		SecondsToLive: 0,
+	params := api_keys.AddAPIkeyParams{
+		Body: &models.AddAPIKeyCommand{
+			Name:          "key-name",
+			Role:          "Viewer",
+			SecondsToLive: 0,
+		},
 	}
+	
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
 
-	client := getClient(mocksrv.server.URL)
-
-	_, res, err := client.ApiKeysApi.AddAPIkey(context.Background(), req)
+	resp, err := client.APIKeys.AddAPIkey(&params, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log(pretty.PrettyFormat(res))
+	t.Log(pretty.PrettyFormat(resp))
 }
 
 func TestDeleteAPIKey(t *testing.T) {
