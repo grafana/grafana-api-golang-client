@@ -1,10 +1,12 @@
 package gapi
 
 import (
-	"net/url"
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/annotations"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -48,130 +50,177 @@ const (
 )
 
 func TestAnnotations(t *testing.T) {
-	server, client := gapiTestTools(t, 200, annotationsJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, annotationsJSON)
+	defer mocksrv.Close()
 
-	params := url.Values{}
-	params.Add("from", "1506676478816")
-	params.Add("to", "1507281278816")
-	params.Add("limit", "100")
+	from := int64(1506676478816)
+	to := int64(1507281278816)
+	limit := int64(100)
 
-	as, err := client.Annotations(params)
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+
+	resp, err := client.Annotations.GetAnnotations(
+		annotations.NewGetAnnotationsParams().
+			WithFrom(&from).
+			WithTo(&to).
+			WithLimit(&limit),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Log(pretty.PrettyFormat(as))
+	t.Log(pretty.PrettyFormat(resp.Payload))
 
-	if as[0].ID != 1124 {
+	if resp.Payload[0].ID != 1124 {
 		t.Error("annotations response should contain annotations with an ID")
 	}
 }
 
 func TestNewAnnotation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, newAnnotationJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, newAnnotationJSON)
+	defer mocksrv.Close()
 
-	a := Annotation{
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+
+	body := models.PostAnnotationsCmd{
 		DashboardID: 123,
 		PanelID:     456,
 		Time:        1507037197339,
-		IsRegion:    true,
-		TimeEnd:     1507180805056,
-		Tags:        []string{"tag1", "tag2"},
-		Text:        "text description",
+		//IsRegion:    true,
+		TimeEnd: 1507180805056,
+		Tags:    []string{"tag1", "tag2"},
+		Text:    "text description",
 	}
-	res, err := client.NewAnnotation(&a)
+	res, err := client.Annotations.CreateAnnotation(
+		annotations.NewCreateAnnotationParams().
+			WithBody(&body),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(res))
 
-	if res != 1 {
+	if *res.Payload.ID != 1 {
 		t.Error("new annotation response should contain the ID of the new annotation")
 	}
 }
 
 func TestUpdateAnnotation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateAnnotationJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, updateAnnotationJSON)
+	defer mocksrv.Close()
 
-	a := Annotation{
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+
+	body := models.UpdateAnnotationsCmd{
 		Text: "new text description",
 	}
-	res, err := client.UpdateAnnotation(1, &a)
+	res, err := client.Annotations.UpdateAnnotation(
+		annotations.NewUpdateAnnotationParams().
+			WithAnnotationID("1").
+			WithBody(&body),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(res))
 
-	if res != "Annotation updated" {
+	if res.Payload.Message != "Annotation updated" {
 		t.Error("update annotation response should contain the correct response message")
 	}
 }
 
 func TestPatchAnnotation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, patchAnnotationJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, patchAnnotationJSON)
+	defer mocksrv.Close()
 
-	a := Annotation{
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+
+	body := models.PatchAnnotationsCmd{
 		Text: "new text description",
 	}
-	res, err := client.PatchAnnotation(1, &a)
+	res, err := client.Annotations.PatchAnnotation(
+		annotations.NewPatchAnnotationParams().
+			WithAnnotationID("1").
+			WithBody(&body),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Log(pretty.PrettyFormat(res))
+	t.Log(pretty.PrettyFormat(res.Payload))
 
-	if res != "Annotation patched" {
+	if res.Payload.Message != "Annotation patched" {
 		t.Error("patch annotation response should contain the correct response message")
 	}
 }
 
 func TestNewGraphiteAnnotation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, newGraphiteAnnotationJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, newGraphiteAnnotationJSON)
+	defer mocksrv.Close()
 
-	a := GraphiteAnnotation{
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+	
+	a := models.PostGraphiteAnnotationsCmd{
 		What: "what",
 		When: 1507180805056,
 		Tags: []string{"tag1", "tag2"},
 		Data: "data",
 	}
-	res, err := client.NewGraphiteAnnotation(&a)
+	res, err := client.Annotations.CreateGraphiteAnnotation(
+		annotations.NewCreateGraphiteAnnotationParams().
+			WithBody(&a),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Log(pretty.PrettyFormat(res))
+	t.Log(pretty.PrettyFormat(res.Payload))
 
-	if res != 1 {
+	if *res.Payload.ID != 1 {
 		t.Error("new annotation response should contain the ID of the new annotation")
 	}
 }
 
 func TestDeleteAnnotation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deleteAnnotationJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, deleteAnnotationJSON)
+	defer mocksrv.Close()
 
-	res, err := client.DeleteAnnotation(1)
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+
+	res, err := client.Annotations.DeleteAnnotation(
+		annotations.NewDeleteAnnotationParams().
+			WithAnnotationID("1"),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Log(pretty.PrettyFormat(res))
+	t.Log(pretty.PrettyFormat(res.Payload))
 
-	if res != "Annotation deleted" {
+	if res.Payload.Message != "Annotation deleted" {
 		t.Error("delete annotation response should contain the correct response message")
 	}
 }
 
+/*
+This endpoint is not supported by Grafana API
 func TestDeleteAnnotationByRegionID(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deleteAnnotationJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, deleteAnnotationJSON)
+	defer mocksrv.Close()
 
 	res, err := client.DeleteAnnotationByRegionID(1)
 	if err != nil {
@@ -184,3 +233,4 @@ func TestDeleteAnnotationByRegionID(t *testing.T) {
 		t.Error("delete annotation by region ID response should contain the correct response message")
 	}
 }
+*/
