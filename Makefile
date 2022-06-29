@@ -1,17 +1,16 @@
 include .bingo/Variables.mk
 
-.PHONY: drone, test
+.PHONY: generate, drone, test
 
 GRAFANA_TARGET_VERSION ?= main
 SWAGGER_SPEC_LOCAL ?= $$(pwd)/../grafana/public/api-merged.json
 
-generate:
+generate: $(SWAGGER)
 	mkdir -p ./goclient
 	$(SWAGGER) generate client \
 	-f https://raw.githubusercontent.com/grafana/grafana/${GRAFANA_TARGET_VERSION}/public/api-merged.json \
 	-t ./goclient \
 	--skip-validation \
-	--with-flatten=verbose \
 	--with-flatten=remove-unused \
 	--additional-initialism=DTO,API,OK \
 	--keep-spec-order
