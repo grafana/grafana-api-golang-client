@@ -2,6 +2,10 @@ package gapi
 
 import (
 	"testing"
+
+	"github.com/grafana/grafana-api-golang-client/goclient/client/access_control"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -41,30 +45,39 @@ const (
 )
 
 func TestNewBuiltInRoleAssignment(t *testing.T) {
-	server, client := gapiTestTools(t, 200, newBuiltInRoleAssignmentResponse)
+	mocksrv, _ := gapiTestTools(t, 200, newBuiltInRoleAssignmentResponse)
 	t.Cleanup(func() {
-		server.Close()
+		mocksrv.Close()
 	})
 
-	br := BuiltInRoleAssignment{
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+
+	br := models.AddBuiltInRoleCommand{
 		Global:      false,
 		RoleUID:     "test:policy",
-		BuiltinRole: "Viewer",
+		BuiltInRole: "Viewer",
 	}
 
-	_, err := client.NewBuiltInRoleAssignment(br)
+	_, err = client.AccessControl.AddBuiltinRole(
+		access_control.NewAddBuiltinRoleParams().WithBody(&br),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestGetBuiltInRoleAssignments(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getBuiltInRoleAssignmentsResponse)
+	mocksrv, _ := gapiTestTools(t, 200, getBuiltInRoleAssignmentsResponse)
 	t.Cleanup(func() {
-		server.Close()
+		mocksrv.Close()
 	})
 
-	resp, err := client.GetBuiltInRoleAssignments()
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+
+	resp, err := client.AccessControl.ListBuiltinRoles(access_control.NewListBuiltinRolesParams(), nil)
 
 	if err != nil {
 		t.Error(err)
@@ -91,23 +104,29 @@ func TestGetBuiltInRoleAssignments(t *testing.T) {
 		},
 	}
 
-	if len(expected["Viewer"]) != len(resp["Viewer"]) || len(expected["Grafana Admin"]) != len(resp["Grafana Admin"]) {
+	if len(expected["Viewer"]) != len(resp.Payload["Viewer"]) || len(expected["Grafana Admin"]) != len(resp.Payload["Grafana Admin"]) {
 		t.Error("Unexpected built-in role assignments.")
 	}
 }
 
 func TestDeleteBuiltInRoleAssignment(t *testing.T) {
-	server, client := gapiTestTools(t, 200, removeBuiltInRoleAssignmentResponse)
+	mocksrv, _ := gapiTestTools(t, 200, removeBuiltInRoleAssignmentResponse)
 	t.Cleanup(func() {
-		server.Close()
+		mocksrv.Close()
 	})
 
-	br := BuiltInRoleAssignment{
-		Global:      false,
-		RoleUID:     "test:policy",
-		BuiltinRole: "Viewer",
-	}
-	err := client.DeleteBuiltInRoleAssignment(br)
+	client, err := GetClient(mocksrv.server.URL)
+	require.NoError(t, err)
+
+	global := false
+
+	_, err = client.AccessControl.RemoveBuiltinRole(
+		access_control.NewRemoveBuiltinRoleParams().
+			WithRoleUID("test:policy").
+			WithBuiltinRole("Viewer").
+			WithGlobal(&global),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
