@@ -39,6 +39,13 @@ type ServiceAccountDTO struct {
 	AvatarURL  string `json:"avatarUrl"`
 }
 
+type RetrieveServiceAccountResponse struct {
+	TotalCount      int64               `json:"totalCount"`
+	ServiceAccounts []ServiceAccountDTO `json:"serviceAccounts"`
+	Page            int64               `json:"page"`
+	PerPage         int64               `json:"perPage"`
+}
+
 // CreateServiceAccountTokenResponse represents the response
 // from the Grafana API when creating a service account token.
 type CreateServiceAccountTokenResponse struct {
@@ -108,10 +115,13 @@ func (c *Client) UpdateServiceAccount(serviceAccountID int64, request UpdateServ
 
 // GetServiceAccounts retrieves a list of all service accounts for the organization.
 func (c *Client) GetServiceAccounts() ([]ServiceAccountDTO, error) {
-	response := make([]ServiceAccountDTO, 0)
+	response := RetrieveServiceAccountResponse{}
 
-	err := c.request(http.MethodGet, "/api/serviceaccounts/search", nil, nil, &response)
-	return response, err
+	if err := c.request(http.MethodGet, "/api/serviceaccounts/search", nil, nil, &response); err != nil {
+		return nil, err
+	}
+
+	return response.ServiceAccounts, nil
 }
 
 // GetServiceAccountTokens retrieves a list of all service account tokens for a specific service account.

@@ -18,7 +18,9 @@ const (
 	"tokens": 0,
 	"avatarUrl": ""
 }`
-	searchServiceAccountsJSON = `[
+	searchServiceAccountsJSON = `{
+	"totalCount": 2,
+	"serviceAccounts": [
 		{
 			"id": 8,
 			"name": "newSA",
@@ -39,7 +41,10 @@ const (
 			"tokens": 2,
 			"avatarUrl": "/avatar/0e29f33c929824a5163d953582e83abe"
 		}
-	]`
+	],
+	"page": 1,
+	"perPage": 1000
+}`
 	createServiceAccountTokenJSON = `{"name":"key-name", "key":"mock-api-key"}`   //#nosec
 	deleteServiceAccountTokenJSON = `{"message":"Service account token deleted"}` //#nosec
 	deleteServiceAccountJSON      = `{"message":"service account deleted"}`
