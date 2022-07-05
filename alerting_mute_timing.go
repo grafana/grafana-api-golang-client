@@ -22,31 +22,17 @@ type TimeRange struct {
 	EndMinute   int
 }
 
-// A WeekdayRange is an inclusive range between [0, 6] where 0 = Sunday.
-type WeekdayRange struct {
-	InclusiveRange
-}
+// A WeekdayRange is an inclusive range of weekdays, e.g. "monday" or "tuesday:thursday".
+type WeekdayRange string
 
-// A DayOfMonthRange is an inclusive range that may have negative Beginning/End values that represent distance from the End of the month Beginning at -1.
-type DayOfMonthRange struct {
-	InclusiveRange
-}
+// A DayOfMonthRange is an inclusive range of days, 1-31, within a month, e.g. "1" or "14:16". Negative values can be used to represent days counting from the end of a month, e.g. "-1".
+type DayOfMonthRange string
 
-// A MonthRange is an inclusive range between [1, 12] where 1 = January.
-type MonthRange struct {
-	InclusiveRange
-}
+// A MonthRange is an inclusive range of months, either numerical or full calendar month, e.g "1:3", "december", or "may:august".
+type MonthRange string
 
-// A YearRange is a positive inclusive range.
-type YearRange struct {
-	InclusiveRange
-}
-
-// InclusiveRange is used to hold the Beginning and End values of many time interval components.
-type InclusiveRange struct {
-	Begin int
-	End   int
-}
+// A YearRange is a positive inclusive range of years, e.g. "2030" or "2021:2022".
+type YearRange string
 
 func (c *Client) MuteTimings() ([]MuteTiming, error) {
 	mts := make([]MuteTiming, 0)
