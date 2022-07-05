@@ -1,7 +1,6 @@
 package gapi
 
 import (
-	"net/url"
 	"testing"
 
 	"github.com/gobs/pretty"
@@ -9,12 +8,8 @@ import (
 
 func TestMuteTimings(t *testing.T) {
 	t.Run("get mute timings succeeds", func(t *testing.T) {
-		/*server, client := gapiTestTools(t, 200, getMessageTemplatesJSON)
-		defer server.Close()*/
-		cfg := Config{
-			BasicAuth: url.UserPassword("admin", "admin"),
-		}
-		client, _ := New("http://localhost:3000", cfg)
+		server, client := gapiTestTools(t, 200, getMuteTimingsJSON)
+		defer server.Close()
 
 		mts, err := client.MuteTimings()
 
@@ -30,6 +25,37 @@ func TestMuteTimings(t *testing.T) {
 		}
 		if mts[1].Name != "another timing" {
 			t.Errorf("incorrect name - expected %s on element %d, got %#v", "another timing", 1, mts)
+		}
+	})
+
+	t.Run("get mute timing succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 200, muteTimingJSON)
+		defer server.Close()
+
+		mt, err := client.MuteTiming("timing one")
+
+		if err != nil {
+			t.Error(err)
+		}
+		t.Log(pretty.PrettyFormat(mt))
+		if mt.Name != "timing one" {
+			t.Errorf("incorrect name - expected %s, got %#v", "timing one", mt)
+		}
+	})
+
+	t.Run("get non-existent mute timing fails", func(t *testing.T) {
+		server, client := gapiTestTools(t, 404, muteTimingJSON)
+		defer server.Close()
+		/*cfg := Config{
+			BasicAuth: url.UserPassword("admin", "admin"),
+		}
+		client, _ := New("http://localhost:3000", cfg)*/
+
+		mt, err := client.MuteTiming("does not exist")
+
+		if err == nil {
+			t.Errorf("expected error but got nil")
+			t.Log(pretty.PrettyFormat(mt))
 		}
 	})
 }
@@ -69,3 +95,24 @@ const getMuteTimingsJSON = `
 		]
 	}
 ]`
+
+const muteTimingJSON = `
+{
+	"name": "timing one",
+	"time_intervals": [
+		{
+			"times": [
+				{
+					"start_time": "13:13",
+					"end_time": "15:15"
+				}
+			],
+			"weekdays": [
+				"monday:wednesday"
+			],
+			"months": [
+				"1"
+			]
+		}
+	]
+}`

@@ -1,5 +1,7 @@
 package gapi
 
+import "fmt"
+
 // MuteTiming represents a Grafana Alerting mute timing.
 type MuteTiming struct {
 	Name          string         `json:"name"`
@@ -34,6 +36,7 @@ type MonthRange string
 // A YearRange is a positive inclusive range of years, e.g. "2030" or "2021:2022".
 type YearRange string
 
+// MuteTimings fetches all mute timings.
 func (c *Client) MuteTimings() ([]MuteTiming, error) {
 	mts := make([]MuteTiming, 0)
 	err := c.request("GET", "/api/v1/provisioning/mute-timings", nil, nil, &mts)
@@ -41,4 +44,12 @@ func (c *Client) MuteTimings() ([]MuteTiming, error) {
 		return nil, err
 	}
 	return mts, nil
+}
+
+// MuteTiming fetches a single mute timing, identified by its name.
+func (c *Client) MuteTiming(name string) (MuteTiming, error) {
+	mt := MuteTiming{}
+	uri := fmt.Sprintf("/api/v1/provisioning/mute-timings/%s", name)
+	err := c.request("GET", uri, nil, nil, &mt)
+	return mt, err
 }
