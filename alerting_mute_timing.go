@@ -1,6 +1,10 @@
 package gapi
 
-import "fmt"
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+)
 
 // MuteTiming represents a Grafana Alerting mute timing.
 type MuteTiming struct {
@@ -52,4 +56,31 @@ func (c *Client) MuteTiming(name string) (MuteTiming, error) {
 	uri := fmt.Sprintf("/api/v1/provisioning/mute-timings/%s", name)
 	err := c.request("GET", uri, nil, nil, &mt)
 	return mt, err
+}
+
+// NewMuteTiming creates a new mute timing.
+func (c *Client) NewMuteTiming(mt *MuteTiming) error {
+	req, err := json.Marshal(mt)
+	if err != nil {
+		return err
+	}
+
+	return c.request("POST", "/api/v1/provisioning/mute-timings", nil, bytes.NewBuffer(req), nil)
+}
+
+// UpdateMuteTiming updates a mute timing.
+func (c *Client) UpdateMuteTiming(mt *MuteTiming) error {
+	uri := fmt.Sprintf("/api/v1/provisioning/mute-timings/%s", mt.Name)
+	req, err := json.Marshal(mt)
+	if err != nil {
+		return err
+	}
+
+	return c.request("PUT", uri, nil, bytes.NewBuffer(req), nil)
+}
+
+// DeleteMutetiming deletes a mute timing.
+func (c *Client) DeleteMuteTiming(name string) error {
+	uri := fmt.Sprintf("/api/v1/provisioning/mute-timings/%s", name)
+	return c.request("DELETE", uri, nil, nil, nil)
 }

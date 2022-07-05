@@ -46,10 +46,6 @@ func TestMuteTimings(t *testing.T) {
 	t.Run("get non-existent mute timing fails", func(t *testing.T) {
 		server, client := gapiTestTools(t, 404, muteTimingJSON)
 		defer server.Close()
-		/*cfg := Config{
-			BasicAuth: url.UserPassword("admin", "admin"),
-		}
-		client, _ := New("http://localhost:3000", cfg)*/
 
 		mt, err := client.MuteTiming("does not exist")
 
@@ -58,6 +54,55 @@ func TestMuteTimings(t *testing.T) {
 			t.Log(pretty.PrettyFormat(mt))
 		}
 	})
+
+	t.Run("create mute timing succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 201, muteTimingJSON)
+		defer server.Close()
+		mt := createMuteTiming()
+
+		err := client.NewMuteTiming(&mt)
+
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
+	t.Run("update mute timing succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 200, muteTimingJSON)
+		defer server.Close()
+		mt := createMuteTiming()
+		mt.TimeIntervals[0].Weekdays = []WeekdayRange{"tuesday", "thursday"}
+
+		err := client.UpdateMuteTiming(&mt)
+
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
+	t.Run("delete mute timing succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 204, muteTimingJSON)
+		defer server.Close()
+
+		err := client.DeleteMuteTiming("timing two")
+
+		if err != nil {
+			t.Error(err)
+		}
+	})
+}
+
+func createMuteTiming() MuteTiming {
+	return MuteTiming{
+		Name: "timing two",
+		TimeIntervals: []TimeInterval{
+			{
+				Weekdays: []WeekdayRange{"monday", "wednesday"},
+				Months:   []MonthRange{"1:3", "4"},
+				Years:    []YearRange{"2022", "2023"},
+			},
+		},
+	}
 }
 
 const getMuteTimingsJSON = `
