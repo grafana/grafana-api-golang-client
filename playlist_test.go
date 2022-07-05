@@ -45,7 +45,7 @@ func TestPlaylistCreateAndUpdate(t *testing.T) {
 		Name:     "my playlist",
 		Interval: "5m",
 		Items: []PlaylistItem{
-			PlaylistItem{},
+			{},
 		},
 	}
 
