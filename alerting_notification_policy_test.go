@@ -10,10 +10,6 @@ func TestNotificationPolicies(t *testing.T) {
 	t.Run("get policy tree succeeds", func(t *testing.T) {
 		server, client := gapiTestTools(t, 200, notificationPolicyJSON)
 		defer server.Close()
-		/*cfg := Config{
-			BasicAuth: url.UserPassword("admin", "admin"),
-		}
-		client, _ := New("http://localhost:3000", cfg)*/
 
 		np, err := client.NotificationPolicy()
 
@@ -28,6 +24,52 @@ func TestNotificationPolicies(t *testing.T) {
 			t.Errorf("wrong number of routes returned, got %#v", np)
 		}
 	})
+
+	t.Run("set policy tree succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 202, `{"message":"created"}`)
+		defer server.Close()
+		np := createNotificationPolicy()
+
+		err := client.SetNotificationPolicy(&np)
+
+		if err != nil {
+			t.Error(err)
+		}
+	})
+}
+
+func createNotificationPolicy() NotificationPolicy {
+	return NotificationPolicy{
+		Receiver: "grafana-default-email",
+		GroupBy:  []string{"asdfasdf", "alertname"},
+		Routes: []SpecificPolicy{
+			{
+				Receiver: "grafana-default-email",
+				ObjectMatchers: Matchers{
+					{
+						Type:  MatchNotEqual,
+						Name:  "abc",
+						Value: "def",
+					},
+				},
+				Continue: true,
+			},
+			{
+				Receiver: "grafana-default-email",
+				ObjectMatchers: Matchers{
+					{
+						Type:  MatchRegexp,
+						Name:  "jkl",
+						Value: "something.*",
+					},
+				},
+				Continue: false,
+			},
+		},
+		GroupWait:      "10s",
+		GroupInterval:  "5m",
+		RepeatInterval: "4h",
+	}
 }
 
 const notificationPolicyJSON = `

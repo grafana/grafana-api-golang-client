@@ -1,9 +1,9 @@
 package gapi
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"regexp"
 )
 
 // Represents a notification routing tree in Grafana Alerting.
@@ -36,7 +36,6 @@ type Matcher struct {
 	Type  MatchType
 	Name  string
 	Value string
-	re    *regexp.Regexp
 }
 
 type MatchType int
@@ -87,13 +86,6 @@ func (m *Matchers) UnmarshalJSON(data []byte) error {
 			Name:  rawMatcher[0],
 			Value: rawMatcher[2],
 		}
-		if matchType == MatchRegexp || matchType == MatchNotRegexp {
-			re, err := regexp.Compile("^(?:" + rawMatcher[2] + ")$")
-			if err != nil {
-				return err
-			}
-			matcher.re = re
-		}
 		*m = append(*m, matcher)
 	}
 	return nil
@@ -111,8 +103,18 @@ func (m Matchers) MarshalJSON() ([]byte, error) {
 	return json.Marshal(result)
 }
 
+// NotificationPolicy fetches the notification policy tree.
 func (c *Client) NotificationPolicy() (NotificationPolicy, error) {
 	np := NotificationPolicy{}
 	err := c.request("GET", "/api/v1/provisioning/policies", nil, nil, &np)
 	return np, err
+}
+
+// SetNotificationPolicy sets the notification policy tree.
+func (c *Client) SetNotificationPolicy(np *NotificationPolicy) error {
+	req, err := json.Marshal(np)
+	if err != nil {
+		return err
+	}
+	return c.request("PUT", "/api/v1/provisioning/policies", nil, bytes.NewBuffer(req), nil)
 }
