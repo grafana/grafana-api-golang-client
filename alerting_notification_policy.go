@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
-	"time"
 )
 
 // Represents a notification routing tree in Grafana Alerting.
@@ -12,9 +11,9 @@ type NotificationPolicy struct {
 	Receiver       string           `json:"receiver,omitempty"`
 	GroupBy        []string         `json:"group_by,omitempty"`
 	Routes         []SpecificPolicy `json:"routes,omitempty"`
-	GroupWait      time.Duration    `json:"group_wait,omitempty"`
-	GroupInterval  time.Duration    `json:"group_interval,omitempty"`
-	RepeatInterval time.Duration    `json:"repeat_interval,omitempty"`
+	GroupWait      string           `json:"group_wait,omitempty"`
+	GroupInterval  string           `json:"group_interval,omitempty"`
+	RepeatInterval string           `json:"repeat_interval,omitempty"`
 	Provenance     string           `json:"provenance,omitempty"`
 }
 
@@ -26,9 +25,9 @@ type SpecificPolicy struct {
 	MuteTimeIntervals []string         `json:"mute_time_intervals,omitempty"`
 	Continue          bool             `json:"continue"`
 	Routes            []SpecificPolicy `json:"routes,omitempty"`
-	GroupWait         time.Duration    `json:"group_wait,omitempty"`
-	GroupInterval     time.Duration    `json:"group_interval,omitempty"`
-	RepeatInterval    time.Duration    `json:"repeat_interval,omitempty"`
+	GroupWait         string           `json:"group_wait,omitempty"`
+	GroupInterval     string           `json:"group_interval,omitempty"`
+	RepeatInterval    string           `json:"repeat_interval,omitempty"`
 }
 
 type Matchers []Matcher
@@ -110,4 +109,10 @@ func (m Matchers) MarshalJSON() ([]byte, error) {
 		result[i] = [3]string{matcher.Name, matcher.Type.String(), matcher.Value}
 	}
 	return json.Marshal(result)
+}
+
+func (c *Client) NotificationPolicy() (NotificationPolicy, error) {
+	np := NotificationPolicy{}
+	err := c.request("GET", "/api/v1/provisioning/policies", nil, nil, &np)
+	return np, err
 }
