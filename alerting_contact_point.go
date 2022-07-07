@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 // ContactPoint represents a Grafana Alerting contact point.
@@ -20,6 +21,18 @@ type ContactPoint struct {
 func (c *Client) ContactPoints() ([]ContactPoint, error) {
 	ps := make([]ContactPoint, 0)
 	err := c.request("GET", "/api/v1/provisioning/contact-points", nil, nil, &ps)
+	if err != nil {
+		return nil, err
+	}
+	return ps, nil
+}
+
+// ContactPointsByName fetches contact points with the given name.
+func (c *Client) ContactPointsByName(name string) ([]ContactPoint, error) {
+	ps := make([]ContactPoint, 0)
+	params := url.Values{}
+	params.Add("name", name)
+	err := c.request("GET", "/api/v1/provisioning/contact-points", params, nil, &ps)
 	if err != nil {
 		return nil, err
 	}
