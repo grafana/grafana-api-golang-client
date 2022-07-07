@@ -19,14 +19,14 @@ type CreateServiceAccountTokenRequest struct {
 type CreateServiceAccountRequest struct {
 	Name       string `json:"name"`
 	Role       string `json:"role,omitempty"`
-	IsDisabled bool   `json:"isDisabled,omitempty"`
+	IsDisabled *bool  `json:"isDisabled,omitempty"`
 }
 
 // UpdateServiceAccountRequest is the request body for modifying a service account.
 type UpdateServiceAccountRequest struct {
 	Name       string `json:"name,omitempty"`
 	Role       string `json:"role,omitempty"`
-	IsDisabled bool   `json:"isDisabled,omitempty"`
+	IsDisabled *bool  `json:"isDisabled,omitempty"`
 }
 
 // ServiceAccountDTO represents a Grafana service account.
