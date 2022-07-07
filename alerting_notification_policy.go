@@ -118,3 +118,7 @@ func (c *Client) SetNotificationPolicy(np *NotificationPolicy) error {
 	}
 	return c.request("PUT", "/api/v1/provisioning/policies", nil, bytes.NewBuffer(req), nil)
 }
+
+func (c *Client) ResetNotificationPolicy() error {
+	return c.request("DELETE", "/api/v1/provisioning/policies", nil, nil, nil)
+}

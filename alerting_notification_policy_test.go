@@ -36,6 +36,17 @@ func TestNotificationPolicies(t *testing.T) {
 			t.Error(err)
 		}
 	})
+
+	t.Run("reset policy tree succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 200, notificationPolicyJSON)
+		defer server.Close()
+
+		err := client.ResetNotificationPolicy()
+
+		if err != nil {
+			t.Error(err)
+		}
+	})
 }
 
 func createNotificationPolicy() NotificationPolicy {
