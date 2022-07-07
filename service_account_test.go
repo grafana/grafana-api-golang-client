@@ -98,8 +98,11 @@ func TestCreateServiceAccount(t *testing.T) {
 	server, client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
 	defer server.Close()
 
+	isDisabled := true
 	req := CreateServiceAccountRequest{
-		Name: "newSA",
+		Name:       "newSA",
+		Role:       "Admin",
+		IsDisabled: &isDisabled,
 	}
 
 	res, err := client.CreateServiceAccount(req)
