@@ -74,7 +74,7 @@ const (
 			"secondsUntilExpiration": 0,
 			"hasExpired": false
 		}
-	]`  //#nosec
+	]` //#nosec
 )
 
 func TestCreateServiceAccountToken(t *testing.T) {
@@ -114,11 +114,10 @@ func TestUpdateServiceAccount(t *testing.T) {
 	server, client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
 	defer server.Close()
 
-	isDisabled := false
 	req := UpdateServiceAccountRequest{
 		Name:       "",
 		Role:       "Admin",
-		IsDisabled: &isDisabled,
+		IsDisabled: false,
 	}
 
 	res, err := client.UpdateServiceAccount(5, req)
