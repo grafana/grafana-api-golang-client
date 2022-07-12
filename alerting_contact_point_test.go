@@ -18,13 +18,31 @@ func TestContactPoints(t *testing.T) {
 		}
 		t.Log(pretty.PrettyFormat(ps))
 		if len(ps) != 2 {
-			t.Errorf("wrong number of contact points returned, got %#v", ps)
+			t.Errorf("wrong number of contact points returned, got %d", len(ps))
 		}
 		if ps[0].UID != "" {
-			t.Errorf("incorrect UID - expected %s on element %d, got %#v", "", 0, ps)
+			t.Errorf("incorrect UID - expected %s on element %d, got %s", "", 0, ps[0].UID)
 		}
 		if ps[1].UID != "rc5r0bjnz" {
-			t.Errorf("incorrect UID - expected %s on element %d, got %#v", "rc5r0bjnz", 0, ps)
+			t.Errorf("incorrect UID - expected %s on element %d, got %s", "rc5r0bjnz", 1, ps[1].UID)
+		}
+	})
+
+	t.Run("get contact points by name succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 200, getContactPointsQueryJSON)
+		defer server.Close()
+
+		ps, err := client.ContactPointsByName("slack-receiver-1")
+
+		if err != nil {
+			t.Error(err)
+		}
+		t.Log(pretty.PrettyFormat(ps))
+		if len(ps) != 1 {
+			t.Errorf("wrong number of contact points returned, got %d", len(ps))
+		}
+		if ps[0].UID != "rc5r0bjnz" {
+			t.Errorf("incorrect UID - expected %s on element %d, got %s", "rc5r0bjnz", 0, ps[0].UID)
 		}
 	})
 
@@ -39,7 +57,7 @@ func TestContactPoints(t *testing.T) {
 		}
 		t.Log(pretty.PrettyFormat(p))
 		if p.UID != "rc5r0bjnz" {
-			t.Errorf("incorrect UID - expected %s got %#v", "rc5r0bjnz", p)
+			t.Errorf("incorrect UID - expected %s got %s", "rc5r0bjnz", p.UID)
 		}
 	})
 
@@ -119,6 +137,21 @@ const getContactPointsJSON = `
 			"addresses": "<example@email.com>"
 		}
 	},
+	{
+		"uid": "rc5r0bjnz",
+		"name": "slack-receiver-1",
+		"type": "slack",
+		"disableResolveMessage": false,
+		"settings": {
+			"recipient": "@foo",
+			"token": "[REDACTED]",
+			"url": "[REDACTED]"
+		}
+	}
+]`
+
+const getContactPointsQueryJSON = `
+[
 	{
 		"uid": "rc5r0bjnz",
 		"name": "slack-receiver-1",
