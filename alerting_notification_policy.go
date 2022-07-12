@@ -7,7 +7,7 @@ import (
 )
 
 // Represents a notification routing tree in Grafana Alerting.
-type NotificationPolicy struct {
+type NotificationPolicyTree struct {
 	Receiver       string           `json:"receiver,omitempty"`
 	GroupBy        []string         `json:"group_by,omitempty"`
 	Routes         []SpecificPolicy `json:"routes,omitempty"`
@@ -104,17 +104,21 @@ func (m Matchers) MarshalJSON() ([]byte, error) {
 }
 
 // NotificationPolicy fetches the notification policy tree.
-func (c *Client) NotificationPolicy() (NotificationPolicy, error) {
-	np := NotificationPolicy{}
+func (c *Client) NotificationPolicyTree() (NotificationPolicyTree, error) {
+	np := NotificationPolicyTree{}
 	err := c.request("GET", "/api/v1/provisioning/policies", nil, nil, &np)
 	return np, err
 }
 
 // SetNotificationPolicy sets the notification policy tree.
-func (c *Client) SetNotificationPolicy(np *NotificationPolicy) error {
+func (c *Client) SetNotificationPolicyTree(np *NotificationPolicyTree) error {
 	req, err := json.Marshal(np)
 	if err != nil {
 		return err
 	}
 	return c.request("PUT", "/api/v1/provisioning/policies", nil, bytes.NewBuffer(req), nil)
+}
+
+func (c *Client) ResetNotificationPolicyTree() error {
+	return c.request("DELETE", "/api/v1/provisioning/policies", nil, nil, nil)
 }
