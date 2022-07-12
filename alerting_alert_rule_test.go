@@ -18,7 +18,7 @@ func TestAlertRules(t *testing.T) {
 			t.Error(err)
 		}
 		if alertRule.UID != "123abcd" {
-			t.Errorf("incorrect UID - expected %s got %#v", "123abcd", alertRule.UID)
+			t.Errorf("incorrect UID - expected %s got %s", "123abcd", alertRule.UID)
 		}
 	})
 
@@ -33,13 +33,13 @@ func TestAlertRules(t *testing.T) {
 		}
 		t.Log(pretty.PrettyFormat(group))
 		if group.Title != "test" {
-			t.Errorf("incorrect title - expected %s got %#v", "test", group)
+			t.Errorf("incorrect title - expected %s got %s", "test", group.Title)
 		}
 		if group.FolderUID != "d8-gk06nz" {
-			t.Errorf("incorrect folderUID - expected %s got %#v", "d8-gk06nz", group)
+			t.Errorf("incorrect folderUID - expected %s got %s", "d8-gk06nz", group.FolderUID)
 		}
 		if len(group.Rules) != 1 {
-			t.Errorf("wrong number of rules, got %#v", group)
+			t.Errorf("wrong number of rules, got %d", len(group.Rules))
 		}
 	})
 
