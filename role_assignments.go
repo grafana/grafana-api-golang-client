@@ -8,13 +8,13 @@ type RoleAssignments struct {
 }
 
 type UserRoleAssignment struct {
-	ID     int64 `json:"id,omitempty"`
-	Global bool  `json:"global"`
+	ID     int  `json:"id,omitempty"`
+	Global bool `json:"global"`
 }
 
-func (c *Client) GetRoleAssignments(uid string) (*[]RoleAssignments, error) {
+func (c *Client) GetRoleAssignments(uid string) (*RoleAssignments, error) {
 	// implement me
-	return &[]RoleAssignments{}, nil
+	return &RoleAssignments{}, nil
 }
 
 func (c *Client) UpdateRoleAssignments(ra RoleAssignments) error {
