@@ -18,7 +18,28 @@ func TestAlertRules(t *testing.T) {
 			t.Error(err)
 		}
 		if alertRule.UID != "123abcd" {
-			t.Errorf("incorrect UID - expected %s got %#v", "123abcd", alertRule.UID)
+			t.Errorf("incorrect UID - expected %s got %s", "123abcd", alertRule.UID)
+		}
+	})
+
+	t.Run("get alert rule group succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 200, getAlertRuleGroupJSON)
+		defer server.Close()
+
+		group, err := client.AlertRuleGroup("d8-gk06nz", "test")
+
+		if err != nil {
+			t.Error(err)
+		}
+		t.Log(pretty.PrettyFormat(group))
+		if group.Title != "test" {
+			t.Errorf("incorrect title - expected %s got %s", "test", group.Title)
+		}
+		if group.FolderUID != "d8-gk06nz" {
+			t.Errorf("incorrect folderUID - expected %s got %s", "d8-gk06nz", group.FolderUID)
+		}
+		if len(group.Rules) != 1 {
+			t.Errorf("wrong number of rules, got %d", len(group.Rules))
 		}
 	})
 
@@ -128,3 +149,92 @@ const getAlertRuleJSON = `
 	"for": 0
 }
 `
+
+const getAlertRuleGroupJSON = `
+{
+	"title": "test",
+	"folderUid": "d8-gk06nz",
+	"interval": 60,
+	"rules": [
+		{
+			"ID": 1,
+			"OrgID": 1,
+			"Title": "abc",
+			"Condition": "B",
+			"Data": [
+				{
+					"refId": "A",
+					"queryType": "",
+					"relativeTimeRange": {
+						"from": 600,
+						"to": 0
+					},
+					"datasourceUid": "PD8C576611E62080A",
+					"model": {
+						"hide": false,
+						"intervalMs": 1000,
+						"maxDataPoints": 43200,
+						"refId": "A"
+					}
+				},
+				{
+					"refId": "B",
+					"queryType": "",
+					"relativeTimeRange": {
+						"from": 0,
+						"to": 0
+					},
+					"datasourceUid": "-100",
+					"model": {
+						"conditions": [
+							{
+								"evaluator": {
+									"params": [
+										3
+									],
+									"type": "gt"
+								},
+								"operator": {
+									"type": "and"
+								},
+								"query": {
+									"params": [
+										"A"
+									]
+								},
+								"reducer": {
+									"params": [],
+									"type": "last"
+								},
+								"type": "query"
+							}
+						],
+						"datasource": {
+							"type": "__expr__",
+							"uid": "-100"
+						},
+						"hide": false,
+						"intervalMs": 1000,
+						"maxDataPoints": 43200,
+						"refId": "B",
+						"type": "classic_conditions"
+					}
+				}
+			],
+			"Updated": "2022-07-07T16:23:56-05:00",
+			"IntervalSeconds": 60,
+			"Version": 1,
+			"UID": "hsXgz0enz",
+			"NamespaceUID": "d8-gk06nz",
+			"DashboardUID": null,
+			"PanelID": null,
+			"RuleGroup": "test",
+			"RuleGroupIndex": 1,
+			"NoDataState": "NoData",
+			"ExecErrState": "Alerting",
+			"For": 300000000000,
+			"Annotations": {},
+			"Labels": {}
+		}
+	]
+}`
