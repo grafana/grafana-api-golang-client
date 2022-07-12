@@ -49,8 +49,8 @@ func TestNotificationPolicies(t *testing.T) {
 	})
 }
 
-func createNotificationPolicy() NotificationPolicy {
-	return NotificationPolicy{
+func createNotificationPolicy() NotificationPolicyTree {
+	return NotificationPolicyTree{
 		Receiver: "grafana-default-email",
 		GroupBy:  []string{"asdfasdf", "alertname"},
 		Routes: []SpecificPolicy{
