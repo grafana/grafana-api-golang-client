@@ -11,7 +11,7 @@ func TestNotificationPolicies(t *testing.T) {
 		server, client := gapiTestTools(t, 200, notificationPolicyJSON)
 		defer server.Close()
 
-		np, err := client.NotificationPolicy()
+		np, err := client.NotificationPolicyTree()
 
 		if err != nil {
 			t.Error(err)
@@ -30,7 +30,7 @@ func TestNotificationPolicies(t *testing.T) {
 		defer server.Close()
 		np := createNotificationPolicy()
 
-		err := client.SetNotificationPolicy(&np)
+		err := client.SetNotificationPolicyTree(&np)
 
 		if err != nil {
 			t.Error(err)
@@ -41,7 +41,7 @@ func TestNotificationPolicies(t *testing.T) {
 		server, client := gapiTestTools(t, 200, notificationPolicyJSON)
 		defer server.Close()
 
-		err := client.ResetNotificationPolicy()
+		err := client.ResetNotificationPolicyTree()
 
 		if err != nil {
 			t.Error(err)

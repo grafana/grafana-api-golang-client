@@ -104,14 +104,14 @@ func (m Matchers) MarshalJSON() ([]byte, error) {
 }
 
 // NotificationPolicy fetches the notification policy tree.
-func (c *Client) NotificationPolicy() (NotificationPolicy, error) {
+func (c *Client) NotificationPolicyTree() (NotificationPolicy, error) {
 	np := NotificationPolicy{}
 	err := c.request("GET", "/api/v1/provisioning/policies", nil, nil, &np)
 	return np, err
 }
 
 // SetNotificationPolicy sets the notification policy tree.
-func (c *Client) SetNotificationPolicy(np *NotificationPolicy) error {
+func (c *Client) SetNotificationPolicyTree(np *NotificationPolicy) error {
 	req, err := json.Marshal(np)
 	if err != nil {
 		return err
@@ -119,6 +119,6 @@ func (c *Client) SetNotificationPolicy(np *NotificationPolicy) error {
 	return c.request("PUT", "/api/v1/provisioning/policies", nil, bytes.NewBuffer(req), nil)
 }
 
-func (c *Client) ResetNotificationPolicy() error {
+func (c *Client) ResetNotificationPolicyTree() error {
 	return c.request("DELETE", "/api/v1/provisioning/policies", nil, nil, nil)
 }
