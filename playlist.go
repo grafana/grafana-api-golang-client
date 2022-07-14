@@ -23,12 +23,13 @@ type Playlist struct {
 	Items    []PlaylistItem `json:"items"`
 }
 
-func (p *Playlist) IDorUID() string {
-	if p.ID > 0 {
-		return fmt.Sprintf("%d", p.ID)
+// Grafana 9.0+ returns the ID and the UID but uses the UID in the API calls.
+// Grafana <9 only returns the ID.
+func (p *Playlist) QueryID() string {
+	if p.UID != "" {
+		return p.UID
 	}
-
-	return p.UID
+	return fmt.Sprintf("%d", p.ID)
 }
 
 // Playlist fetches and returns a Grafana playlist.
@@ -57,12 +58,12 @@ func (c *Client) NewPlaylist(playlist Playlist) (string, error) {
 		return "", err
 	}
 
-	return result.IDorUID(), nil
+	return result.QueryID(), nil
 }
 
 // UpdatePlaylist updates a Grafana playlist.
 func (c *Client) UpdatePlaylist(playlist Playlist) error {
-	path := fmt.Sprintf("/api/playlists/%s", playlist.IDorUID())
+	path := fmt.Sprintf("/api/playlists/%s", playlist.QueryID())
 	data, err := json.Marshal(playlist)
 	if err != nil {
 		return err
