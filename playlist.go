@@ -33,8 +33,8 @@ func (p *Playlist) QueryID() string {
 }
 
 // Playlist fetches and returns a Grafana playlist.
-func (c *Client) Playlist(idOrUid string) (*Playlist, error) {
-	path := fmt.Sprintf("/api/playlists/%s", idOrUid)
+func (c *Client) Playlist(idOrUID string) (*Playlist, error) {
+	path := fmt.Sprintf("/api/playlists/%s", idOrUID)
 	playlist := &Playlist{}
 	err := c.request("GET", path, nil, nil, playlist)
 	if err != nil {
