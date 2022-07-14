@@ -16,15 +16,16 @@ type PlaylistItem struct {
 
 // Playlist represents a Grafana playlist.
 type Playlist struct {
-	ID       int            `json:"id"`
+	ID       int            `json:"id,omitempty"`  // Grafana < 9.0
+	UID      string         `json:"uid,omitempty"` // Grafana >= 9.0
 	Name     string         `json:"name"`
 	Interval string         `json:"interval"`
 	Items    []PlaylistItem `json:"items"`
 }
 
 // Playlist fetches and returns a Grafana playlist.
-func (c *Client) Playlist(id int) (*Playlist, error) {
-	path := fmt.Sprintf("/api/playlists/%d", id)
+func (c *Client) Playlist(idOrUid string) (*Playlist, error) {
+	path := fmt.Sprintf("/api/playlists/%s", idOrUid)
 	playlist := &Playlist{}
 	err := c.request("GET", path, nil, nil, playlist)
 	if err != nil {
