@@ -97,6 +97,12 @@ func createMuteTiming() MuteTiming {
 		Name: "timing two",
 		TimeIntervals: []TimeInterval{
 			{
+				Times: []TimeRange{
+					{
+						StartMinute: "13:13",
+						EndMinute:   "15:15",
+					},
+				},
 				Weekdays: []WeekdayRange{"monday", "wednesday"},
 				Months:   []MonthRange{"1:3", "4"},
 				Years:    []YearRange{"2022", "2023"},
