@@ -20,6 +20,14 @@ func (a BasicAuthenticator) AuthenticateRequest(req runtime.ClientRequest, reg s
 	return req.SetHeaderParam("Authorization", fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(creds))))
 }
 
+type APIKeyAuthenticator struct {
+	APIKey string
+}
+
+func (a APIKeyAuthenticator) AuthenticateRequest(req runtime.ClientRequest, reg strfmt.Registry) error {
+	return req.SetHeaderParam("Authorization", fmt.Sprintf("Bearer %s", a.APIKey))
+}
+
 func GetClient(serverURL string) (*client.GrafanaHTTPAPI, error) {
 	u, err := url.Parse(serverURL)
 	if err != nil {
@@ -28,8 +36,8 @@ func GetClient(serverURL string) (*client.GrafanaHTTPAPI, error) {
 	c := client.NewHTTPClientWithConfig(
 		nil,
 		client.DefaultTransportConfig().
-		WithHost(u.Host).
-		WithSchemes([]string{"http"}),
+			WithHost(u.Host).
+			WithSchemes([]string{"http"}),
 	)
 	return c, nil
 }
