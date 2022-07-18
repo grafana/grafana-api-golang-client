@@ -12,9 +12,10 @@ generate: $(SWAGGER)
 	-t ./goclient \
 	--skip-validation \
 	--with-flatten=remove-unused \
-	--additional-initialism=DTO,API,OK \
+	--additional-initialism=DTO,API,OK,LDAP,ACL,SNS,CSV \
 	--keep-spec-order
 	go get -u ./goclient/...
+	go mod tidy
 
 clean:
 	rm -rf $$(pwd)/goclient
