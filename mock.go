@@ -6,6 +6,8 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/grafana/grafana-api-golang-client/goclient/client"
 )
 
 type mockServer struct {
@@ -17,7 +19,7 @@ func (m *mockServer) Close() {
 	m.server.Close()
 }
 
-func gapiTestTools(t *testing.T, code int, body string) (*mockServer, *Client) {
+func gapiTestTools(t *testing.T, code int, body string) (*mockServer, *client.GrafanaHTTPAPI) {
 	t.Helper()
 
 	mock := &mockServer{
@@ -30,9 +32,17 @@ func gapiTestTools(t *testing.T, code int, body string) (*mockServer, *Client) {
 		fmt.Fprint(w, body)
 	}))
 
+	client, err := GetClient(mock.server.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return mock, client
+}
+
+func getCloudClient(t *testing.T, srv string) *CloudClient {
 	tr := &http.Transport{
 		Proxy: func(req *http.Request) (*url.URL, error) {
-			return url.Parse(mock.server.URL)
+			return url.Parse(srv)
 		},
 	}
 
@@ -42,6 +52,5 @@ func gapiTestTools(t *testing.T, code int, body string) (*mockServer, *Client) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return mock, client
+	return client
 }
-
