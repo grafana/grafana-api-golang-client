@@ -4,6 +4,9 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/dashboards"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/search"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -48,28 +51,34 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 	server, client := gapiTestTools(t, 200, createdAndUpdateDashboardResponse)
 	defer server.Close()
 
-	dashboard := Dashboard{
-		Model: map[string]interface{}{
+	dashboard := models.SaveDashboardCommand{
+		Dashboard: map[string]interface{}{
 			"title": "test",
 		},
-		Folder:    0,
+		FolderID:  0,
 		Overwrite: false,
 	}
 
-	resp, err := client.NewDashboard(dashboard)
+	resp, err := client.Dashboards.PostDashboard(
+		dashboards.NewPostDashboardParams().WithBody(&dashboard),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.UID != "nErXDvCkzz" {
-		t.Errorf("Invalid uid - %s, Expected %s", resp.UID, "nErXDvCkzz")
+	if *resp.Payload.UID != "nErXDvCkzz" {
+		t.Errorf("Invalid uid - %s, Expected %s", *resp.Payload.UID, "nErXDvCkzz")
 	}
 
 	for _, code := range []int{400, 401, 403, 412} {
 		server.code = code
-		_, err = client.NewDashboard(dashboard)
+		_, err := client.Dashboards.PostDashboard(
+			dashboards.NewPostDashboardParams().WithBody(&dashboard),
+			nil,
+		)
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
@@ -80,32 +89,28 @@ func TestDashboardGet(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getDashboardResponse)
 	defer server.Close()
 
-	resp, err := client.Dashboard("test")
+	resp, err := client.Dashboards.GetDashboardByUID(
+		dashboards.NewGetDashboardByUIDParams().WithUID("cIBgcSjkk"),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
-	uid, ok := resp.Model["uid"]
+
+	dashboardData, ok := resp.Payload.Dashboard.(map[string]interface{})
+
+	uid, ok := dashboardData["uid"]
 	if !ok || uid != "cIBgcSjkk" {
 		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
 	}
 
-	resp, err = client.DashboardByUID("cIBgcSjkk")
-	if err != nil {
-		t.Fatal(err)
-	}
-	uid, ok = resp.Model["uid"]
-	if !ok || uid != "cIBgcSjkk" {
-		t.Fatalf("Invalid UID - %s, Expected %s", uid, "cIBgcSjkk")
-	}
-
 	for _, code := range []int{401, 403, 404} {
 		server.code = code
-		_, err = client.Dashboard("test")
-		if err == nil {
-			t.Errorf("%d not detected", code)
-		}
 
-		_, err = client.DashboardByUID("cIBgcSjkk")
+		_, err = client.Dashboards.GetDashboardByUID(
+			dashboards.NewGetDashboardByUIDParams().WithUID("cIBgcSjkk"),
+			nil,
+		)
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
@@ -116,12 +121,11 @@ func TestDashboardDelete(t *testing.T) {
 	server, client := gapiTestTools(t, 200, "")
 	defer server.Close()
 
-	err := client.DeleteDashboard("test")
-	if err != nil {
-		t.Error(err)
-	}
-
-	err = client.DeleteDashboardByUID("cIBgcSjkk")
+	_, err := client.Dashboards.DeleteDashboardByUID(
+		dashboards.NewDeleteDashboardByUIDParams().
+			WithUID("cIBgcSjkk"),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -129,12 +133,11 @@ func TestDashboardDelete(t *testing.T) {
 	for _, code := range []int{401, 403, 404, 412} {
 		server.code = code
 
-		err = client.DeleteDashboard("test")
-		if err == nil {
-			t.Errorf("%d not detected", code)
-		}
-
-		err = client.DeleteDashboardByUID("cIBgcSjkk")
+		_, err := client.Dashboards.DeleteDashboardByUID(
+			dashboards.NewDeleteDashboardByUIDParams().
+				WithUID("cIBgcSjkk"),
+			nil,
+		)
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}
@@ -145,18 +148,22 @@ func TestDashboards(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getDashboardsJSON)
 	defer server.Close()
 
-	dashboards, err := client.Dashboards()
+	typ := "dash-db"
+	resp, err := client.Search.Search(
+		search.NewSearchParams().WithType(&typ),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Log(pretty.PrettyFormat(dashboards))
+	t.Log(pretty.PrettyFormat(resp))
 
-	if len(dashboards) != 1 {
+	if len(resp.Payload) != 1 {
 		t.Error("Length of returned dashboards should be 1")
 	}
 
-	if dashboards[0].ID != 1 || dashboards[0].Title != "Grafana Stats" {
+	if resp.Payload[0].ID != 1 || resp.Payload[0].Title != "Grafana Stats" {
 		t.Error("Not correctly parsing returned dashboards.")
 	}
 }

@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/snapshots"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -17,30 +19,38 @@ const (
 )
 
 func TestSnapshotCreate(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdSnapshotResponse)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, createdSnapshotResponse)
+	defer mocksrv.Close()
 
-	snapshot := Snapshot{
-		Model: map[string]interface{}{
+	snapshot := models.CreateDashboardSnapshotCommand{
+		Dashboard: map[string]interface{}{
 			"title": "test",
 		},
 		Expires: 3600,
 	}
 
-	resp, err := client.NewSnapshot(snapshot)
+	resp, err := client.Snapshots.CreateSnapshot(
+		snapshots.NewCreateSnapshotParams().
+			WithBody(&snapshot),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.DeleteKey != "XXXXXXX" {
-		t.Errorf("Invalid key - %s, Expected %s", resp.DeleteKey, "XXXXXXX")
+	if resp.Payload.DeleteKey != "XXXXXXX" {
+		t.Errorf("Invalid key - %s, Expected %s", resp.Payload.DeleteKey, "XXXXXXX")
 	}
 
 	for _, code := range []int{400, 401, 403, 412} {
-		server.code = code
-		_, err = client.NewSnapshot(snapshot)
+		mocksrv.code = code
+		_, err := client.Snapshots.CreateSnapshot(
+			snapshots.NewCreateSnapshotParams().
+				WithBody(&snapshot),
+			nil,
+		)
 		if err == nil {
 			t.Errorf("%d not detected", code)
 		}

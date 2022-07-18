@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/folders"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -85,79 +87,98 @@ const (
 )
 
 func TestFolders(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getFoldersJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getFoldersJSON)
+	defer mocksrv.Close()
 
-	folders, err := client.Folders()
+	folders, err := client.Folders.GetFolders(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(folders))
 
-	if len(folders) != 1 {
+	if len(folders.Payload) != 1 {
 		t.Error("Length of returned folders should be 1")
 	}
-	if folders[0].ID != 1 || folders[0].Title != "Departmenet ABC" {
+	if folders.Payload[0].ID != 1 || folders.Payload[0].Title != "Departmenet ABC" {
 		t.Error("Not correctly parsing returned folders.")
 	}
 }
 
 func TestFolder(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getFolderJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getFolderJSON)
+	defer mocksrv.Close()
 
 	folder := int64(1)
-	resp, err := client.Folder(folder)
+	respByID, err := client.Folders.GetFolderByID(
+		folders.NewGetFolderByIDParams().WithFolderID(folder),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Log(pretty.PrettyFormat(resp))
+	t.Log(pretty.PrettyFormat(respByID))
 
-	if resp.ID != folder || resp.Title != "Departmenet ABC" {
+	if respByID.Payload.ID != folder || respByID.Payload.Title != "Departmenet ABC" {
 		t.Error("Not correctly parsing returned folder.")
 	}
 }
 
 func TestFolderByUid(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getFolderJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getFolderJSON)
+	defer mocksrv.Close()
 
 	folder := "nErXDvCkzz"
-	resp, err := client.FolderByUID(folder)
+	resp, err := client.Folders.GetFolderByUID(
+		folders.NewGetFolderByUIDParams().WithFolderUID(folder),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.UID != folder || resp.Title != "Departmenet ABC" {
+	if resp.Payload.UID != folder || resp.Payload.Title != "Departmenet ABC" {
 		t.Error("Not correctly parsing returned folder.")
 	}
 }
 
 func TestNewFolder(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdFolderJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, createdFolderJSON)
+	defer mocksrv.Close()
 
-	resp, err := client.NewFolder("test-folder")
+	resp, err := client.Folders.CreateFolder(
+		folders.NewCreateFolderParams().
+			WithBody(&models.CreateFolderCommand{
+				Title: "test-folder",
+			}),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.UID != "nErXDvCkzz" {
+	if resp.Payload.UID != "nErXDvCkzz" {
 		t.Error("Not correctly parsing returned creation message.")
 	}
 }
 
 func TestUpdateFolder(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updatedFolderJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, updatedFolderJSON)
+	defer mocksrv.Close()
 
-	err := client.UpdateFolder("nErXDvCkzz", "test-folder")
+	_, err := client.Folders.UpdateFolder(
+		folders.NewUpdateFolderParams().
+			WithFolderUID("nErXDvCkzz").
+			WithBody(&models.UpdateFolderCommand{
+				Title: "test-folder",
+			}),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -167,7 +188,10 @@ func TestDeleteFolder(t *testing.T) {
 	server, client := gapiTestTools(t, 200, deletedFolderJSON)
 	defer server.Close()
 
-	err := client.DeleteFolder("nErXDvCkzz")
+	_, err := client.Folders.DeleteFolder(
+		folders.NewDeleteFolderParams().WithFolderUID("nErXDvCkzz"),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}

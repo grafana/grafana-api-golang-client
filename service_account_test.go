@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/service_accounts"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -73,15 +75,19 @@ const (
 )
 
 func TestCreateServiceAccountToken(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, createServiceAccountTokenJSON)
-	defer server.Close()
+	mocksv, client := gapiTestTools(t, http.StatusOK, createServiceAccountTokenJSON)
+	defer mocksv.Close()
 
-	req := CreateServiceAccountTokenRequest{
+	req := models.AddServiceAccountTokenCommand{
 		Name:          "key-name",
 		SecondsToLive: 0,
 	}
 
-	res, err := client.CreateServiceAccountToken(req)
+	res, err := client.ServiceAccounts.CreateToken(
+		service_accounts.NewCreateTokenParams().
+			WithBody(&req),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
@@ -90,14 +96,18 @@ func TestCreateServiceAccountToken(t *testing.T) {
 }
 
 func TestCreateServiceAccount(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
+	defer mocksrv.Close()
 
-	req := CreateServiceAccountRequest{
+	req := models.CreateServiceAccountForm{
 		Name: "newSA",
 	}
 
-	res, err := client.CreateServiceAccount(req)
+	res, err := client.ServiceAccounts.CreateServiceAccount(
+		service_accounts.NewCreateServiceAccountParams().
+			WithBody(&req),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
@@ -106,17 +116,21 @@ func TestCreateServiceAccount(t *testing.T) {
 }
 
 func TestUpdateServiceAccount(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
+	defer mocksrv.Close()
 
-	isDisabled := false
-	req := UpdateServiceAccountRequest{
+	req := models.UpdateServiceAccountForm{
 		Name:       "",
 		Role:       "Admin",
-		IsDisabled: &isDisabled,
+		IsDisabled: false,
 	}
 
-	res, err := client.UpdateServiceAccount(5, req)
+	res, err := client.ServiceAccounts.UpdateServiceAccount(
+		service_accounts.NewUpdateServiceAccountParams().
+			WithServiceAccountID(5).
+			WithBody(&req),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
@@ -125,10 +139,14 @@ func TestUpdateServiceAccount(t *testing.T) {
 }
 
 func TestDeleteServiceAccount(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, deleteServiceAccountJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, http.StatusOK, deleteServiceAccountJSON)
+	defer mocksrv.Close()
 
-	res, err := client.DeleteServiceAccount(int64(1))
+	res, err := client.ServiceAccounts.DeleteServiceAccount(
+		service_accounts.NewDeleteServiceAccountParams().
+			WithServiceAccountID(1),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
@@ -137,10 +155,15 @@ func TestDeleteServiceAccount(t *testing.T) {
 }
 
 func TestDeleteServiceAccountToken(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, deleteServiceAccountTokenJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, http.StatusOK, deleteServiceAccountTokenJSON)
+	defer mocksrv.Close()
 
-	res, err := client.DeleteServiceAccountToken(int64(1), int64(1))
+	res, err := client.ServiceAccounts.DeleteToken(
+		service_accounts.NewDeleteTokenParams().
+			WithServiceAccountID(1).
+			WithTokenID(1),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
@@ -149,10 +172,13 @@ func TestDeleteServiceAccountToken(t *testing.T) {
 }
 
 func TestGetServiceAccounts(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, searchServiceAccountsJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, http.StatusOK, searchServiceAccountsJSON)
+	defer mocksrv.Close()
 
-	res, err := client.GetServiceAccounts()
+	res, err := client.ServiceAccounts.SearchOrgServiceAccountsWithPaging(
+		service_accounts.NewSearchOrgServiceAccountsWithPagingParams(),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
@@ -161,10 +187,14 @@ func TestGetServiceAccounts(t *testing.T) {
 }
 
 func TestGetServiceAccountTokens(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, getServiceAccountTokensJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, http.StatusOK, getServiceAccountTokensJSON)
+	defer mocksrv.Close()
 
-	res, err := client.GetServiceAccountTokens(5)
+	res, err := client.ServiceAccounts.ListTokens(
+		service_accounts.NewListTokensParams().
+			WithServiceAccountID(5),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}

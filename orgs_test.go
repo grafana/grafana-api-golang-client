@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/orgs"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -15,89 +17,111 @@ const (
 )
 
 func TestOrgs(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getOrgsJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getOrgsJSON)
+	defer mocksrv.Close()
 
-	orgs, err := client.Orgs()
+	orgs, err := client.Orgs.SearchOrg(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(orgs))
 
-	if len(orgs) != 2 {
+	if len(orgs.Payload) != 2 {
 		t.Error("Length of returned orgs should be 2")
 	}
-	if orgs[0].ID != 1 || orgs[0].Name != "Main Org." {
+	if orgs.Payload[0].ID != 1 || orgs.Payload[0].Name != "Main Org." {
 		t.Error("Not correctly parsing returned organizations.")
 	}
 }
 
 func TestOrgByName(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getOrgJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getOrgJSON)
+	defer mocksrv.Close()
 
 	org := "Main Org."
-	resp, err := client.OrgByName(org)
+	resp, err := client.Orgs.GetOrgByName(
+		orgs.NewGetOrgByNameParams().WithOrgName(org),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.ID != 1 || resp.Name != org {
+	if resp.Payload.ID != 1 || resp.Payload.Name != org {
 		t.Error("Not correctly parsing returned organization.")
 	}
 }
 
 func TestOrg(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getOrgJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getOrgJSON)
+	defer mocksrv.Close()
 
 	org := int64(1)
-	resp, err := client.Org(org)
+	resp, err := client.Orgs.GetOrgByID(
+		orgs.NewGetOrgByIDParams().WithOrgID(org),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.ID != org || resp.Name != "Main Org." {
+	if resp.Payload.ID != org || resp.Payload.Name != "Main Org." {
 		t.Error("Not correctly parsing returned organization.")
 	}
 }
 
 func TestNewOrg(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdOrgJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, createdOrgJSON)
+	defer mocksrv.Close()
 
-	resp, err := client.NewOrg("test-org")
+	resp, err := client.Orgs.CreateOrg(
+		orgs.NewCreateOrgParams().
+			WithBody(&models.CreateOrgCommand{
+				Name: "test-org",
+			}),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp != 1 {
+	if *resp.Payload.OrgID != 1 {
 		t.Error("Not correctly parsing returned creation message.")
 	}
 }
 
 func TestUpdateOrg(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updatedOrgJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, updatedOrgJSON)
+	defer mocksrv.Close()
 
-	err := client.UpdateOrg(int64(1), "test-org")
+	_, err := client.Orgs.AdminUpdateOrg(
+		orgs.NewAdminUpdateOrgParams().
+			WithOrgID(1).
+			WithBody(&models.UpdateOrgForm{
+				Name: "test-org",
+			}),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestDeleteOrg(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deletedOrgJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, deletedOrgJSON)
+	defer mocksrv.Close()
 
-	err := client.DeleteOrg(int64(1))
+	_, err := client.Orgs.AdminDeleteOrg(
+		orgs.NewAdminDeleteOrgParams().WithOrgID(1),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}

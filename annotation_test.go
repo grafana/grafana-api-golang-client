@@ -6,7 +6,6 @@ import (
 	"github.com/gobs/pretty"
 	"github.com/grafana/grafana-api-golang-client/goclient/client/annotations"
 	"github.com/grafana/grafana-api-golang-client/goclient/models"
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -50,15 +49,12 @@ const (
 )
 
 func TestAnnotations(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, annotationsJSON)
+	mocksrv, client := gapiTestTools(t, 200, annotationsJSON)
 	defer mocksrv.Close()
 
 	from := int64(1506676478816)
 	to := int64(1507281278816)
 	limit := int64(100)
-
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
 
 	resp, err := client.Annotations.GetAnnotations(
 		annotations.NewGetAnnotationsParams().
@@ -79,11 +75,8 @@ func TestAnnotations(t *testing.T) {
 }
 
 func TestNewAnnotation(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, newAnnotationJSON)
+	mocksrv, client := gapiTestTools(t, 200, newAnnotationJSON)
 	defer mocksrv.Close()
-
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
 
 	body := models.PostAnnotationsCmd{
 		DashboardID: 123,
@@ -111,11 +104,8 @@ func TestNewAnnotation(t *testing.T) {
 }
 
 func TestUpdateAnnotation(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, updateAnnotationJSON)
+	mocksrv, client := gapiTestTools(t, 200, updateAnnotationJSON)
 	defer mocksrv.Close()
-
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
 
 	body := models.UpdateAnnotationsCmd{
 		Text: "new text description",
@@ -138,11 +128,8 @@ func TestUpdateAnnotation(t *testing.T) {
 }
 
 func TestPatchAnnotation(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, patchAnnotationJSON)
+	mocksrv, client := gapiTestTools(t, 200, patchAnnotationJSON)
 	defer mocksrv.Close()
-
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
 
 	body := models.PatchAnnotationsCmd{
 		Text: "new text description",
@@ -165,12 +152,9 @@ func TestPatchAnnotation(t *testing.T) {
 }
 
 func TestNewGraphiteAnnotation(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, newGraphiteAnnotationJSON)
+	mocksrv, client := gapiTestTools(t, 200, newGraphiteAnnotationJSON)
 	defer mocksrv.Close()
 
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
-	
 	a := models.PostGraphiteAnnotationsCmd{
 		What: "what",
 		When: 1507180805056,
@@ -194,11 +178,8 @@ func TestNewGraphiteAnnotation(t *testing.T) {
 }
 
 func TestDeleteAnnotation(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, deleteAnnotationJSON)
+	mocksrv, client := gapiTestTools(t, 200, deleteAnnotationJSON)
 	defer mocksrv.Close()
-
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
 
 	res, err := client.Annotations.DeleteAnnotation(
 		annotations.NewDeleteAnnotationParams().

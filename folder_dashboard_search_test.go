@@ -1,7 +1,6 @@
 package gapi
 
 import (
-	"net/url"
 	"testing"
 )
 
@@ -50,14 +49,14 @@ const (
 func TestFolderDashboardSearch(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getFolderDashboardSearchResponse)
 	defer server.Close()
-	resp, err := client.FolderDashboardSearch(url.Values{})
+	resp, err := client.Search.Search(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(resp) != 3 {
-		t.Errorf("Expected 3 objects in response, got %d", len(resp))
+	if len(resp.Payload) != 3 {
+		t.Errorf("Expected 3 objects in response, got %d", len(resp.Payload))
 	}
-	if resp[0].ID != 163 || resp[0].Title != "Folder" {
+	if resp.Payload[0].ID != 163 || resp.Payload[0].Title != "Folder" {
 		t.Error("Not correctly parsing response.")
 	}
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/gobs/pretty"
 	"github.com/grafana/grafana-api-golang-client/goclient/client/api_keys"
 	"github.com/grafana/grafana-api-golang-client/goclient/models"
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -29,7 +28,7 @@ const (
 )
 
 func TestCreateAPIKey(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, createAPIKeyJSON)
+	mocksrv, client := gapiTestTools(t, 200, createAPIKeyJSON)
 	defer mocksrv.Close()
 
 	params := api_keys.AddAPIkeyParams{
@@ -39,9 +38,6 @@ func TestCreateAPIKey(t *testing.T) {
 			SecondsToLive: 0,
 		},
 	}
-	
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
 
 	resp, err := client.APIKeys.AddAPIkey(&params, nil)
 	if err != nil {
@@ -51,10 +47,10 @@ func TestCreateAPIKey(t *testing.T) {
 }
 
 func TestDeleteAPIKey(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deleteAPIKeyJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, deleteAPIKeyJSON)
+	defer mocksrv.Close()
 
-	res, err := client.DeleteAPIKey(int64(1))
+	res, err := client.APIKeys.DeleteAPIkey(api_keys.NewDeleteAPIkeyParams().WithID(1), nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -63,10 +59,10 @@ func TestDeleteAPIKey(t *testing.T) {
 }
 
 func TestGetAPIKeys(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getAPIKeysJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getAPIKeysJSON)
+	defer mocksrv.Close()
 
-	res, err := client.GetAPIKeys(true)
+	res, err := client.APIKeys.GetAPIkeys(api_keys.NewGetAPIkeysParams(), nil)
 	if err != nil {
 		t.Error(err)
 	}

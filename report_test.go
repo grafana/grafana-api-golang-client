@@ -2,9 +2,12 @@ package gapi
 
 import (
 	"testing"
-	"time"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/reports"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
+	"github.com/stretchr/testify/require"
 )
 
 var (
@@ -54,46 +57,56 @@ var (
 		"id": 4
 	}
 `
-	now        = time.Now()
-	testReport = Report{
+)
+
+func testReport(t *testing.T) *models.CreateOrUpdateConfigCmd {
+	t.Helper()
+
+	startDate, err := strfmt.ParseDateTime("2020-01-01T00:00:00Z")
+	require.NoError(t, err)
+
+	return &models.CreateOrUpdateConfigCmd{
 		DashboardID: 33,
 		Name:        "My Report",
 		Recipients:  "test@test.com",
-		Schedule: ReportSchedule{
-			StartDate:         &now,
-			EndDate:           nil,
+		Schedule: &models.ScheduleDTO{
+			StartDate:         startDate,
+			EndDate:           strfmt.NewDateTime(),
 			Frequency:         "custom",
 			IntervalFrequency: "weeks",
 			IntervalAmount:    2,
 			WorkdaysOnly:      true,
 			TimeZone:          "GMT",
 		},
-		Options: ReportOptions{
+		Options: &models.ReportOptionsDTO{
 			Orientation: "landscape",
 			Layout:      "grid",
-			TimeRange: ReportTimeRange{
+			TimeRange: &models.TimeRangeDTO{
 				From: "now-1h",
 				To:   "now",
 			},
 		},
 		EnableDashboardURL: true,
-		EnableCSV:          true,
+		EnableCsv:          true,
 	}
-)
+}
 
 func TestReport(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getReportJSON)
 	defer server.Close()
 
-	report := int64(4)
-	resp, err := client.Report(report)
+	reportID := int64(4)
+	resp, err := client.Reports.GetReport(
+		reports.NewGetReportParams().
+			WithReportID(reportID),
+		nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.ID != report || resp.Name != "My Report" {
+	if resp.Payload.ID != reportID || resp.Payload.Name != "My Report" {
 		t.Error("Not correctly parsing returned report.")
 	}
 }
@@ -102,14 +115,17 @@ func TestNewReport(t *testing.T) {
 	server, client := gapiTestTools(t, 200, createReportJSON)
 	defer server.Close()
 
-	resp, err := client.NewReport(testReport)
+	resp, err := client.Reports.CreateReport(
+		reports.NewCreateReportParams().
+			WithBody(testReport(t)),
+		nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp != 4 {
+	if resp.Payload.ID != 4 {
 		t.Error("Not correctly parsing returned creation message.")
 	}
 }
@@ -118,7 +134,11 @@ func TestUpdateReport(t *testing.T) {
 	server, client := gapiTestTools(t, 200, "")
 	defer server.Close()
 
-	err := client.UpdateReport(testReport)
+	_, err := client.Reports.UpdateReport(
+		reports.NewUpdateReportParams().
+			WithReportID(4).
+			WithBody(testReport(t)),
+		nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -128,7 +148,10 @@ func TestDeleteReport(t *testing.T) {
 	server, client := gapiTestTools(t, 200, "")
 	defer server.Close()
 
-	err := client.DeleteReport(4)
+	_, err := client.Reports.DeleteReport(
+		reports.NewDeleteReportParams().
+			WithReportID(int64(4)),
+		nil)
 	if err != nil {
 		t.Fatal(err)
 	}

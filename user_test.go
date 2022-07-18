@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/users"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -14,21 +16,24 @@ const (
 )
 
 func TestUsers(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getUsersJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getUsersJSON)
+	defer mocksrv.Close()
 
-	resp, err := client.Users()
+	resp, err := client.Users.SearchUsers(
+		users.NewSearchUsersParams(),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if len(resp) != 1 {
+	if len(resp.Payload.Users) != 1 {
 		t.Fatal("No users were returned.")
 	}
 
-	user := resp[0]
+	user := resp.Payload.Users[0]
 
 	if user.Email != "users@localhost" ||
 		user.ID != 1 ||
@@ -38,51 +43,72 @@ func TestUsers(t *testing.T) {
 }
 
 func TestUser(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getUserJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getUserJSON)
+	defer mocksrv.Close()
 
-	user, err := client.User(1)
+	user, err := client.Users.GetUserByID(
+		users.NewGetUserByIDParams().
+			WithUserID(1),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(user))
 
-	if user.Email != "user@localhost" ||
-		user.ID != 2 ||
-		user.IsAdmin != false {
+	if user.Payload.Email != "user@localhost" ||
+		user.Payload.ID != 2 ||
+		user.Payload.IsGrafanaAdmin != false {
 		t.Error("Not correctly parsing returned user.")
 	}
 }
 
 func TestUserByEmail(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getUserByEmailJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getUserByEmailJSON)
+	defer mocksrv.Close()
 
-	user, err := client.UserByEmail("admin@localhost")
+	user, err := client.Users.GetUserByLoginOrEmail(
+		users.NewGetUserByLoginOrEmailParams().
+			WithLoginOrEmail("admin@localhost"),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(user))
 
-	if user.Email != "userByEmail@localhost" ||
-		user.ID != 3 ||
-		user.IsAdmin != true {
+	if user.Payload.Email != "userByEmail@localhost" ||
+		user.Payload.ID != 3 ||
+		user.Payload.IsGrafanaAdmin != true {
 		t.Error("Not correctly parsing returned user.")
 	}
 }
 
 func TestUserUpdate(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getUserUpdateJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getUserUpdateJSON)
+	defer mocksrv.Close()
 
-	user, err := client.User(4)
+	user, err := client.Users.GetUserByID(
+		users.NewGetUserByIDParams().
+			WithUserID(4),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	user.IsAdmin = true
-	err = client.UserUpdate(user)
+	_, err = client.Users.UpdateUser(
+		users.NewUpdateUserParams().
+			WithUserID(user.Payload.ID).
+			WithBody(&models.UpdateUserCommand{
+				Email: user.Payload.Email,
+				Name:  user.Payload.Name,
+				Login: user.Payload.Login,
+				Theme: "dark",
+			}),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}

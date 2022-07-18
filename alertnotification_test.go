@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/legacy_alerts_notification_channels"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -76,46 +78,53 @@ const (
 )
 
 func TestAlertNotifications(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getAlertNotificationsJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getAlertNotificationsJSON)
+	defer mocksrv.Close()
 
-	alertnotifications, err := client.AlertNotifications()
+	alertnotifications, err := client.LegacyAlertsNotificationChannels.GetAlertNotificationChannels(
+		legacy_alerts_notification_channels.NewGetAlertNotificationChannelsParams(),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
 
 	t.Log(pretty.PrettyFormat(alertnotifications))
 
-	if len(alertnotifications) != 1 {
+	if len(alertnotifications.Payload) != 1 {
 		t.Error("Length of returned alert notifications should be 1")
 	}
-	if alertnotifications[0].ID != 1 || alertnotifications[0].Name != "Team A" {
+	if alertnotifications.Payload[0].ID != 1 || alertnotifications.Payload[0].Name != "Team A" {
 		t.Error("Not correctly parsing returned alert notifications.")
 	}
 }
 
 func TestAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getAlertNotificationJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getAlertNotificationJSON)
+	defer mocksrv.Close()
 
 	alertnotification := int64(1)
-	resp, err := client.AlertNotification(alertnotification)
+	resp, err := client.LegacyAlertsNotificationChannels.GetAlertNotificationChannelByID(
+		legacy_alerts_notification_channels.NewGetAlertNotificationChannelByIDParams().
+			WithNotificationChannelID(alertnotification),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.ID != alertnotification || resp.Name != "Team A" {
+	if resp.Payload.ID != alertnotification || resp.Payload.Name != "Team A" {
 		t.Error("Not correctly parsing returned alert notification.")
 	}
 }
 
 func TestNewAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdAlertNotificationJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, createdAlertNotificationJSON)
+	defer mocksrv.Close()
 
-	an := &AlertNotification{
+	an := &models.CreateAlertNotificationCommand{
 		Name:                  "Team A",
 		Type:                  "email",
 		IsDefault:             false,
@@ -126,23 +135,27 @@ func TestNewAlertNotification(t *testing.T) {
 			"addresses": "dev@grafana.com",
 		},
 	}
-	resp, err := client.NewAlertNotification(an)
+	resp, err := client.LegacyAlertsNotificationChannels.CreateAlertNotificationChannel(
+		legacy_alerts_notification_channels.NewCreateAlertNotificationChannelParams().
+			WithBody(an),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp != 1 {
+	if resp.Payload.ID != 1 {
 		t.Error("Not correctly parsing returned creation message.")
 	}
 }
 
 func TestUpdateAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updatedAlertNotificationJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, updatedAlertNotificationJSON)
+	defer mocksrv.Close()
 
-	an := &AlertNotification{
+	an := &models.UpdateAlertNotificationCommand{
 		ID:                    1,
 		Name:                  "Team A",
 		Type:                  "email",
@@ -155,17 +168,26 @@ func TestUpdateAlertNotification(t *testing.T) {
 		},
 	}
 
-	err := client.UpdateAlertNotification(an)
+	_, err := client.LegacyAlertsNotificationChannels.UpdateAlertNotificationChannel(
+		legacy_alerts_notification_channels.NewUpdateAlertNotificationChannelParams().
+			WithNotificationChannelID(an.ID).
+			WithBody(an),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestDeleteAlertNotification(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deletedAlertNotificationJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, deletedAlertNotificationJSON)
+	defer mocksrv.Close()
 
-	err := client.DeleteAlertNotification(1)
+	_, err := client.LegacyAlertsNotificationChannels.DeleteAlertNotificationChannel(
+		legacy_alerts_notification_channels.NewDeleteAlertNotificationChannelParams().
+			WithNotificationChannelID(1),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}

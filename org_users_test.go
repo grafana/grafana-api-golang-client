@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/orgs"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -14,15 +16,15 @@ const (
 )
 
 func TestOrgUsersCurrent(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getOrgUsersJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getOrgUsersJSON)
+	defer mocksrv.Close()
 
-	resp, err := client.OrgUsersCurrent()
+	resp, err := client.CurrentOrgDetails.GetOrgUsers(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	user := OrgUser{
+	user := &models.OrgUserDTO{
 		OrgID:  1,
 		UserID: 1,
 		Email:  "admin@localhost",
@@ -30,24 +32,26 @@ func TestOrgUsersCurrent(t *testing.T) {
 		Role:   "Admin",
 	}
 
-	if resp[0] != user {
+	if resp.Payload[0] != user {
 		t.Error("Not correctly parsing returned organization users.")
 	}
 }
 
 func TestOrgUsers(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getOrgUsersJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, getOrgUsersJSON)
+	defer mocksrv.Close()
 
-	org := int64(1)
-	resp, err := client.OrgUsers(org)
+	resp, err := client.Orgs.AdminGetOrgUsers(
+		orgs.NewAdminGetOrgUsersParams().WithOrgID(1),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	user := OrgUser{
+	user := &models.OrgUserDTO{
 		OrgID:  1,
 		UserID: 1,
 		Email:  "admin@localhost",
@@ -55,18 +59,24 @@ func TestOrgUsers(t *testing.T) {
 		Role:   "Admin",
 	}
 
-	if resp[0] != user {
+	if resp.Payload[0] != user {
 		t.Error("Not correctly parsing returned organization users.")
 	}
 }
 
 func TestAddOrgUser(t *testing.T) {
-	server, client := gapiTestTools(t, 200, addOrgUserJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, addOrgUserJSON)
+	defer mocksrv.Close()
 
-	orgID, user, role := int64(1), "admin@localhost", "Admin"
-
-	err := client.AddOrgUser(orgID, user, role)
+	_, err := client.Orgs.AdminAddOrgUser(
+		orgs.NewAdminAddOrgUserParams().
+			WithOrgID(1).
+			WithBody(&models.AddOrgUserCommand{
+				LoginOrEmail: "admin@localhost",
+				Role:         "Admin",
+			}),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -76,9 +86,15 @@ func TestUpdateOrgUser(t *testing.T) {
 	server, client := gapiTestTools(t, 200, updateOrgUserJSON)
 	defer server.Close()
 
-	orgID, userID, role := int64(1), int64(1), "Editor"
-
-	err := client.UpdateOrgUser(orgID, userID, role)
+	_, err := client.Orgs.AdminUpdateOrgUser(
+		orgs.NewAdminUpdateOrgUserParams().
+			WithOrgID(1).
+			WithUserID(1).
+			WithBody(&models.UpdateOrgUserCommand{
+				Role: "Editor",
+			}),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,9 +104,12 @@ func TestRemoveOrgUser(t *testing.T) {
 	server, client := gapiTestTools(t, 200, removeOrgUserJSON)
 	defer server.Close()
 
-	orgID, userID := int64(1), int64(1)
-
-	err := client.RemoveOrgUser(orgID, userID)
+	_, err := client.Orgs.AdminDeleteOrgUser(
+		orgs.NewAdminDeleteOrgUserParams().
+			WithOrgID(1).
+			WithUserID(1),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}

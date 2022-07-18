@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/access_control"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -58,16 +60,16 @@ const (
 )
 
 func TestNewRole(t *testing.T) {
-	server, client := gapiTestTools(t, 201, newRoleResponse)
+	mocksrv, client := gapiTestTools(t, 201, newRoleResponse)
 	t.Cleanup(func() {
-		server.Close()
+		mocksrv.Close()
 	})
 
-	roleReq := Role{
+	roleReq := models.CreateRoleForm{
 		Global:      false,
 		Name:        "test:policy",
 		Description: "test:policy",
-		Permissions: []Permission{
+		Permissions: []*models.Permission{
 			{
 				Action: "test:self",
 				Scope:  "test:self",
@@ -75,14 +77,18 @@ func TestNewRole(t *testing.T) {
 		},
 	}
 
-	resp, err := client.NewRole(roleReq)
+	resp, err := client.AccessControl.CreateRoleWithPermissions(
+		access_control.NewCreateRoleWithPermissionsParams().
+			WithBody(&roleReq),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.UID != "vc3SCSsGz" {
+	if resp.Payload.UID != "vc3SCSsGz" {
 		t.Error("Not correctly parsing returned role uid.")
 	}
 }
@@ -95,14 +101,17 @@ func TestGetRole(t *testing.T) {
 
 	uid := "vc3SCSsGz"
 
-	resp, err := client.GetRole(uid)
+	resp, err := client.AccessControl.GetRole(
+		access_control.NewGetRoleParams().WithRoleUID(uid),
+		nil,
+	)
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	expected := Role{
-		Global:      false,
+	expected := models.RoleDTO{
+		//Global:      false,
 		Version:     1,
 		UID:         "vc3SCSsGz",
 		Name:        "test:policy",
@@ -110,7 +119,7 @@ func TestGetRole(t *testing.T) {
 		Group:       "test group",
 		DisplayName: "test display",
 		Hidden:      false,
-		Permissions: []Permission{
+		Permissions: []*models.Permission{
 			{
 				Action: "test:self",
 				Scope:  "test:self",
@@ -119,7 +128,7 @@ func TestGetRole(t *testing.T) {
 	}
 
 	t.Run("check response data", func(t *testing.T) {
-		if expected.UID != resp.UID || expected.Name != resp.Name {
+		if expected.UID != resp.Payload.UID || expected.Name != resp.Payload.Name {
 			t.Error("Not correctly parsing returned role.")
 		}
 	})
@@ -131,11 +140,11 @@ func TestUpdateRole(t *testing.T) {
 		server.Close()
 	})
 
-	roleReq := Role{
+	roleReq := models.UpdateRoleCommand{
 		Global:      false,
 		Name:        "test:policy",
 		Description: "test:policy",
-		Permissions: []Permission{
+		Permissions: []*models.Permission{
 			{
 				Action: "test:self1",
 				Scope:  "test:self1",
@@ -143,7 +152,10 @@ func TestUpdateRole(t *testing.T) {
 		},
 	}
 
-	err := client.UpdateRole(roleReq)
+	_, err := client.AccessControl.UpdateRoleWithPermissions(
+		access_control.NewUpdateRoleWithPermissionsParams().WithBody(&roleReq),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
@@ -155,7 +167,13 @@ func TestDeleteRole(t *testing.T) {
 		server.Close()
 	})
 
-	err := client.DeleteRole("vc3SCSsGz", false)
+	global := false
+	_, err := client.AccessControl.RemoveUserRole(
+		access_control.NewRemoveUserRoleParams().
+			WithRoleUID("vc3SCSsGz").
+			WithGlobal(&global),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}

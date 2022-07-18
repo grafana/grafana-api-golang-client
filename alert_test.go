@@ -1,11 +1,11 @@
 package gapi
 
 import (
-	"net/url"
 	"strings"
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/legacy_alerts"
 )
 
 const (
@@ -47,84 +47,96 @@ const (
 )
 
 func TestAlerts(t *testing.T) {
-	server, client := gapiTestTools(t, 200, alertsJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, alertsJSON)
+	defer mocksrv.Close()
 
-	params := url.Values{}
-	params.Add("dashboardId", "123")
-
-	as, err := client.Alerts(params)
+	as, err := client.LegacyAlerts.GetAlerts(
+		legacy_alerts.NewGetAlertsParams().WithDashboardID([]string{"123"}),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
 
 	t.Log(pretty.PrettyFormat(as))
 
-	if as[0].ID != 1 {
+	if as.Payload[0].ID != 1 {
 		t.Error("alerts response should contain alerts with an ID")
 	}
 }
 
 func TestAlerts_500(t *testing.T) {
-	server, client := gapiTestTools(t, 500, alertsJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 500, alertsJSON)
+	defer mocksrv.Close()
 
-	params := url.Values{}
-	params.Add("dashboardId", "123")
-
-	_, err := client.Alerts(params)
+	_, err := client.LegacyAlerts.GetAlerts(
+		legacy_alerts.NewGetAlertsParams().WithDashboardID([]string{"123"}),
+		nil,
+	)
 	if !strings.Contains(err.Error(), "status: 500") {
 		t.Errorf("expected error to contain 'status: 500'; got: %s", err.Error())
 	}
 }
 
 func TestAlert(t *testing.T) {
-	server, client := gapiTestTools(t, 200, alertJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, alertJSON)
+	defer mocksrv.Close()
 
-	res, err := client.Alert(1)
+	res, err := client.LegacyAlerts.GetAlertByID(
+		legacy_alerts.NewGetAlertByIDParams().WithAlertID("1"),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
 
 	t.Log(pretty.PrettyFormat(res))
 
-	if res.ID != 1 {
+	if res.Payload.ID != 1 {
 		t.Error("alert response should contain the ID of the queried alert")
 	}
 }
 
 func TestAlert_500(t *testing.T) {
-	server, client := gapiTestTools(t, 500, alertJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 500, alertJSON)
+	defer mocksrv.Close()
 
-	_, err := client.Alert(1)
+	_, err := client.LegacyAlerts.GetAlertByID(
+		legacy_alerts.NewGetAlertByIDParams().WithAlertID("1"),
+		nil,
+	)
 	if !strings.Contains(err.Error(), "status: 500") {
 		t.Errorf("expected error to contain 'status: 500'; got: %s", err.Error())
 	}
 }
 
 func TestPauseAlert(t *testing.T) {
-	server, client := gapiTestTools(t, 200, pauseAlertJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 200, pauseAlertJSON)
+	defer mocksrv.Close()
 
-	res, err := client.PauseAlert(1)
+	res, err := client.LegacyAlerts.PauseAlert(
+		legacy_alerts.NewPauseAlertParams().WithAlertID("1"),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
 
 	t.Log(pretty.PrettyFormat(res))
 
-	if res.State != "Paused" {
+	if res.Payload.State != "Paused" {
 		t.Error("pause alert response should contain the correct response message")
 	}
 }
 
 func TestPauseAlert_500(t *testing.T) {
-	server, client := gapiTestTools(t, 500, pauseAlertJSON)
-	defer server.Close()
+	mocksrv, client := gapiTestTools(t, 500, pauseAlertJSON)
+	defer mocksrv.Close()
 
-	_, err := client.PauseAlert(1)
+	_, err := client.LegacyAlerts.PauseAlert(
+		legacy_alerts.NewPauseAlertParams().WithAlertID("1"),
+		nil,
+	)
 	if !strings.Contains(err.Error(), "status: 500") {
 		t.Errorf("expected error to contain 'status: 500'; got: %s", err.Error())
 	}

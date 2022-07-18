@@ -6,7 +6,6 @@ import (
 	"github.com/gobs/pretty"
 	"github.com/grafana/grafana-api-golang-client/goclient/client/datasources"
 	"github.com/grafana/grafana-api-golang-client/goclient/models"
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -16,7 +15,7 @@ const (
 )
 
 func TestNewDataSource(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, createdDataSourceJSON)
+	mocksrv, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer mocksrv.Close()
 
 	params := datasources.NewAddDatasourceParams().WithBody(
@@ -40,9 +39,6 @@ func TestNewDataSource(t *testing.T) {
 		},
 	)
 
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
-
 	res, err := client.Datasources.AddDatasource(params, nil)
 	if err != nil {
 		t.Fatal(err)
@@ -58,25 +54,22 @@ func TestNewDataSource(t *testing.T) {
 }
 
 func TestNewPrometheusDataSource(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, createdDataSourceJSON)
+	mocksrv, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer mocksrv.Close()
 
 	params := datasources.NewAddDatasourceParams().WithBody(
 		&models.AddDataSourceCommand{
-		Name:      "foo_prometheus",
-		Type:      "prometheus",
-		URL:       "http://some-url.com",
-		Access:    "access",
-		IsDefault: true,
-		JSONData: map[string]string{
-			"httpMethod":   "POST",
-			"queryTimeout": "60s",
-			"timeInterval": "1m",
-		},
-	})
-
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
+			Name:      "foo_prometheus",
+			Type:      "prometheus",
+			URL:       "http://some-url.com",
+			Access:    "access",
+			IsDefault: true,
+			JSONData: map[string]string{
+				"httpMethod":   "POST",
+				"queryTimeout": "60s",
+				"timeInterval": "1m",
+			},
+		})
 
 	res, err := client.Datasources.AddDatasource(params, nil)
 	if err != nil {
@@ -92,7 +85,7 @@ func TestNewPrometheusDataSource(t *testing.T) {
 }
 
 func TestNewPrometheusSigV4DataSource(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, createdDataSourceJSON)
+	mocksrv, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer mocksrv.Close()
 
 	params := datasources.NewAddDatasourceParams().WithBody(
@@ -114,9 +107,6 @@ func TestNewPrometheusSigV4DataSource(t *testing.T) {
 			},
 		},
 	)
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
-
 	res, err := client.Datasources.AddDatasource(params, nil)
 	if err != nil {
 		t.Fatal(err)
@@ -131,7 +121,7 @@ func TestNewPrometheusSigV4DataSource(t *testing.T) {
 }
 
 func TestNewElasticsearchDataSource(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, createdDataSourceJSON)
+	mocksrv, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer mocksrv.Close()
 
 	params := datasources.NewAddDatasourceParams().WithBody(
@@ -151,9 +141,6 @@ func TestNewElasticsearchDataSource(t *testing.T) {
 		},
 	)
 
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
-
 	res, err := client.Datasources.AddDatasource(params, nil)
 	if err != nil {
 		t.Fatal(err)
@@ -168,7 +155,7 @@ func TestNewElasticsearchDataSource(t *testing.T) {
 }
 
 func TestNewInfluxDBDataSource(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, createdDataSourceJSON)
+	mocksrv, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer mocksrv.Close()
 
 	params := datasources.NewAddDatasourceParams().WithBody(
@@ -189,9 +176,6 @@ func TestNewInfluxDBDataSource(t *testing.T) {
 		},
 	)
 
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
-
 	res, err := client.Datasources.AddDatasource(params, nil)
 	if err != nil {
 		t.Fatal(err)
@@ -206,7 +190,7 @@ func TestNewInfluxDBDataSource(t *testing.T) {
 }
 
 func TestNewOpenTSDBDataSource(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, createdDataSourceJSON)
+	mocksrv, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer mocksrv.Close()
 
 	params := datasources.NewAddDatasourceParams().WithBody(
@@ -223,9 +207,6 @@ func TestNewOpenTSDBDataSource(t *testing.T) {
 		},
 	)
 
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
-	
 	res, err := client.Datasources.AddDatasource(params, nil)
 	if err != nil {
 		t.Fatal(err)
@@ -240,7 +221,7 @@ func TestNewOpenTSDBDataSource(t *testing.T) {
 }
 
 func TestNewAzureDataSource(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, createdDataSourceJSON)
+	mocksrv, client := gapiTestTools(t, 200, createdDataSourceJSON)
 	defer mocksrv.Close()
 
 	params := datasources.NewAddDatasourceParams().WithBody(
@@ -266,9 +247,6 @@ func TestNewAzureDataSource(t *testing.T) {
 		},
 	)
 
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
-	
 	res, err := client.Datasources.AddDatasource(params, nil)
 	if err != nil {
 		t.Fatal(err)
@@ -283,11 +261,8 @@ func TestNewAzureDataSource(t *testing.T) {
 }
 
 func TestDataSources(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, getDataSourcesJSON)
+	mocksrv, client := gapiTestTools(t, 200, getDataSourcesJSON)
 	defer mocksrv.Close()
-
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
 
 	datasources, err := client.Datasources.GetDatasources(&datasources.GetDatasourcesParams{}, nil)
 	if err != nil {
@@ -305,11 +280,8 @@ func TestDataSources(t *testing.T) {
 }
 
 func TestDataSourceIDByName(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, getDataSourceJSON)
+	mocksrv, client := gapiTestTools(t, 200, getDataSourceJSON)
 	defer mocksrv.Close()
-
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
 
 	datasourceResp, err := client.Datasources.GetDatasourceIDByName(&datasources.GetDatasourceIDByNameParams{
 		Name: "foo",

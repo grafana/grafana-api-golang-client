@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/dashboard_permissions"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -60,17 +62,20 @@ func TestDashboardPermissions(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getDashboardPermissionsJSON)
 	defer server.Close()
 
-	resp, err := client.DashboardPermissions(1)
+	resp, err := client.DashboardPermissions.GetDashboardPermissionsWithUID(
+		dashboard_permissions.NewGetDashboardPermissionsWithUIDParams().WithUID("nErXDvCkzz"),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	expects := []*DashboardPermission{
+	expects := []*models.DashboardACLInfoDTO{
 		{
-			DashboardID:    1,
-			DashboardUID:   "nErXDvCkzz",
+			DashboardID: 1,
+			//DashboardUID:   "nErXDvCkzz",
 			Role:           "Viewer",
 			UserID:         0,
 			TeamID:         0,
@@ -80,8 +85,8 @@ func TestDashboardPermissions(t *testing.T) {
 			PermissionName: "View",
 		},
 		{
-			DashboardID:    2,
-			DashboardUID:   "nErXDvCkzz",
+			DashboardID: 2,
+			//DashboardUID:   "nErXDvCkzz",
 			Role:           "Editor",
 			UserID:         0,
 			TeamID:         0,
@@ -94,15 +99,15 @@ func TestDashboardPermissions(t *testing.T) {
 
 	for i, expect := range expects {
 		t.Run("check data", func(t *testing.T) {
-			if resp[i].DashboardID != expect.DashboardID ||
-				resp[i].DashboardUID != expect.DashboardUID ||
-				resp[i].Role != expect.Role ||
-				resp[i].UserID != expect.UserID ||
-				resp[i].TeamID != expect.TeamID ||
-				resp[i].IsFolder != expect.IsFolder ||
-				resp[i].Inherited != expect.Inherited ||
-				resp[i].Permission != expect.Permission ||
-				resp[i].PermissionName != expect.PermissionName {
+			if resp.Payload[i].DashboardID != expect.DashboardID ||
+				//resp.Payload[i].DashboardUID != expect.DashboardUID ||
+				resp.Payload[i].Role != expect.Role ||
+				resp.Payload[i].UserID != expect.UserID ||
+				resp.Payload[i].TeamID != expect.TeamID ||
+				resp.Payload[i].IsFolder != expect.IsFolder ||
+				resp.Payload[i].Inherited != expect.Inherited ||
+				resp.Payload[i].Permission != expect.Permission ||
+				resp.Payload[i].PermissionName != expect.PermissionName {
 				t.Error("Not correctly parsing returned dashboard permission")
 			}
 		})
@@ -113,8 +118,8 @@ func TestUpdateDashboardPermissions(t *testing.T) {
 	server, client := gapiTestTools(t, 200, updateDashboardPermissionsJSON)
 	defer server.Close()
 
-	items := &PermissionItems{
-		Items: []*PermissionItem{
+	items := models.UpdateDashboardACLCommand{
+		Items: []*models.DashboardACLUpdateItem{
 			{
 				Role:       "viewer",
 				Permission: 1,
@@ -133,7 +138,12 @@ func TestUpdateDashboardPermissions(t *testing.T) {
 			},
 		},
 	}
-	err := client.UpdateDashboardPermissions(1, items)
+	_, err := client.DashboardPermissions.PostDashboardPermissionsWithUID(
+		dashboard_permissions.NewPostDashboardPermissionsWithUIDParams().
+			WithUID("uid").
+			WithBody(&items),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}

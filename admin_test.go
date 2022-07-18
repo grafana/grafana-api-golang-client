@@ -1,13 +1,13 @@
 package gapi
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/gobs/pretty"
 	"github.com/grafana/grafana-api-golang-client/goclient/client/admin"
 	"github.com/grafana/grafana-api-golang-client/goclient/client/admin_users"
 	"github.com/grafana/grafana-api-golang-client/goclient/models"
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -24,11 +24,8 @@ const (
 )
 
 func TestCreateUser(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, createUserJSON)
+	mocksrv, client := gapiTestTools(t, 200, createUserJSON)
 	defer mocksrv.Close()
-
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
 
 	resp, err := client.AdminUsers.CreateUser(admin_users.NewCreateUserParams().WithBody(
 		&models.AdminCreateUserForm{
@@ -48,60 +45,48 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, deleteUserJSON)
+	mocksrv, client := gapiTestTools(t, 200, deleteUserJSON)
 	defer mocksrv.Close()
 
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
-
-	_, err = client.AdminUsers.DeleteUser(admin_users.NewDeleteUserParams().WithUserID(1), nil)
+	_, err := client.AdminUsers.DeleteUser(admin_users.NewDeleteUserParams().WithUserID(1), nil)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestUpdateUserPassword(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, updateUserPasswordJSON)
+	mocksrv, client := gapiTestTools(t, 200, updateUserPasswordJSON)
 	defer mocksrv.Close()
 
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
-	
-	_, err = client.AdminUsers.SetPassword(admin_users.NewSetPasswordParams().
+	_, err := client.AdminUsers.SetPassword(admin_users.NewSetPasswordParams().
 		WithUserID(1).
 		WithBody(&models.AdminUpdateUserPasswordForm{
 			Password: "new-password",
 		},
-	), nil)
+		), nil)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestUpdateUserPermissions(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, updateUserPermissionsJSON)
+	mocksrv, client := gapiTestTools(t, 200, updateUserPermissionsJSON)
 	defer mocksrv.Close()
 
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
-
-	_, err = client.AdminUsers.SetPermissions(admin_users.NewSetPermissionsParams().
+	_, err := client.AdminUsers.SetPermissions(admin_users.NewSetPermissionsParams().
 		WithUserID(1).
 		WithBody(&models.AdminUpdateUserPermissionsForm{
 			IsGrafanaAdmin: false,
 		},
-	), nil)
+		), nil)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestPauseAllAlerts(t *testing.T) {
-	mocksrv, _ := gapiTestTools(t, 200, pauseAllAlertsJSON)
+	mocksrv, client := gapiTestTools(t, 200, pauseAllAlertsJSON)
 	defer mocksrv.Close()
-
-	client, err := GetClient(mocksrv.server.URL)
-	require.NoError(t, err)
 
 	res, err := client.Admin.PauseAllAlerts(admin.NewPauseAllAlertsParams().WithBody(
 		&models.PauseAllAlertsCommand{
@@ -119,17 +104,12 @@ func TestPauseAllAlerts(t *testing.T) {
 	}
 }
 
-/*
-TestPauseAllAlerts_500 tests this:
-https://github.com/grafana/grafana-api-golang-client/blob/50d2d632e9d03305abb9aeca6ae9e026693e40b0/client.go#L120
-but this behavior is not present in the new client
 func TestPauseAllAlerts_500(t *testing.T) {
 	server, client := gapiTestTools(t, 500, pauseAllAlertsJSON)
 	defer server.Close()
 
-	_, err := client.PauseAllAlerts()
+	_, err := client.Admin.PauseAllAlerts(admin.NewPauseAllAlertsParams(), nil)
 	if !strings.Contains(err.Error(), "status: 500") {
 		t.Errorf("expected error to contain 'status: 500'; got: %s", err.Error())
 	}
 }
-*/

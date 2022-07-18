@@ -4,6 +4,9 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/google/go-cmp/cmp"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/teams"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -90,20 +93,22 @@ const (
 )
 
 func TestSearchTeam(t *testing.T) {
-	server, client := gapiTestTools(t, 200, searchTeamJSON)
-	defer server.Close()
+	mocksv, client := gapiTestTools(t, 200, searchTeamJSON)
+	defer mocksv.Close()
 
 	query := "myteam"
-	resp, err := client.SearchTeam(query)
+	resp, err := client.Teams.SearchTeams(
+		teams.NewSearchTeamsParams().WithQuery(&query),
+		nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	expect := &SearchTeam{
+	expect := &models.SearchTeamQueryResult{
 		TotalCount: 1,
-		Teams: []*Team{
+		Teams: []*models.TeamDTO{
 			{
 				ID:          1,
 				OrgID:       1,
@@ -118,7 +123,7 @@ func TestSearchTeam(t *testing.T) {
 		PerPage: 1000,
 	}
 	t.Run("check data", func(t *testing.T) {
-		if expect.TotalCount != resp.TotalCount || expect.Teams[0].Name != resp.Teams[0].Name {
+		if cmp.Diff(resp.Payload, expect) != "" {
 			t.Error("Not correctly parsing returned team search.")
 		}
 	})
@@ -128,15 +133,16 @@ func TestTeam(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getTeamJSON)
 	defer server.Close()
 
-	id := int64(1)
-	resp, err := client.Team(id)
+	resp, err := client.Teams.GetTeam(
+		teams.NewGetTeamParams().WithTeamID("1"),
+		nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	expect := &Team{
+	expect := &models.TeamDTO{
 		ID:          1,
 		OrgID:       1,
 		Name:        "MyTestTeam",
@@ -146,7 +152,7 @@ func TestTeam(t *testing.T) {
 		Permission:  0,
 	}
 	t.Run("check data", func(t *testing.T) {
-		if resp.ID != expect.ID || resp.Name != expect.Name {
+		if resp.Payload.ID != expect.ID || resp.Payload.Name != expect.Name {
 			t.Error("Not correctly parsing returned team.")
 		}
 	})
@@ -156,14 +162,17 @@ func TestAddTeam(t *testing.T) {
 	server, client := gapiTestTools(t, 200, addTeamsJSON)
 	defer server.Close()
 
-	name := "TestTeam"
-	email := ""
-
-	id, err := client.AddTeam(name, email)
+	resp, err := client.Teams.CreateTeam(
+		teams.NewCreateTeamParams().
+			WithBody(&models.CreateTeamCommand{
+				Name: "TestTeam",
+			}),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
-	if id == 0 {
+	if resp.Payload.TeamID == 0 {
 		t.Error("AddTeam returned an invalid ID")
 	}
 }
@@ -172,11 +181,14 @@ func TestUpdateTeam(t *testing.T) {
 	server, client := gapiTestTools(t, 200, updateTeamJSON)
 	defer server.Close()
 
-	id := int64(1)
-	name := "TestTeam"
-	email := ""
-
-	err := client.UpdateTeam(id, name, email)
+	_, err := client.Teams.UpdateTeam(
+		teams.NewUpdateTeamParams().
+			WithTeamID("1").
+			WithBody(&models.UpdateTeamCommand{
+				Name: "TestTeam",
+			}),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
@@ -186,9 +198,10 @@ func TestDeleteTeam(t *testing.T) {
 	server, client := gapiTestTools(t, 200, deleteTeamJSON)
 	defer server.Close()
 
-	id := int64(1)
-
-	err := client.DeleteTeam(id)
+	_, err := client.Teams.DeleteTeamByID(
+		teams.NewDeleteTeamByIDParams().WithTeamID("1"),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}
@@ -198,13 +211,14 @@ func TestTeamMembers(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getTeamMembersJSON)
 	defer server.Close()
 
-	id := int64(1)
-
-	resp, err := client.TeamMembers(id)
+	resp, err := client.Teams.GetTeamMembers(
+		teams.NewGetTeamMembersParams().WithTeamID("1"),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	expects := []*TeamMember{
+	expects := []*models.TeamMemberDTO{
 		{
 			OrgID:      1,
 			TeamID:     1,
@@ -227,7 +241,7 @@ func TestTeamMembers(t *testing.T) {
 
 	for i, expect := range expects {
 		t.Run("check data", func(t *testing.T) {
-			if expect.Email != resp[i].Email || expect.AvatarURL != resp[i].AvatarURL {
+			if expect.Email != resp.Payload[i].Email || expect.AvatarURL != resp.Payload[i].AvatarURL {
 				t.Error("Not correctly parsing returned team members.")
 			}
 		})
@@ -238,10 +252,14 @@ func TestAddTeamMember(t *testing.T) {
 	server, client := gapiTestTools(t, 200, addTeamMemberJSON)
 	defer server.Close()
 
-	id := int64(1)
-	userID := int64(2)
-
-	if err := client.AddTeamMember(id, userID); err != nil {
+	if _, err := client.Teams.AddTeamMember(
+		teams.NewAddTeamMemberParams().
+			WithTeamID("1").
+			WithBody(&models.AddTeamMemberCommand{
+				UserID: int64(2),
+			}),
+		nil,
+	); err != nil {
 		t.Error(err)
 	}
 }
@@ -250,10 +268,12 @@ func TestRemoveMemberFromTeam(t *testing.T) {
 	server, client := gapiTestTools(t, 200, removeMemberFromTeamJSON)
 	defer server.Close()
 
-	id := int64(1)
-	userID := int64(2)
-
-	if err := client.RemoveMemberFromTeam(id, userID); err != nil {
+	if _, err := client.Teams.RemoveTeamMember(
+		teams.NewRemoveTeamMemberParams().
+			WithTeamID("1").
+			WithUserID(int64(2)),
+		nil,
+	); err != nil {
 		t.Error(err)
 	}
 }
@@ -262,20 +282,22 @@ func TestTeamPreferences(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getTeamPreferencesJSON)
 	defer server.Close()
 
-	id := int64(1)
-
-	resp, err := client.TeamPreferences(id)
+	resp, err := client.Teams.GetTeamPreferences(
+		teams.NewGetTeamPreferencesParams().
+			WithTeamID("1"),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	expect := &Preferences{
+	expect := &models.Prefs{
 		Theme:           "",
 		HomeDashboardID: 0,
 		Timezone:        "",
 	}
 
 	t.Run("check data", func(t *testing.T) {
-		if expect.Theme != resp.Theme || expect.HomeDashboardID != resp.HomeDashboardID {
+		if expect.Theme != resp.Payload.Theme || expect.HomeDashboardID != resp.Payload.HomeDashboardID {
 			t.Error("Not correctly parsing returned team preferences.")
 		}
 	})
@@ -285,14 +307,16 @@ func TestUpdateTeamPreferences(t *testing.T) {
 	server, client := gapiTestTools(t, 200, updateTeamPreferencesJSON)
 	defer server.Close()
 
-	id := int64(1)
-	preferences := Preferences{
+	preferences := models.UpdatePrefsCmd{
 		Theme:           "",
 		HomeDashboardID: int64(0),
 		Timezone:        "",
 	}
 
-	if err := client.UpdateTeamPreferences(id, preferences); err != nil {
+	if _, err := client.Teams.UpdateTeamPreferences(
+		teams.NewUpdateTeamPreferencesParams().WithTeamID("1").WithBody(&preferences),
+		nil,
+	); err != nil {
 		t.Error(err)
 	}
 }

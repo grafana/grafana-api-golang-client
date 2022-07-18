@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/folder_permissions"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -60,18 +62,20 @@ func TestFolderPermissions(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getFolderPermissionsJSON)
 	defer server.Close()
 
-	fid := "nErXDvCkzz"
-	resp, err := client.FolderPermissions(fid)
+	resp, err := client.FolderPermissions.GetFolderPermissions(
+		folder_permissions.NewGetFolderPermissionsParams().
+			WithFolderUID("nErXDvCkzz"),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	expects := []*FolderPermission{
+	expects := []*models.DashboardACLInfoDTO{
 		{
-			ID:             1,
-			FolderUID:      "nErXDvCkzz",
+			UID:            "perm-1",
 			UserID:         0,
 			TeamID:         0,
 			Role:           "Viewer",
@@ -82,8 +86,7 @@ func TestFolderPermissions(t *testing.T) {
 			DashboardID:    0,
 		},
 		{
-			ID:             2,
-			FolderUID:      "",
+			UID:            "perm-2",
 			UserID:         0,
 			TeamID:         0,
 			Role:           "Editor",
@@ -97,7 +100,7 @@ func TestFolderPermissions(t *testing.T) {
 
 	for i, expect := range expects {
 		t.Run("check data", func(t *testing.T) {
-			if resp[i].ID != expect.ID || resp[i].Role != expect.Role {
+			if resp.Payload[i].UID != expect.UID || resp.Payload[i].Role != expect.Role {
 				t.Error("Not correctly parsing returned folder permission")
 			}
 		})
@@ -108,8 +111,8 @@ func TestUpdateFolderPermissions(t *testing.T) {
 	server, client := gapiTestTools(t, 200, updateFolderPermissionsJSON)
 	defer server.Close()
 
-	items := &PermissionItems{
-		Items: []*PermissionItem{
+	cmd := models.UpdateDashboardACLCommand{
+		Items: []*models.DashboardACLUpdateItem{
 			{
 				Role:       "viewer",
 				Permission: 1,
@@ -128,7 +131,12 @@ func TestUpdateFolderPermissions(t *testing.T) {
 			},
 		},
 	}
-	err := client.UpdateFolderPermissions("nErXDvCkzz", items)
+	_, err := client.FolderPermissions.UpdateFolderPermissions(
+		folder_permissions.NewUpdateFolderPermissionsParams().
+			WithFolderUID("nErXDvCkzz").
+			WithBody(&cmd),
+		nil,
+	)
 	if err != nil {
 		t.Error(err)
 	}

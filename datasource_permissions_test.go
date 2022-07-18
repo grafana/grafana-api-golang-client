@@ -4,6 +4,10 @@ import (
 	"testing"
 
 	"github.com/gobs/pretty"
+	"github.com/google/go-cmp/cmp"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/dashboard_permissions"
+	"github.com/grafana/grafana-api-golang-client/goclient/client/datasource_permissions"
+	"github.com/grafana/grafana-api-golang-client/goclient/models"
 )
 
 const (
@@ -43,37 +47,44 @@ func TestDatasourcePermissions(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getDatasourcePermissionsJSON)
 	defer server.Close()
 
-	resp, err := client.DatasourcePermissions(1)
+	resp, err := client.DatasourcePermissions.GetPermissions(
+		datasource_permissions.NewGetPermissionsParams().WithDatasourceID("1"),
+		nil,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	expects := []*DatasourcePermission{
+	expects := []*models.DataSourcePermissionsDTO{
 		{
-			DatasourceID:   1,
-			UserID:         1,
-			TeamID:         0,
-			Permission:     1,
-			PermissionName: "Query",
+			DatasourceID: 1,
+			Permissions: []*models.DataSourcePermissionRuleDTO{
+				{
+					UserID:         1,
+					TeamID:         0,
+					Permission:     1,
+					PermissionName: "Query",
+				},
+			},
 		},
 		{
-			DatasourceID:   2,
-			UserID:         0,
-			TeamID:         1,
-			Permission:     1,
-			PermissionName: "Query",
+			DatasourceID: 2,
+			Permissions: []*models.DataSourcePermissionRuleDTO{
+				{
+					UserID:         0,
+					TeamID:         1,
+					Permission:     1,
+					PermissionName: "Query",
+				},
+			},
 		},
 	}
 
-	for i, expect := range expects {
+	for _, expect := range expects {
 		t.Run("check data", func(t *testing.T) {
-			if resp.Permissions[i].DatasourceID != expect.DatasourceID ||
-				resp.Permissions[i].UserID != expect.UserID ||
-				resp.Permissions[i].TeamID != expect.TeamID ||
-				resp.Permissions[i].Permission != expect.Permission ||
-				resp.Permissions[i].PermissionName != expect.PermissionName {
+			if cmp.Diff(resp.Payload, expect) != "" {
 				t.Error("Not correctly parsing returned datasource permission")
 			}
 		})
@@ -84,19 +95,24 @@ func TestAddDatasourcePermissions(t *testing.T) {
 	server, client := gapiTestTools(t, 200, addDatasourcePermissionsJSON)
 	defer server.Close()
 
-	for _, item := range []*DatasourcePermissionAddPayload{
-		{
-			TeamID:     1,
-			Permission: 1,
+	items := models.UpdateDashboardACLCommand{
+		Items: []*models.DashboardACLUpdateItem{
+			{
+				TeamID:     1,
+				Permission: 1,
+			},
+			{
+				UserID:     11,
+				Permission: 1,
+			},
 		},
-		{
-			UserID:     11,
-			Permission: 1,
-		},
-	} {
-		err := client.AddDatasourcePermission(1, item)
-		if err != nil {
-			t.Error(err)
-		}
+	}
+	_, err := client.DashboardPermissions.PostDashboardPermissionsWithUID(
+		dashboard_permissions.NewPostDashboardPermissionsWithUIDParams().
+			WithUID("uid").WithBody(&items),
+		nil,
+	)
+	if err != nil {
+		t.Error(err)
 	}
 }
