@@ -65,7 +65,7 @@ type CloudRegionsResponse struct {
 }
 
 // GetCloudRegions fetches and returns all Grafana Cloud regions.
-func (c *Client) GetCloudRegions() (CloudRegionsResponse, error) {
+func (c *CloudClient) GetCloudRegions() (CloudRegionsResponse, error) {
 	var regions CloudRegionsResponse
 	err := c.request("GET", "/api/stack-regions", nil, nil, &regions)
 	return regions, err
@@ -73,7 +73,7 @@ func (c *Client) GetCloudRegions() (CloudRegionsResponse, error) {
 
 // GetCloudRegionBySlug fetches and returns the cloud region which matches the given slug.
 // You can also provide a numeric region ID.
-func (c *Client) GetCloudRegionBySlug(slug string) (CloudRegion, error) {
+func (c *CloudClient) GetCloudRegionBySlug(slug string) (CloudRegion, error) {
 	var region CloudRegion
 	err := c.request("GET", fmt.Sprintf("/api/stack-regions/%s", slug), nil, nil, &region)
 	return region, err

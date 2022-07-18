@@ -44,8 +44,10 @@ const (
 )
 
 func TestInstallCloudPlugin(t *testing.T) {
-	server, client := gapiTestTools(t, 200, installPluginJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, installPluginJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	installation, err := client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
 	if err != nil {
@@ -63,7 +65,7 @@ func TestInstallCloudPlugin(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 404, 412} {
-		server.code = code
+		mocksrv.code = code
 
 		installation, err = client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
 		if err == nil {
@@ -76,8 +78,10 @@ func TestInstallCloudPlugin(t *testing.T) {
 }
 
 func TestUninstallCloudPlugin(t *testing.T) {
-	server, client := gapiTestTools(t, 200, uninstallPluginJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, uninstallPluginJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	err := client.UninstallCloudPlugin("some-stack", "some-plugin")
 	if err != nil {
@@ -85,7 +89,7 @@ func TestUninstallCloudPlugin(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 404, 412} {
-		server.code = code
+		mocksrv.code = code
 
 		err = client.UninstallCloudPlugin("some-stack", "some-plugin")
 		if err == nil {
@@ -95,7 +99,9 @@ func TestUninstallCloudPlugin(t *testing.T) {
 }
 
 func TestIsCloudPluginInstalled(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getPluginJSON)
+	mocksrv, _ := gapiTestTools(t, 200, getPluginJSON)
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	ok, err := client.IsCloudPluginInstalled("some-stack", "some-plugin")
 	if err != nil {
@@ -106,7 +112,7 @@ func TestIsCloudPluginInstalled(t *testing.T) {
 		t.Errorf("Expected plugin installation - Expected true, got false")
 	}
 
-	server.code = 404
+	mocksrv.code = 404
 	ok, err = client.IsCloudPluginInstalled("some-stack", "some-plugin")
 	if err != nil {
 		t.Error(err)
@@ -117,7 +123,7 @@ func TestIsCloudPluginInstalled(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 412} {
-		server.code = code
+		mocksrv.code = code
 
 		_, err := client.IsCloudPluginInstalled("some-stack", "some-plugin")
 		if err == nil {
@@ -127,8 +133,10 @@ func TestIsCloudPluginInstalled(t *testing.T) {
 }
 
 func TestGetCloudPluginInstallation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, installPluginJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, installPluginJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	installation, err := client.GetCloudPluginInstallation("some-stack", "some-plugin")
 	if err != nil {
@@ -146,7 +154,7 @@ func TestGetCloudPluginInstallation(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 404, 412} {
-		server.code = code
+		mocksrv.code = code
 
 		installation, err = client.GetCloudPluginInstallation("some-stack", "some-plugin")
 		if err == nil {
@@ -159,8 +167,10 @@ func TestGetCloudPluginInstallation(t *testing.T) {
 }
 
 func TestPlugin(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getPluginJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, getPluginJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	plugin, err := client.PluginBySlug("some-plugin")
 	if err != nil {
@@ -178,7 +188,7 @@ func TestPlugin(t *testing.T) {
 	}
 
 	for _, code := range []int{404} {
-		server.code = code
+		mocksrv.code = code
 
 		_, err = client.PluginBySlug("some-plugin")
 		if err == nil {
@@ -188,8 +198,10 @@ func TestPlugin(t *testing.T) {
 }
 
 func TestPluginByID(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getPluginJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, getPluginJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	plugin, err := client.PluginBySlug("some-plugin")
 	if err != nil {
@@ -207,7 +219,7 @@ func TestPluginByID(t *testing.T) {
 	}
 
 	for _, code := range []int{404} {
-		server.code = code
+		mocksrv.code = code
 
 		_, err = client.PluginByID(123)
 		if err == nil {

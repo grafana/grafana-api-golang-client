@@ -1,39 +1,49 @@
 package gapi
 
 import (
-	"bytes"
-	"encoding/json"
-	"net/url"
+	"encoding/base64"
 	"testing"
+
+	"github.com/go-openapi/runtime"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNew_basicAuth(t *testing.T) {
-	c, err := New("http://my-grafana.com", Config{BasicAuth: url.UserPassword("user", "pass")})
-	if err != nil {
-		t.Fatalf("expected error to be nil; got: %s", err.Error())
+	a := BasicAuthenticator{
+		Username: "user",
+		Password: "pass",
 	}
 
-	expected := "http://user:pass@my-grafana.com"
-	if c.baseURL.String() != expected {
-		t.Errorf("expected error: %s; got: %s", expected, c.baseURL.String())
-	}
+	tr := new(runtime.TestClientRequest)
+	err := a.AuthenticateRequest(tr, nil)
+	require.NoError(t, err)
+
+	auth, ok := tr.GetHeaderParams()["Authorization"]
+	require.True(t, ok)
+	require.Len(t, auth, 1)
+
+	blob, err := base64.StdEncoding.DecodeString(auth[0])
+	require.NoError(t, err)
+	assert.Equal(t, blob, []byte("Basic user:pass"))
 }
 
 func TestNew_tokenAuth(t *testing.T) {
-	const apiKey = "123"
-	c, err := New("http://my-grafana.com", Config{APIKey: apiKey})
-	if err != nil {
-		t.Fatalf("expected error to be nil; got: %s", err.Error())
+	a := APIKeyAuthenticator{
+		APIKey: "123",
 	}
 
-	expected := "http://my-grafana.com"
-	if c.baseURL.String() != expected {
-		t.Errorf("expected error: %s; got: %s", expected, c.baseURL.String())
-	}
+	tr := new(runtime.TestClientRequest)
+	err := a.AuthenticateRequest(tr, nil)
+	require.NoError(t, err)
 
-	if c.config.APIKey != apiKey {
-		t.Errorf("expected error: %s; got: %s", apiKey, c.config.APIKey)
-	}
+	auth, ok := tr.GetHeaderParams()["Authorization"]
+	require.True(t, ok)
+	require.Len(t, auth, 1)
+
+	blob, err := base64.StdEncoding.DecodeString(auth[0])
+	require.NoError(t, err)
+	assert.Equal(t, blob, []byte("Bearer 123"))
 }
 
 func TestNew_orgID(t *testing.T) {
@@ -83,7 +93,7 @@ func TestRequest_200(t *testing.T) {
 	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
 	defer server.Close()
 
-	err := client.request("GET", "/foo", url.Values{}, nil, nil)
+	_, err := client.Datasources.GetDatasources(nil, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -93,7 +103,7 @@ func TestRequest_201(t *testing.T) {
 	server, client := gapiTestTools(t, 201, `{"foo":"bar"}`)
 	defer server.Close()
 
-	err := client.request("GET", "/foo", url.Values{}, nil, nil)
+	_, err := client.Datasources.GetDatasources(nil, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -104,7 +114,7 @@ func TestRequest_400(t *testing.T) {
 	defer server.Close()
 
 	expected := `status: 400, body: {"foo":"bar"}`
-	err := client.request("GET", "/foo", url.Values{}, nil, nil)
+	_, err := client.Datasources.GetDatasources(nil, nil)
 	if err.Error() != expected {
 		t.Errorf("expected error: %v; got: %s", expected, err)
 	}
@@ -115,28 +125,27 @@ func TestRequest_500(t *testing.T) {
 	defer server.Close()
 
 	expected := `status: 500, body: {"foo":"bar"}`
-	err := client.request("GET", "/foo", url.Values{}, nil, nil)
+	_, err := client.Datasources.GetDatasources(nil, nil)
 	if err.Error() != expected {
 		t.Errorf("expected error: %v; got: %s", expected, err)
 	}
 }
 
 func TestRequest_badURL(t *testing.T) {
-	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
-	baseURL, err := url.Parse("bad-url")
-	if err != nil {
-		t.Fatal(err)
-	}
-	client.baseURL = *baseURL
-	defer server.Close()
+	client, err := GetClient("bad-url")
+	require.NoError(t, err)
 
 	expected := `Get "bad-url/foo": unsupported protocol scheme ""`
-	err = client.request("GET", "/foo", url.Values{}, nil, nil)
+	_, err = client.Datasources.GetDatasources(nil, nil)
 	if err.Error() != expected {
 		t.Errorf("expected error: %v; got: %s", expected, err)
 	}
 }
 
+/*
+The following tests used to test unmarshalling the response to the expected interface:
+https://github.com/grafana/grafana-api-golang-client/blob/6ee7f30a8188cf1e087166bc6b5c7edbc8370bf3/client.go#L127
+but this behavior has been replaced.
 func TestRequest_200Unmarshal(t *testing.T) {
 	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
 	defer server.Close()
@@ -180,3 +189,4 @@ func TestRequest_200UnmarshalPut(t *testing.T) {
 		t.Errorf("expected: name; got: %s", result.Name)
 	}
 }
+*/

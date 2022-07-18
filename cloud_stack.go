@@ -109,7 +109,7 @@ type UpdateStackInput struct {
 }
 
 // Stacks fetches and returns the Grafana stacks.
-func (c *Client) Stacks() (StackItems, error) {
+func (c *CloudClient) Stacks() (StackItems, error) {
 	stacks := StackItems{}
 	err := c.request("GET", "/api/instances", nil, nil, &stacks)
 	if err != nil {
@@ -120,7 +120,7 @@ func (c *Client) Stacks() (StackItems, error) {
 }
 
 // StackByName fetches and returns the stack whose slug it's passed.
-func (c *Client) StackBySlug(slug string) (Stack, error) {
+func (c *CloudClient) StackBySlug(slug string) (Stack, error) {
 	stack := Stack{}
 	err := c.request("GET", fmt.Sprintf("/api/instances/%s", slug), nil, nil, &stack)
 
@@ -133,7 +133,7 @@ func (c *Client) StackBySlug(slug string) (Stack, error) {
 
 // StackByID fetches and returns the stack whose name it's passed.
 // This returns deleted instances as well with `status=deleted`.
-func (c *Client) StackByID(id int64) (Stack, error) {
+func (c *CloudClient) StackByID(id int64) (Stack, error) {
 	stack := Stack{}
 	err := c.request("GET", fmt.Sprintf("/api/instances/%d", id), nil, nil, &stack)
 
@@ -145,7 +145,7 @@ func (c *Client) StackByID(id int64) (Stack, error) {
 }
 
 // NewStack creates a new Grafana Stack
-func (c *Client) NewStack(stack *CreateStackInput) (int64, error) {
+func (c *CloudClient) NewStack(stack *CreateStackInput) (int64, error) {
 	data, err := json.Marshal(stack)
 	if err != nil {
 		return 0, err
@@ -165,7 +165,7 @@ func (c *Client) NewStack(stack *CreateStackInput) (int64, error) {
 
 // UpdateOrg updates a Grafana stack.
 // Only name, slug and description can be updated. No other parameters of the stack are updateable
-func (c *Client) UpdateStack(id int64, stack *UpdateStackInput) error {
+func (c *CloudClient) UpdateStack(id int64, stack *UpdateStackInput) error {
 	data, err := json.Marshal(stack)
 	if err != nil {
 		return err
@@ -175,6 +175,6 @@ func (c *Client) UpdateStack(id int64, stack *UpdateStackInput) error {
 }
 
 // DeleteStack deletes the Grafana stack whose slug it passed in.
-func (c *Client) DeleteStack(stackSlug string) error {
+func (c *CloudClient) DeleteStack(stackSlug string) error {
 	return c.request("DELETE", fmt.Sprintf("/api/instances/%s", stackSlug), nil, nil, nil)
 }

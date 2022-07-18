@@ -17,8 +17,8 @@ import (
 	"github.com/hashicorp/go-cleanhttp"
 )
 
-// Client is a Grafana API client.
-type Client struct {
+// CloudClient is a Grafana API client.
+type CloudClient struct {
 	config  Config
 	baseURL url.URL
 	client  *http.Client
@@ -41,7 +41,7 @@ type Config struct {
 }
 
 // New creates a new Grafana client.
-func New(baseURL string, cfg Config) (*Client, error) {
+func New(baseURL string, cfg Config) (*CloudClient, error) {
 	u, err := url.Parse(baseURL)
 	if err != nil {
 		return nil, err
@@ -56,14 +56,14 @@ func New(baseURL string, cfg Config) (*Client, error) {
 		cli = cleanhttp.DefaultClient()
 	}
 
-	return &Client{
+	return &CloudClient{
 		config:  cfg,
 		baseURL: *u,
 		client:  cli,
 	}, nil
 }
 
-func (c *Client) request(method, requestPath string, query url.Values, body io.Reader, responseStruct interface{}) error {
+func (c *CloudClient) request(method, requestPath string, query url.Values, body io.Reader, responseStruct interface{}) error {
 	var (
 		req          *http.Request
 		resp         *http.Response
@@ -132,7 +132,7 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 	return nil
 }
 
-func (c *Client) newRequest(method, requestPath string, query url.Values, body io.Reader) (*http.Request, error) {
+func (c *CloudClient) newRequest(method, requestPath string, query url.Values, body io.Reader) (*http.Request, error) {
 	url := c.baseURL
 	url.Path = path.Join(url.Path, requestPath)
 	url.RawQuery = query.Encode()

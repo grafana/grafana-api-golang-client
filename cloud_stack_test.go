@@ -92,8 +92,10 @@ const (
 )
 
 func TestStacks(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getStacksJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, getStacksJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	stacks, err := client.Stacks()
 
@@ -132,8 +134,10 @@ func TestStacks(t *testing.T) {
 }
 
 func TestCreateStack(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createStackJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, createStackJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	stack := &CreateStackInput{
 		Name:   "mystack",
@@ -160,8 +164,10 @@ func TestCreateStack(t *testing.T) {
 }
 
 func TestStackBySlug(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getStackJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, getStackJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	expectedStackSlug := "mystack"
 	resp, err := client.StackBySlug(expectedStackSlug)
@@ -177,8 +183,10 @@ func TestStackBySlug(t *testing.T) {
 }
 
 func TestStackByID(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getStackJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, getStackJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	expectedStackID := int64(1)
 	resp, err := client.StackByID(expectedStackID)
@@ -195,8 +203,10 @@ func TestStackByID(t *testing.T) {
 }
 
 func TestUpdateStack(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getStacksJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, getStacksJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	stack := &UpdateStackInput{
 		Name:        "mystack2",
@@ -211,8 +221,10 @@ func TestUpdateStack(t *testing.T) {
 }
 
 func TestDeleteStack(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getStacksJSON)
-	defer server.Close()
+	mocksrv, _ := gapiTestTools(t, 200, getStacksJSON)
+	defer mocksrv.Close()
+
+	client := getCloudClient(t, mocksrv.server.URL)
 
 	err := client.DeleteStack("mystack")
 

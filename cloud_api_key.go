@@ -23,7 +23,7 @@ type CloudAPIKey struct {
 	Expiration string
 }
 
-func (c *Client) CreateCloudAPIKey(org string, input *CreateCloudAPIKeyInput) (*CloudAPIKey, error) {
+func (c *CloudClient) CreateCloudAPIKey(org string, input *CreateCloudAPIKeyInput) (*CloudAPIKey, error) {
 	resp := CloudAPIKey{}
 	data, err := json.Marshal(input)
 	if err != nil {
@@ -34,12 +34,12 @@ func (c *Client) CreateCloudAPIKey(org string, input *CreateCloudAPIKeyInput) (*
 	return &resp, err
 }
 
-func (c *Client) ListCloudAPIKeys(org string) (*ListCloudAPIKeysOutput, error) {
+func (c *CloudClient) ListCloudAPIKeys(org string) (*ListCloudAPIKeysOutput, error) {
 	resp := &ListCloudAPIKeysOutput{}
 	err := c.request("GET", fmt.Sprintf("/api/orgs/%s/api-keys", org), nil, nil, &resp)
 	return resp, err
 }
 
-func (c *Client) DeleteCloudAPIKey(org string, keyName string) error {
+func (c *CloudClient) DeleteCloudAPIKey(org string, keyName string) error {
 	return c.request("DELETE", fmt.Sprintf("/api/orgs/%s/api-keys/%s", org, keyName), nil, nil, nil)
 }
