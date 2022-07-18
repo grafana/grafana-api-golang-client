@@ -11,7 +11,7 @@ func TestNotificationPolicies(t *testing.T) {
 		server, client := gapiTestTools(t, 200, notificationPolicyJSON)
 		defer server.Close()
 
-		np, err := client.NotificationPolicy()
+		np, err := client.NotificationPolicyTree()
 
 		if err != nil {
 			t.Error(err)
@@ -30,7 +30,18 @@ func TestNotificationPolicies(t *testing.T) {
 		defer server.Close()
 		np := createNotificationPolicy()
 
-		err := client.SetNotificationPolicy(&np)
+		err := client.SetNotificationPolicyTree(&np)
+
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
+	t.Run("reset policy tree succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 200, notificationPolicyJSON)
+		defer server.Close()
+
+		err := client.ResetNotificationPolicyTree()
 
 		if err != nil {
 			t.Error(err)
@@ -38,8 +49,8 @@ func TestNotificationPolicies(t *testing.T) {
 	})
 }
 
-func createNotificationPolicy() NotificationPolicy {
-	return NotificationPolicy{
+func createNotificationPolicy() NotificationPolicyTree {
+	return NotificationPolicyTree{
 		Receiver: "grafana-default-email",
 		GroupBy:  []string{"asdfasdf", "alertname"},
 		Routes: []SpecificPolicy{

@@ -26,6 +26,14 @@ type AlertRule struct {
 	Provenance   string            `json:"provenance"`
 }
 
+// RuleGroup represents a group of rules in Grafana Alerting.
+type RuleGroup struct {
+	Title     string      `json:"title"`
+	FolderUID string      `json:"folderUid"`
+	Interval  int64       `json:"interval"`
+	Rules     []AlertRule `json:"rules"`
+}
+
 // AlertQuery represents a single query stage associated with an alert definition.
 type AlertQuery struct {
 	DatasourceUID     string            `json:"datasourceUid,omitempty"`
@@ -61,6 +69,14 @@ func (c *Client) AlertRule(uid string) (AlertRule, error) {
 	if err != nil {
 		return AlertRule{}, err
 	}
+	return result, err
+}
+
+// AlertRuleGroup fetches a group of alert rules, identified by its name and the UID of its folder.
+func (c *Client) AlertRuleGroup(folderUID string, name string) (RuleGroup, error) {
+	path := fmt.Sprintf("/api/v1/provisioning/folder/%s/rule-groups/%s", folderUID, name)
+	result := RuleGroup{}
+	err := c.request("GET", path, nil, nil, &result)
 	return result, err
 }
 
