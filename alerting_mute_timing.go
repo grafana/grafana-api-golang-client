@@ -24,8 +24,8 @@ type TimeInterval struct {
 
 // TimeRange represents a range of minutes within a 1440 minute day, exclusive of the End minute.
 type TimeRange struct {
-	StartMinute int
-	EndMinute   int
+	StartMinute string `json:"start_time"`
+	EndMinute   string `json:"end_time"`
 }
 
 // A WeekdayRange is an inclusive range of weekdays, e.g. "monday" or "tuesday:thursday".
