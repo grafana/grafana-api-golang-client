@@ -16,15 +16,25 @@ type PlaylistItem struct {
 
 // Playlist represents a Grafana playlist.
 type Playlist struct {
-	ID       int            `json:"id"`
+	ID       int            `json:"id,omitempty"`  // Grafana < 9.0
+	UID      string         `json:"uid,omitempty"` // Grafana >= 9.0
 	Name     string         `json:"name"`
 	Interval string         `json:"interval"`
 	Items    []PlaylistItem `json:"items"`
 }
 
+// Grafana 9.0+ returns the ID and the UID but uses the UID in the API calls.
+// Grafana <9 only returns the ID.
+func (p *Playlist) QueryID() string {
+	if p.UID != "" {
+		return p.UID
+	}
+	return fmt.Sprintf("%d", p.ID)
+}
+
 // Playlist fetches and returns a Grafana playlist.
-func (c *Client) Playlist(id int) (*Playlist, error) {
-	path := fmt.Sprintf("/api/playlists/%d", id)
+func (c *Client) Playlist(idOrUID string) (*Playlist, error) {
+	path := fmt.Sprintf("/api/playlists/%s", idOrUID)
 	playlist := &Playlist{}
 	err := c.request("GET", path, nil, nil, playlist)
 	if err != nil {
@@ -35,27 +45,25 @@ func (c *Client) Playlist(id int) (*Playlist, error) {
 }
 
 // NewPlaylist creates a new Grafana playlist.
-func (c *Client) NewPlaylist(playlist Playlist) (int, error) {
+func (c *Client) NewPlaylist(playlist Playlist) (string, error) {
 	data, err := json.Marshal(playlist)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	result := struct {
-		ID int
-	}{}
+	var result Playlist
 
 	err = c.request("POST", "/api/playlists", nil, bytes.NewBuffer(data), &result)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	return result.ID, nil
+	return result.QueryID(), nil
 }
 
 // UpdatePlaylist updates a Grafana playlist.
 func (c *Client) UpdatePlaylist(playlist Playlist) error {
-	path := fmt.Sprintf("/api/playlists/%d", playlist.ID)
+	path := fmt.Sprintf("/api/playlists/%s", playlist.QueryID())
 	data, err := json.Marshal(playlist)
 	if err != nil {
 		return err
@@ -65,8 +73,8 @@ func (c *Client) UpdatePlaylist(playlist Playlist) error {
 }
 
 // DeletePlaylist deletes the Grafana playlist whose ID it's passed.
-func (c *Client) DeletePlaylist(id int) error {
-	path := fmt.Sprintf("/api/playlists/%d", id)
+func (c *Client) DeletePlaylist(idOrUID string) error {
+	path := fmt.Sprintf("/api/playlists/%s", idOrUID)
 
 	return c.request("DELETE", path, nil, nil, nil)
 }

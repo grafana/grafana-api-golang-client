@@ -6,13 +6,13 @@ import (
 
 const (
 	createAndUpdatePlaylistResponse = `  {
-		"id": 1,
+		"uid": "1",
 		"name": "my playlist",
 		"interval": "5m"
 	}`
 
 	getPlaylistResponse = `{
-		"id" : 2,
+		"uid": "2",
 		"name": "my playlist",
 		"interval": "5m",
 		"orgId": "my org",
@@ -55,8 +55,8 @@ func TestPlaylistCreateAndUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if id != 1 {
-		t.Errorf("Invalid id - %d, Expected %d", id, 1)
+	if id != "1" {
+		t.Errorf("Invalid id - %s, Expected %s", id, "1")
 	}
 
 	// update
@@ -77,13 +77,13 @@ func TestGetPlaylist(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getPlaylistResponse)
 	defer server.Close()
 
-	playlist, err := client.Playlist(1)
+	playlist, err := client.Playlist("2")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if playlist.ID != 2 {
-		t.Errorf("Invalid id - %d, Expected %d", playlist.ID, 1)
+	if playlist.UID != "2" {
+		t.Errorf("Invalid id - %s, Expected %s", playlist.UID, "2")
 	}
 
 	if len(playlist.Items) != 2 {
@@ -95,7 +95,7 @@ func TestDeletePlaylist(t *testing.T) {
 	server, client := gapiTestTools(t, 200, "")
 	defer server.Close()
 
-	err := client.DeletePlaylist(1)
+	err := client.DeletePlaylist("1")
 	if err != nil {
 		t.Fatal(err)
 	}
