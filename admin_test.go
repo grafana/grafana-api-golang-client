@@ -27,7 +27,7 @@ func TestCreateUser(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, createUserJSON)
 	defer mocksrv.Close()
 
-	resp, err := client.AdminUsers.CreateUser(admin_users.NewCreateUserParams().WithBody(
+	resp, err := client.AdminUsers.AdminCreateUser(admin_users.NewAdminCreateUserParams().WithBody(
 		&models.AdminCreateUserForm{
 			Email:    "admin@localhost",
 			Login:    "admin",
@@ -48,7 +48,7 @@ func TestDeleteUser(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, deleteUserJSON)
 	defer mocksrv.Close()
 
-	_, err := client.AdminUsers.DeleteUser(admin_users.NewDeleteUserParams().WithUserID(1), nil)
+	_, err := client.AdminUsers.AdminDeleteUser(admin_users.NewAdminDeleteUserParams().WithUserID(1), nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -58,7 +58,7 @@ func TestUpdateUserPassword(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, updateUserPasswordJSON)
 	defer mocksrv.Close()
 
-	_, err := client.AdminUsers.SetPassword(admin_users.NewSetPasswordParams().
+	_, err := client.AdminUsers.AdminUpdateUserPassword(admin_users.NewAdminUpdateUserPasswordParams().
 		WithUserID(1).
 		WithBody(&models.AdminUpdateUserPasswordForm{
 			Password: "new-password",
@@ -73,7 +73,7 @@ func TestUpdateUserPermissions(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, updateUserPermissionsJSON)
 	defer mocksrv.Close()
 
-	_, err := client.AdminUsers.SetPermissions(admin_users.NewSetPermissionsParams().
+	_, err := client.AdminUsers.AdminUpdateUserPermissions(admin_users.NewAdminUpdateUserPermissionsParams().
 		WithUserID(1).
 		WithBody(&models.AdminUpdateUserPermissionsForm{
 			IsGrafanaAdmin: false,

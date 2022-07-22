@@ -87,8 +87,8 @@ func TestNewAnnotation(t *testing.T) {
 		Tags:    []string{"tag1", "tag2"},
 		Text:    "text description",
 	}
-	res, err := client.Annotations.CreateAnnotation(
-		annotations.NewCreateAnnotationParams().
+	res, err := client.Annotations.PostAnnotation(
+		annotations.NewPostAnnotationParams().
 			WithBody(&body),
 		nil,
 	)
@@ -161,8 +161,8 @@ func TestNewGraphiteAnnotation(t *testing.T) {
 		Tags: []string{"tag1", "tag2"},
 		Data: "data",
 	}
-	res, err := client.Annotations.CreateGraphiteAnnotation(
-		annotations.NewCreateGraphiteAnnotationParams().
+	res, err := client.Annotations.PostGraphiteAnnotation(
+		annotations.NewPostGraphiteAnnotationParams().
 			WithBody(&a),
 		nil,
 	)
@@ -181,8 +181,8 @@ func TestDeleteAnnotation(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, deleteAnnotationJSON)
 	defer mocksrv.Close()
 
-	res, err := client.Annotations.DeleteAnnotation(
-		annotations.NewDeleteAnnotationParams().
+	res, err := client.Annotations.DeleteAnnotationByID(
+		annotations.NewDeleteAnnotationByIDParams().
 			WithAnnotationID("1"),
 		nil,
 	)

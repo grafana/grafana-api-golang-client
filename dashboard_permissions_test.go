@@ -62,8 +62,8 @@ func TestDashboardPermissions(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getDashboardPermissionsJSON)
 	defer server.Close()
 
-	resp, err := client.DashboardPermissions.GetDashboardPermissionsWithUID(
-		dashboard_permissions.NewGetDashboardPermissionsWithUIDParams().WithUID("nErXDvCkzz"),
+	resp, err := client.DashboardPermissions.GetDashboardPermissionsListByUID(
+		dashboard_permissions.NewGetDashboardPermissionsListByUIDParams().WithUID("nErXDvCkzz"),
 		nil,
 	)
 	if err != nil {
@@ -100,7 +100,7 @@ func TestDashboardPermissions(t *testing.T) {
 	for i, expect := range expects {
 		t.Run("check data", func(t *testing.T) {
 			if resp.Payload[i].DashboardID != expect.DashboardID ||
-				//resp.Payload[i].DashboardUID != expect.DashboardUID ||
+				// resp.Payload[i].DashboardUID != expect.DashboardUID ||
 				resp.Payload[i].Role != expect.Role ||
 				resp.Payload[i].UserID != expect.UserID ||
 				resp.Payload[i].TeamID != expect.TeamID ||
@@ -138,8 +138,8 @@ func TestUpdateDashboardPermissions(t *testing.T) {
 			},
 		},
 	}
-	_, err := client.DashboardPermissions.PostDashboardPermissionsWithUID(
-		dashboard_permissions.NewPostDashboardPermissionsWithUIDParams().
+	_, err := client.DashboardPermissions.UpdateDashboardPermissionsByUID(
+		dashboard_permissions.NewUpdateDashboardPermissionsByUIDParams().
 			WithUID("uid").
 			WithBody(&items),
 		nil,

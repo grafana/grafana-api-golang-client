@@ -47,8 +47,8 @@ func TestDatasourcePermissions(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getDatasourcePermissionsJSON)
 	defer server.Close()
 
-	resp, err := client.DatasourcePermissions.GetPermissions(
-		datasource_permissions.NewGetPermissionsParams().WithDatasourceID("1"),
+	resp, err := client.DatasourcePermissions.GetAllPermissions(
+		datasource_permissions.NewGetAllPermissionsParams().WithDatasourceID("1"),
 		nil,
 	)
 	if err != nil {
@@ -107,8 +107,8 @@ func TestAddDatasourcePermissions(t *testing.T) {
 			},
 		},
 	}
-	_, err := client.DashboardPermissions.PostDashboardPermissionsWithUID(
-		dashboard_permissions.NewPostDashboardPermissionsWithUIDParams().
+	_, err := client.DashboardPermissions.UpdateDashboardPermissionsByUID(
+		dashboard_permissions.NewUpdateDashboardPermissionsByUIDParams().
 			WithUID("uid").WithBody(&items),
 		nil,
 	)

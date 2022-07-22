@@ -29,8 +29,8 @@ func TestSnapshotCreate(t *testing.T) {
 		Expires: 3600,
 	}
 
-	resp, err := client.Snapshots.CreateSnapshot(
-		snapshots.NewCreateSnapshotParams().
+	resp, err := client.Snapshots.CreateDashboardSnapshot(
+		snapshots.NewCreateDashboardSnapshotParams().
 			WithBody(&snapshot),
 		nil,
 	)
@@ -46,8 +46,8 @@ func TestSnapshotCreate(t *testing.T) {
 
 	for _, code := range []int{400, 401, 403, 412} {
 		mocksrv.code = code
-		_, err := client.Snapshots.CreateSnapshot(
-			snapshots.NewCreateSnapshotParams().
+		_, err := client.Snapshots.CreateDashboardSnapshot(
+			snapshots.NewCreateDashboardSnapshotParams().
 				WithBody(&snapshot),
 			nil,
 		)

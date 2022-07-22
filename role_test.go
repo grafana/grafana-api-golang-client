@@ -77,8 +77,8 @@ func TestNewRole(t *testing.T) {
 		},
 	}
 
-	resp, err := client.AccessControl.CreateRoleWithPermissions(
-		access_control.NewCreateRoleWithPermissionsParams().
+	resp, err := client.AccessControl.CreateRole(
+		access_control.NewCreateRoleParams().
 			WithBody(&roleReq),
 		nil,
 	)

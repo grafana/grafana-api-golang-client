@@ -14,7 +14,7 @@ func main() {
 		log.Fatalf("failed to get the client: %v", err)
 	}
 
-	params := datasources.NewAddDatasourceParams().WithBody(
+	params := datasources.NewAddDataSourceParams().WithBody(
 		&models.AddDataSourceCommand{
 			Name:      "foo",
 			Type:      "cloudwatch",
@@ -35,7 +35,7 @@ func main() {
 		},
 	)
 
-	res, err := c.Datasources.AddDatasource(params, gapi.BasicAuthenticator{
+	res, err := c.Datasources.AddDataSource(params, gapi.BasicAuthenticator{
 		Username: "admin",
 		Password: "admin",
 	})

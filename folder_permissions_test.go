@@ -62,8 +62,8 @@ func TestFolderPermissions(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getFolderPermissionsJSON)
 	defer server.Close()
 
-	resp, err := client.FolderPermissions.GetFolderPermissions(
-		folder_permissions.NewGetFolderPermissionsParams().
+	resp, err := client.FolderPermissions.GetFolderPermissionList(
+		folder_permissions.NewGetFolderPermissionListParams().
 			WithFolderUID("nErXDvCkzz"),
 		nil,
 	)

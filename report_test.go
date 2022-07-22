@@ -98,7 +98,7 @@ func TestReport(t *testing.T) {
 	reportID := int64(4)
 	resp, err := client.Reports.GetReport(
 		reports.NewGetReportParams().
-			WithReportID(reportID),
+			WithID(reportID),
 		nil)
 	if err != nil {
 		t.Fatal(err)
@@ -136,7 +136,7 @@ func TestUpdateReport(t *testing.T) {
 
 	_, err := client.Reports.UpdateReport(
 		reports.NewUpdateReportParams().
-			WithReportID(4).
+			WithID(4).
 			WithBody(testReport(t)),
 		nil)
 	if err != nil {
@@ -150,7 +150,7 @@ func TestDeleteReport(t *testing.T) {
 
 	_, err := client.Reports.DeleteReport(
 		reports.NewDeleteReportParams().
-			WithReportID(int64(4)),
+			WithID(int64(4)),
 		nil)
 	if err != nil {
 		t.Fatal(err)

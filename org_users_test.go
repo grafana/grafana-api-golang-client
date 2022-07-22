@@ -19,7 +19,7 @@ func TestOrgUsersCurrent(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, getOrgUsersJSON)
 	defer mocksrv.Close()
 
-	resp, err := client.CurrentOrgDetails.GetOrgUsers(nil, nil)
+	resp, err := client.Org.GetOrgUsersForCurrentOrg(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,8 +41,8 @@ func TestOrgUsers(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, getOrgUsersJSON)
 	defer mocksrv.Close()
 
-	resp, err := client.Orgs.AdminGetOrgUsers(
-		orgs.NewAdminGetOrgUsersParams().WithOrgID(1),
+	resp, err := client.Orgs.GetOrgUsers(
+		orgs.NewGetOrgUsersParams().WithOrgID(1),
 		nil,
 	)
 	if err != nil {
@@ -68,8 +68,8 @@ func TestAddOrgUser(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, addOrgUserJSON)
 	defer mocksrv.Close()
 
-	_, err := client.Orgs.AdminAddOrgUser(
-		orgs.NewAdminAddOrgUserParams().
+	_, err := client.Orgs.AddOrgUser(
+		orgs.NewAddOrgUserParams().
 			WithOrgID(1).
 			WithBody(&models.AddOrgUserCommand{
 				LoginOrEmail: "admin@localhost",
@@ -86,8 +86,8 @@ func TestUpdateOrgUser(t *testing.T) {
 	server, client := gapiTestTools(t, 200, updateOrgUserJSON)
 	defer server.Close()
 
-	_, err := client.Orgs.AdminUpdateOrgUser(
-		orgs.NewAdminUpdateOrgUserParams().
+	_, err := client.Orgs.UpdateOrgUser(
+		orgs.NewUpdateOrgUserParams().
 			WithOrgID(1).
 			WithUserID(1).
 			WithBody(&models.UpdateOrgUserCommand{
@@ -104,8 +104,8 @@ func TestRemoveOrgUser(t *testing.T) {
 	server, client := gapiTestTools(t, 200, removeOrgUserJSON)
 	defer server.Close()
 
-	_, err := client.Orgs.AdminDeleteOrgUser(
-		orgs.NewAdminDeleteOrgUserParams().
+	_, err := client.Orgs.RemoveOrgUser(
+		orgs.NewRemoveOrgUserParams().
 			WithOrgID(1).
 			WithUserID(1),
 		nil,

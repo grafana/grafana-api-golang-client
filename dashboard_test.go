@@ -7,6 +7,7 @@ import (
 	"github.com/grafana/grafana-api-golang-client/goclient/client/dashboards"
 	"github.com/grafana/grafana-api-golang-client/goclient/client/search"
 	"github.com/grafana/grafana-api-golang-client/goclient/models"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -98,6 +99,7 @@ func TestDashboardGet(t *testing.T) {
 	}
 
 	dashboardData, ok := resp.Payload.Dashboard.(map[string]interface{})
+	require.True(t, ok)
 
 	uid, ok := dashboardData["uid"]
 	if !ok || uid != "cIBgcSjkk" {

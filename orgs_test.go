@@ -20,7 +20,7 @@ func TestOrgs(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, getOrgsJSON)
 	defer mocksrv.Close()
 
-	orgs, err := client.Orgs.SearchOrg(nil, nil)
+	orgs, err := client.Orgs.SearchOrgs(nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -101,8 +101,8 @@ func TestUpdateOrg(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, updatedOrgJSON)
 	defer mocksrv.Close()
 
-	_, err := client.Orgs.AdminUpdateOrg(
-		orgs.NewAdminUpdateOrgParams().
+	_, err := client.Orgs.UpdateOrg(
+		orgs.NewUpdateOrgParams().
 			WithOrgID(1).
 			WithBody(&models.UpdateOrgForm{
 				Name: "test-org",
@@ -118,8 +118,8 @@ func TestDeleteOrg(t *testing.T) {
 	mocksrv, client := gapiTestTools(t, 200, deletedOrgJSON)
 	defer mocksrv.Close()
 
-	_, err := client.Orgs.AdminDeleteOrg(
-		orgs.NewAdminDeleteOrgParams().WithOrgID(1),
+	_, err := client.Orgs.DeleteOrgByID(
+		orgs.NewDeleteOrgByIDParams().WithOrgID(1),
 		nil,
 	)
 	if err != nil {

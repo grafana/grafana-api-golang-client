@@ -133,8 +133,8 @@ func TestTeam(t *testing.T) {
 	server, client := gapiTestTools(t, 200, getTeamJSON)
 	defer server.Close()
 
-	resp, err := client.Teams.GetTeam(
-		teams.NewGetTeamParams().WithTeamID("1"),
+	resp, err := client.Teams.GetTeamByID(
+		teams.NewGetTeamByIDParams().WithTeamID("1"),
 		nil)
 	if err != nil {
 		t.Fatal(err)

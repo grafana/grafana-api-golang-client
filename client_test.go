@@ -93,7 +93,7 @@ func TestRequest_200(t *testing.T) {
 	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
 	defer server.Close()
 
-	_, err := client.Datasources.GetDatasources(nil, nil)
+	_, err := client.Datasources.GetDataSources(nil, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -103,7 +103,7 @@ func TestRequest_201(t *testing.T) {
 	server, client := gapiTestTools(t, 201, `{"foo":"bar"}`)
 	defer server.Close()
 
-	_, err := client.Datasources.GetDatasources(nil, nil)
+	_, err := client.Datasources.GetDataSources(nil, nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -114,7 +114,7 @@ func TestRequest_400(t *testing.T) {
 	defer server.Close()
 
 	expected := `status: 400, body: {"foo":"bar"}`
-	_, err := client.Datasources.GetDatasources(nil, nil)
+	_, err := client.Datasources.GetDataSources(nil, nil)
 	if err.Error() != expected {
 		t.Errorf("expected error: %v; got: %s", expected, err)
 	}
@@ -125,7 +125,7 @@ func TestRequest_500(t *testing.T) {
 	defer server.Close()
 
 	expected := `status: 500, body: {"foo":"bar"}`
-	_, err := client.Datasources.GetDatasources(nil, nil)
+	_, err := client.Datasources.GetDataSources(nil, nil)
 	if err.Error() != expected {
 		t.Errorf("expected error: %v; got: %s", expected, err)
 	}
@@ -136,7 +136,7 @@ func TestRequest_badURL(t *testing.T) {
 	require.NoError(t, err)
 
 	expected := `Get "bad-url/foo": unsupported protocol scheme ""`
-	_, err = client.Datasources.GetDatasources(nil, nil)
+	_, err = client.Datasources.GetDataSources(nil, nil)
 	if err.Error() != expected {
 		t.Errorf("expected error: %v; got: %s", expected, err)
 	}
