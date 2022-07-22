@@ -3,10 +3,9 @@ module github.com/grafana/grafana-api-golang-client
 go 1.14
 
 require (
-	github.com/go-openapi/analysis v0.21.3 // indirect
+	github.com/go-openapi/analysis v0.21.4 // indirect
 	github.com/go-openapi/errors v0.20.2
 	github.com/go-openapi/runtime v0.24.1
-	github.com/go-openapi/spec v0.20.6 // indirect
 	github.com/go-openapi/strfmt v0.21.3
 	github.com/go-openapi/swag v0.21.1
 	github.com/go-openapi/validate v0.22.0
