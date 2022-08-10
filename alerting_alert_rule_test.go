@@ -55,10 +55,23 @@ func TestAlertRules(t *testing.T) {
 		}
 	})
 
+	t.Run("get non-existent rule group fails", func(t *testing.T) {
+		server, client := gapiTestTools(t, 404, "")
+		defer server.Close()
+
+		group, err := client.AlertRuleGroup("d8-gk06nz", "does not exist")
+
+		if err == nil {
+			t.Errorf("expected error but got nil")
+			t.Log(pretty.PrettyFormat(group))
+		}
+	})
+
 	t.Run("create alert rule succeeds", func(t *testing.T) {
 		server, client := gapiTestTools(t, 201, writeAlertRuleJSON)
 		defer server.Close()
 		alertRule := createAlertRule()
+
 		uid, err := client.NewAlertRule(&alertRule)
 
 		if err != nil {
@@ -66,6 +79,18 @@ func TestAlertRules(t *testing.T) {
 		}
 		if uid != "123abcd" {
 			t.Errorf("unexpected UID returned, got %s", uid)
+		}
+	})
+
+	t.Run("set alert rule group succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 200, getAlertRuleGroupJSON)
+		defer server.Close()
+		group := createAlertRuleGroup()
+
+		err := client.SetAlertRuleGroup(group)
+
+		if err != nil {
+			t.Error(err)
 		}
 	})
 
@@ -92,6 +117,15 @@ func TestAlertRules(t *testing.T) {
 			t.Error(err)
 		}
 	})
+}
+
+func createAlertRuleGroup() RuleGroup {
+	return RuleGroup{
+		Title:     "eval_group_1",
+		FolderUID: "project_test",
+		Interval:  120,
+		Rules:     []AlertRule{createAlertRule()},
+	}
 }
 
 func createAlertRule() AlertRule {
