@@ -80,6 +80,19 @@ func (c *Client) AlertRuleGroup(folderUID string, name string) (RuleGroup, error
 	return result, err
 }
 
+// SetAlertRuleGroup overwrites an existing rule group on the server.
+func (c *Client) SetAlertRuleGroup(group RuleGroup) error {
+	folderUID := group.FolderUID
+	name := group.Title
+	req, err := json.Marshal(group)
+	if err != nil {
+		return err
+	}
+
+	uri := fmt.Sprintf("/api/v1/provisioning/folder/%s/rule-groups/%s", folderUID, name)
+	return c.request("PUT", uri, nil, bytes.NewBuffer(req), nil)
+}
+
 // NewAlertRule creates a new alert rule and returns its UID.
 func (c *Client) NewAlertRule(ar *AlertRule) (string, error) {
 	req, err := json.Marshal(ar)
