@@ -15,10 +15,6 @@ type UpdateOrgPreferencesResponse struct {
 func (c *Client) OrgPreferences() (Preferences, error) {
 	var prefs Preferences
 	err := c.request("GET", "/api/org/preferences", nil, nil, &prefs)
-	if err != nil {
-		return prefs, err
-	}
-
 	return prefs, err
 }
 
