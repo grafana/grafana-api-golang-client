@@ -144,6 +144,7 @@ func syncCalculatedRuleFields(rule *AlertRule) {
 }
 
 // timeDurationToRuleDuration converts a typical time.Duration to the string-based format that alert rules expect.
+// This code is adapted from Prometheus: https://github.com/prometheus/common/blob/dfbc25bd00225c70aca0d94c3c4bb7744f28ace0/model/time.go#L236
 func timeDurationToRuleDuration(d time.Duration) string {
 	ms := int64(d / time.Millisecond)
 	if ms == 0 {
