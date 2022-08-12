@@ -3,6 +3,7 @@ package gapi
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/gobs/pretty"
 )
@@ -138,7 +139,7 @@ func createAlertRule() AlertRule {
 		OrgID:        1,
 		RuleGroup:    "eval_group_1",
 		Title:        "Always in alarm",
-		ForDuration:  0,
+		ForDuration:  60 * time.Second,
 	}
 }
 
@@ -165,7 +166,7 @@ const writeAlertRuleJSON = `
 	"orgId": 1,
 	"ruleGroup": "eval_group_1",
 	"title": "Always in alarm",
-	"for": 0
+	"for": "1m"
 }
 `
 
@@ -180,7 +181,7 @@ const getAlertRuleJSON = `
 	"uid": "123abcd",
 	"ruleGroup": "eval_group_1",
 	"title": "Always in alarm",
-	"for": 0
+	"for": "1m"
 }
 `
 
@@ -266,7 +267,7 @@ const getAlertRuleGroupJSON = `
 			"RuleGroupIndex": 1,
 			"NoDataState": "NoData",
 			"ExecErrState": "Alerting",
-			"For": 300000000000,
+			"For": "1m",
 			"Annotations": {},
 			"Labels": {}
 		}
