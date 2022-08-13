@@ -15,8 +15,8 @@ type SearchTeam struct {
 	PerPage    int64   `json:"perPage,omitempty"`
 }
 
-// Team consists of a get response
-// It's used in  Add and Update API
+// Team consists of a GET response.
+// It's used in the Add and Update APIs.
 type Team struct {
 	ID          int64  `json:"id,omitempty"`
 	OrgID       int64  `json:"orgId,omitempty"`
