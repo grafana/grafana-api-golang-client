@@ -1,4 +1,4 @@
-GRAFANA_VERSION ?= 9.0.2
+GRAFANA_VERSION ?= 9.0.7
 
 .PHONY: drone, test, acc-test-docker, acc-test
 
