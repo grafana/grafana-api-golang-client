@@ -41,7 +41,7 @@ type TeamMember struct {
 // Preferences represents Grafana preferences.
 type Preferences struct {
 	Theme           string `json:"theme"`
-	HomeDashboardID int64  `json:"homeDashboardId"`
+	HomeDashboardID int64  `json:"homeDashboardID"`
 	Timezone        string `json:"timezone"`
 }
 
