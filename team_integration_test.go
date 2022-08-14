@@ -1,4 +1,4 @@
-// +build acceptance
+// +build integration
 
 package gapi
 
@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestTeamAcceptance(t *testing.T) {
+func TestIntegrationTeam(t *testing.T) {
 	teamID, err := client.AddTeam("foo", "foo@bar.com")
 	if err != nil {
 		t.Fatalf("failed to add team: %v", err)

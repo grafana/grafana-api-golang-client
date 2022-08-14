@@ -13,13 +13,13 @@ test:
 	golangci-lint run ./...
 	go test -cover -race -vet all -mod readonly ./...
 
-acc-test-docker:
+integ-test-docker:
 	GRAFANA_VERSION=$(GRAFANA_VERSION) \
 		docker-compose \
 		-f ./docker-compose.yml \
 		run --rm -e TESTARGS="$(TESTARGS)" \
 		grafana-api-golang-client \
-		make acc-test
+		make integ-test
 
-acc-test:
-	go test --tags=acceptance ./... -v $(TESTARGS) -timeout 120m
+integ-test:
+	go test --tags=integration ./... -v $(TESTARGS) -timeout 120m
