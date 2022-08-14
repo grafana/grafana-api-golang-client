@@ -6,6 +6,7 @@ package gapi
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/gobs/pretty"
 )
@@ -29,17 +30,17 @@ func TestAlertRules(t *testing.T) {
 		server, client := gapiTestTools(t, 200, getAlertRuleGroupJSON)
 		defer server.Close()
 
-		group, err := client.AlertRuleGroup("d8-gk06nz", "test")
+		group, err := client.AlertRuleGroup("project_test", "eval_group_1")
 
 		if err != nil {
 			t.Error(err)
 		}
 		t.Log(pretty.PrettyFormat(group))
-		if group.Title != "test" {
-			t.Errorf("incorrect title - expected %s got %s", "test", group.Title)
+		if group.Title != "eval_group_1" {
+			t.Errorf("incorrect title - expected %s got %s", "eval_group_1", group.Title)
 		}
-		if group.FolderUID != "d8-gk06nz" {
-			t.Errorf("incorrect folderUID - expected %s got %s", "d8-gk06nz", group.FolderUID)
+		if group.FolderUID != "project_test" {
+			t.Errorf("incorrect folderUID - expected %s got %s", "project_test", group.FolderUID)
 		}
 		if len(group.Rules) != 1 {
 			t.Errorf("wrong number of rules, got %d", len(group.Rules))
@@ -58,10 +59,23 @@ func TestAlertRules(t *testing.T) {
 		}
 	})
 
+	t.Run("get non-existent rule group fails", func(t *testing.T) {
+		server, client := gapiTestTools(t, 404, "")
+		defer server.Close()
+
+		group, err := client.AlertRuleGroup("d8-gk06nz", "does not exist")
+
+		if err == nil {
+			t.Errorf("expected error but got nil")
+			t.Log(pretty.PrettyFormat(group))
+		}
+	})
+
 	t.Run("create alert rule succeeds", func(t *testing.T) {
 		server, client := gapiTestTools(t, 201, writeAlertRuleJSON)
 		defer server.Close()
 		alertRule := createAlertRule()
+
 		uid, err := client.NewAlertRule(&alertRule)
 
 		if err != nil {
@@ -69,6 +83,18 @@ func TestAlertRules(t *testing.T) {
 		}
 		if uid != "123abcd" {
 			t.Errorf("unexpected UID returned, got %s", uid)
+		}
+	})
+
+	t.Run("set alert rule group succeeds", func(t *testing.T) {
+		server, client := gapiTestTools(t, 200, getAlertRuleGroupJSON)
+		defer server.Close()
+		group := createAlertRuleGroup()
+
+		err := client.SetAlertRuleGroup(group)
+
+		if err != nil {
+			t.Error(err)
 		}
 	})
 
@@ -97,6 +123,15 @@ func TestAlertRules(t *testing.T) {
 	})
 }
 
+func createAlertRuleGroup() RuleGroup {
+	return RuleGroup{
+		Title:     "eval_group_1",
+		FolderUID: "project_test",
+		Interval:  120,
+		Rules:     []AlertRule{createAlertRule()},
+	}
+}
+
 func createAlertRule() AlertRule {
 	return AlertRule{
 		Condition:    "A",
@@ -107,7 +142,7 @@ func createAlertRule() AlertRule {
 		OrgID:        1,
 		RuleGroup:    "eval_group_1",
 		Title:        "Always in alarm",
-		ForDuration:  0,
+		ForDuration:  60 * time.Second,
 	}
 }
 
@@ -134,7 +169,7 @@ const writeAlertRuleJSON = `
 	"orgId": 1,
 	"ruleGroup": "eval_group_1",
 	"title": "Always in alarm",
-	"for": 0
+	"for": "1m"
 }
 `
 
@@ -149,95 +184,84 @@ const getAlertRuleJSON = `
 	"uid": "123abcd",
 	"ruleGroup": "eval_group_1",
 	"title": "Always in alarm",
-	"for": 0
+	"for": "1m"
 }
 `
 
 const getAlertRuleGroupJSON = `
 {
-	"title": "test",
-	"folderUid": "d8-gk06nz",
+	"title": "eval_group_1",
+	"folderUid": "project_test",
 	"interval": 60,
 	"rules": [
-		{
-			"ID": 1,
-			"OrgID": 1,
-			"Title": "abc",
-			"Condition": "B",
-			"Data": [
-				{
-					"refId": "A",
-					"queryType": "",
-					"relativeTimeRange": {
-						"from": 600,
-						"to": 0
+	  {
+		"id": 212,
+		"uid": "HW7RYci4z",
+		"orgID": 1,
+		"folderUID": "project_test",
+		"ruleGroup": "eval_group_1",
+		"title": "Always in alarm",
+		"condition": "A",
+		"data": [
+		  {
+			"refId": "A",
+			"queryType": "",
+			"relativeTimeRange": {
+			  "from": 0,
+			  "to": 0
+			},
+			"datasourceUid": "-100",
+			"model": {
+			  "datasourceUid": "-100",
+			  "intervalMs": 1000,
+			  "maxDataPoints": 43200,
+			  "model": {
+				"conditions": [
+				  {
+					"evaluator": {
+					  "params": [
+						0,
+						0
+					  ],
+					  "type": "gt"
 					},
-					"datasourceUid": "PD8C576611E62080A",
-					"model": {
-						"hide": false,
-						"intervalMs": 1000,
-						"maxDataPoints": 43200,
-						"refId": "A"
-					}
+					"operator": {
+					  "type": "and"
+					},
+					"query": {
+					  "params": []
+					},
+					"reducer": {
+					  "params": [],
+					  "type": "avg"
+					},
+					"type": "query"
+				  }
+				],
+				"datasource": {
+				  "type": "__expr__",
+				  "uid": "__expr__"
 				},
-				{
-					"refId": "B",
-					"queryType": "",
-					"relativeTimeRange": {
-						"from": 0,
-						"to": 0
-					},
-					"datasourceUid": "-100",
-					"model": {
-						"conditions": [
-							{
-								"evaluator": {
-									"params": [
-										3
-									],
-									"type": "gt"
-								},
-								"operator": {
-									"type": "and"
-								},
-								"query": {
-									"params": [
-										"A"
-									]
-								},
-								"reducer": {
-									"params": [],
-									"type": "last"
-								},
-								"type": "query"
-							}
-						],
-						"datasource": {
-							"type": "__expr__",
-							"uid": "-100"
-						},
-						"hide": false,
-						"intervalMs": 1000,
-						"maxDataPoints": 43200,
-						"refId": "B",
-						"type": "classic_conditions"
-					}
-				}
-			],
-			"Updated": "2022-07-07T16:23:56-05:00",
-			"IntervalSeconds": 60,
-			"Version": 1,
-			"UID": "hsXgz0enz",
-			"NamespaceUID": "d8-gk06nz",
-			"DashboardUID": null,
-			"PanelID": null,
-			"RuleGroup": "test",
-			"RuleGroupIndex": 1,
-			"NoDataState": "NoData",
-			"ExecErrState": "Alerting",
-			"For": 300000000000,
-			"Annotations": {},
-			"Labels": {}
-		}
+				"expression": "1 == 1",
+				"hide": false,
+				"intervalMs": 1000,
+				"maxDataPoints": 43200,
+				"refId": "A",
+				"type": "math"
+			  },
+			  "queryType": "",
+			  "refId": "A",
+			  "relativeTimeRange": {
+				"from": 0,
+				"to": 0
+			  }
+			}
+		  }
+		],
+		"updated": "2022-08-12T15:44:43-05:00",
+		"noDataState": "OK",
+		"execErrState": "OK",
+		"for": "2m"
+	  }
 	]
-}`
+  }`
