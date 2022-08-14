@@ -7,8 +7,14 @@ Contributions to this library offering support for the [Terraform provider for G
 
 ## Tests
 
-To run the tests:
+To lint and run unit tests:
 
 ```
-go test
+make test
+```
+
+To run integration tests against a local Docker instance of Grafana:
+
+```
+make integ-test-docker
 ```
