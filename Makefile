@@ -1,6 +1,6 @@
 GRAFANA_VERSION ?= 9.0.7
 
-.PHONY: drone, test, acc-test-docker, acc-test
+.PHONY: drone, test, integ-test-docker, integ-test
 
 drone:
 	drone jsonnet --stream --format --source .drone/drone.jsonnet --target .drone/drone.yml
