@@ -187,9 +187,6 @@ type JSONData struct {
 	// Used by Azure Monitor
 	ClientID                     string `json:"clientId,omitempty"`
 	CloudName                    string `json:"cloudName,omitempty"`
-	LogAnalyticsClientID         string `json:"logAnalyticsClientId,omitempty"`
-	LogAnalyticsDefaultWorkspace string `json:"logAnalyticsDefaultWorkspace,omitempty"`
-	LogAnalyticsTenantID         string `json:"logAnalyticsTenantId,omitempty"`
 	SubscriptionID               string `json:"subscriptionId,omitempty"`
 	TenantID                     string `json:"tenantId,omitempty"`
 }
