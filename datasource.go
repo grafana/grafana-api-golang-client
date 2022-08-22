@@ -185,7 +185,6 @@ type JSONData struct {
 	Version       string `json:"version,omitempty"`
 
 	// Used by Azure Monitor
-	AzureLogAnalyticsSameAs      bool   `json:"azureLogAnalyticsSameAs"`
 	ClientID                     string `json:"clientId,omitempty"`
 	CloudName                    string `json:"cloudName,omitempty"`
 	LogAnalyticsClientID         string `json:"logAnalyticsClientId,omitempty"`
