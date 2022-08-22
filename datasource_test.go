@@ -212,14 +212,10 @@ func TestNewAzureDataSource(t *testing.T) {
 		Access:    "access",
 		IsDefault: true,
 		JSONData: JSONData{
-			AzureLogAnalyticsSameAs:      true,
-			ClientID:                     "lorem-ipsum",
-			CloudName:                    "azuremonitor",
-			LogAnalyticsClientID:         "lorem-ipsum",
-			LogAnalyticsDefaultWorkspace: "lorem-ipsum",
-			LogAnalyticsTenantID:         "lorem-ipsum",
-			SubscriptionID:               "lorem-ipsum",
-			TenantID:                     "lorem-ipsum",
+			ClientID:       "lorem-ipsum",
+			CloudName:      "azuremonitor",
+			SubscriptionID: "lorem-ipsum",
+			TenantID:       "lorem-ipsum",
 		},
 		SecureJSONData: SecureJSONData{
 			ClientSecret: "alksdjaslkdjkslajdkj.asdlkjaksdjlkajsdlkjsaldj==",

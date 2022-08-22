@@ -185,14 +185,10 @@ type JSONData struct {
 	Version       string `json:"version,omitempty"`
 
 	// Used by Azure Monitor
-	AzureLogAnalyticsSameAs      bool   `json:"azureLogAnalyticsSameAs"`
-	ClientID                     string `json:"clientId,omitempty"`
-	CloudName                    string `json:"cloudName,omitempty"`
-	LogAnalyticsClientID         string `json:"logAnalyticsClientId,omitempty"`
-	LogAnalyticsDefaultWorkspace string `json:"logAnalyticsDefaultWorkspace,omitempty"`
-	LogAnalyticsTenantID         string `json:"logAnalyticsTenantId,omitempty"`
-	SubscriptionID               string `json:"subscriptionId,omitempty"`
-	TenantID                     string `json:"tenantId,omitempty"`
+	ClientID       string `json:"clientId,omitempty"`
+	CloudName      string `json:"cloudName,omitempty"`
+	SubscriptionID string `json:"subscriptionId,omitempty"`
+	TenantID       string `json:"tenantId,omitempty"`
 }
 
 // Required to avoid recursion during (un)marshal
