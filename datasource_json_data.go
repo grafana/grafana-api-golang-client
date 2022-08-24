@@ -176,13 +176,13 @@ func (d SecureJSONData) Map() (map[string]interface{}, error) {
 	return fields, nil
 }
 
-func JSONDataWithHeaders(jsonData, secureJsonData map[string]interface{}, headers map[string]string) (map[string]interface{}, map[string]interface{}) {
+func JSONDataWithHeaders(jsonData, secureJSONData map[string]interface{}, headers map[string]string) (map[string]interface{}, map[string]interface{}) {
 	idx := 1
 	for name, value := range headers {
 		jsonData[fmt.Sprintf("httpHeaderName%d", idx)] = name
-		secureJsonData[fmt.Sprintf("httpHeaderValue%d", idx)] = value
+		secureJSONData[fmt.Sprintf("httpHeaderValue%d", idx)] = value
 		idx += 1
 	}
 
-	return jsonData, secureJsonData
+	return jsonData, secureJSONData
 }
