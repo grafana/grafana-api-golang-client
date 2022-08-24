@@ -177,12 +177,22 @@ func (d SecureJSONData) Map() (map[string]interface{}, error) {
 }
 
 func JSONDataWithHeaders(jsonData, secureJSONData map[string]interface{}, headers map[string]string) (map[string]interface{}, map[string]interface{}) {
+	// Clone the maps so we don't modify the original
+	clonedJsonData := make(map[string]interface{}, len(jsonData))
+	for k, v := range jsonData {
+		clonedJsonData[k] = v
+	}
+	clonedSecureJSONData := make(map[string]interface{}, len(secureJSONData))
+	for k, v := range secureJSONData {
+		clonedSecureJSONData[k] = v
+	}
+
 	idx := 1
 	for name, value := range headers {
-		jsonData[fmt.Sprintf("httpHeaderName%d", idx)] = name
-		secureJSONData[fmt.Sprintf("httpHeaderValue%d", idx)] = value
+		clonedJsonData[fmt.Sprintf("httpHeaderName%d", idx)] = name
+		clonedSecureJSONData[fmt.Sprintf("httpHeaderValue%d", idx)] = value
 		idx += 1
 	}
 
-	return jsonData, secureJSONData
+	return clonedJsonData, clonedSecureJSONData
 }
