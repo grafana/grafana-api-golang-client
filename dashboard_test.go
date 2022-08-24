@@ -55,7 +55,8 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 		Model: map[string]interface{}{
 			"title": "test",
 		},
-		Folder:    0,
+		FolderID:  0,
+		FolderUID: "l3KqBxCMz",
 		Overwrite: false,
 	}
 

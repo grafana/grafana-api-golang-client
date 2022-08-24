@@ -38,13 +38,6 @@ type TeamMember struct {
 	Permission int64  `json:"permission,omitempty"`
 }
 
-// Preferences represents Grafana preferences.
-type Preferences struct {
-	Theme           string `json:"theme"`
-	HomeDashboardID int64  `json:"homeDashboardID"`
-	Timezone        string `json:"timezone"`
-}
-
 // SearchTeam searches Grafana teams and returns the results.
 func (c *Client) SearchTeam(query string) (*SearchTeam, error) {
 	var result SearchTeam
