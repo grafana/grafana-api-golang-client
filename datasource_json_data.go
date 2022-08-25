@@ -218,7 +218,6 @@ func ExtractHeadersFromJSONData(jsonData, secureJSONData map[string]interface{})
 			headerName := dataValue.(string)
 			headers[headerName] = "true" // We can't retrieve the headers, so we just set a dummy value
 		}
-
 	}
 
 	return jsonData, secureJSONData, headers
