@@ -3,6 +3,7 @@ package gapi
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 type LokiDerivedField struct {
@@ -176,23 +177,48 @@ func (d SecureJSONData) Map() (map[string]interface{}, error) {
 	return fields, nil
 }
 
+func cloneMap(m map[string]interface{}) map[string]interface{} {
+	clone := make(map[string]interface{})
+	for k, v := range m {
+		clone[k] = v
+	}
+	return clone
+}
+
 func JSONDataWithHeaders(jsonData, secureJSONData map[string]interface{}, headers map[string]string) (map[string]interface{}, map[string]interface{}) {
 	// Clone the maps so we don't modify the original
-	clonedJSONData := make(map[string]interface{}, len(jsonData))
-	for k, v := range jsonData {
-		clonedJSONData[k] = v
-	}
-	clonedSecureJSONData := make(map[string]interface{}, len(secureJSONData))
-	for k, v := range secureJSONData {
-		clonedSecureJSONData[k] = v
-	}
+	jsonData = cloneMap(jsonData)
+	secureJSONData = cloneMap(secureJSONData)
 
 	idx := 1
 	for name, value := range headers {
-		clonedJSONData[fmt.Sprintf("httpHeaderName%d", idx)] = name
-		clonedSecureJSONData[fmt.Sprintf("httpHeaderValue%d", idx)] = value
+		jsonData[fmt.Sprintf("httpHeaderName%d", idx)] = name
+		secureJSONData[fmt.Sprintf("httpHeaderValue%d", idx)] = value
 		idx += 1
 	}
 
-	return clonedJSONData, clonedSecureJSONData
+	return jsonData, secureJSONData
+}
+
+func ExtractHeadersFromJSONData(jsonData, secureJSONData map[string]interface{}) (map[string]interface{}, map[string]interface{}, map[string]string) {
+	// Clone the maps so we don't modify the original
+	jsonData = cloneMap(jsonData)
+	secureJSONData = cloneMap(secureJSONData)
+	headers := make(map[string]string)
+
+	for dataName, dataValue := range jsonData {
+		if strings.HasPrefix(dataName, "httpHeaderName") {
+			// Remove the header name from JSON data
+			delete(jsonData, dataName)
+
+			// Remove the header value from secure JSON data
+			secureDataName := strings.Replace(dataName, "httpHeaderName", "httpHeaderValue", 1)
+			delete(secureJSONData, secureDataName)
+
+			headerName := dataValue.(string)
+			headers[headerName] = "true" // We can't retrieve the headers, so we just set a dummy value
+		}
+	}
+
+	return jsonData, secureJSONData, headers
 }
