@@ -353,7 +353,7 @@ func (c *Client) DataSourceByUID(uid string) (*DataSource, error) {
 
 // DataSourceIDByName returns the Grafana data source ID by name.
 func (c *Client) DataSourceIDByName(name string) (int64, error) {
-	path := fmt.Sprintf("/api/datasources/id/%s", name)
+	path := fmt.Sprintf("/api/datasources/name/%s", name)
 
 	result := struct {
 		ID int64 `json:"id"`
