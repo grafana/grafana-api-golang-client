@@ -71,8 +71,19 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 		bodyContents []byte
 	)
 
+	// If we want to retry the request, we'll need to stash the request data in memory. Otherwise, we lose it since readers cannot be replayed.
+	var bodyBuffer bytes.Buffer
+	if c.config.NumRetries > 0 {
+		body = io.TeeReader(body, &bodyBuffer)
+	}
+
 	// retry logic
 	for n := 0; n <= c.config.NumRetries; n++ {
+		// If it's not the first request, re-use the request body we stashed earlier.
+		if n > 0 {
+			body = bytes.NewReader(bodyBuffer.Bytes())
+		}
+
 		req, err = c.newRequest(method, requestPath, query, body)
 		if err != nil {
 			return err
