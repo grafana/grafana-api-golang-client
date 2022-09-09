@@ -37,7 +37,6 @@ func (c *Client) UpdateRoleAssignments(ra RoleAssignments) (*RoleAssignments, er
 		return nil, err
 	}
 
-	// TODO check method
 	url := fmt.Sprintf("/api/access-control/roles/%s/assignments", ra.RoleUID)
 	err = c.request(http.MethodPut, url, nil, bytes.NewBuffer(data), &response)
 	if err != nil {
