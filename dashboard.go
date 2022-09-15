@@ -28,7 +28,8 @@ type DashboardSaveResponse struct {
 type Dashboard struct {
 	Meta      DashboardMeta          `json:"meta"`
 	Model     map[string]interface{} `json:"dashboard"`
-	Folder    int64                  `json:"folderId"`
+	FolderID  int64                  `json:"folderId"`
+	FolderUID string                 `json:"folderUid"`
 	Overwrite bool                   `json:"overwrite"`
 
 	// This is only used when creating a new dashboard, it will always be empty when getting a dashboard.
@@ -112,7 +113,7 @@ func (c *Client) dashboard(path string) (*Dashboard, error) {
 	if err != nil {
 		return nil, err
 	}
-	result.Folder = result.Meta.Folder
+	result.FolderID = result.Meta.Folder
 
 	return result, err
 }
