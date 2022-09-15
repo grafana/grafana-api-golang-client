@@ -65,6 +65,16 @@ func (c *Client) UpdateDataSource(s *DataSource) error {
 	return c.request("PUT", path, nil, bytes.NewBuffer(data), nil)
 }
 
+func (c *Client) UpdateDataSourceByUID(s *DataSource) error {
+	path := fmt.Sprintf("/api/datasources/uid/%s", s.UID)
+	data, err := json.Marshal(s)
+	if err != nil {
+		return err
+	}
+
+	return c.request("PUT", path, nil, bytes.NewBuffer(data), nil)
+}
+
 // DataSource fetches and returns the Grafana data source whose ID it's passed.
 func (c *Client) DataSource(id int64) (*DataSource, error) {
 	path := fmt.Sprintf("/api/datasources/%d", id)
