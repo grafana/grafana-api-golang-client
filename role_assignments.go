@@ -8,15 +8,10 @@ import (
 )
 
 type RoleAssignments struct {
-	RoleUID         string           `json:"role_uid"`
-	Users           []RoleAssignment `json:"users,omitempty"`
-	Teams           []RoleAssignment `json:"teams,omitempty"`
-	ServiceAccounts []RoleAssignment `json:"service_accounts,omitempty"`
-}
-
-type RoleAssignment struct {
-	ID     int  `json:"id"`
-	Global bool `json:"global"`
+	RoleUID         string `json:"role_uid"`
+	Users           []int  `json:"users,omitempty"`
+	Teams           []int  `json:"teams,omitempty"`
+	ServiceAccounts []int  `json:"service_accounts,omitempty"`
 }
 
 func (c *Client) GetRoleAssignments(uid string) (*RoleAssignments, error) {
