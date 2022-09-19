@@ -24,7 +24,7 @@ func (c *Client) GetRoleAssignments(uid string) (*RoleAssignments, error) {
 	return assignments, nil
 }
 
-func (c *Client) UpdateRoleAssignments(ra RoleAssignments) (*RoleAssignments, error) {
+func (c *Client) UpdateRoleAssignments(ra *RoleAssignments) (*RoleAssignments, error) {
 	response := &RoleAssignments{}
 
 	data, err := json.Marshal(ra)
