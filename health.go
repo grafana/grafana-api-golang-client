@@ -1,8 +1,6 @@
 package gapi
 
 type HealthResponse struct {
-	Code     string `json:"code,omitempty"`
-	Message  string `json:"message,omitempty"`
 	Commit   string `json:"commit,omitempty"`
 	Database string `json:"database,omitempty"`
 	Version  string `json:"version,omitempty"`
