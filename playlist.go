@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 // PlaylistItem represents a Grafana playlist item.
@@ -42,6 +43,19 @@ func (c *Client) Playlist(idOrUID string) (*Playlist, error) {
 	}
 
 	return playlist, nil
+}
+
+// Playlists fetches and returns a Grafana playlist.
+func (c *Client) Playlists(params url.Values) (*[]Playlist, error) {
+	path := "/api/playlists/"
+	playlists := &[]Playlist{}
+
+	err := c.request("GET", path, params, nil, playlists)
+	if err != nil {
+		return nil, err
+	}
+
+	return playlists, nil
 }
 
 // NewPlaylist creates a new Grafana playlist.

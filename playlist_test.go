@@ -1,6 +1,9 @@
 package gapi
 
 import (
+	"encoding/json"
+	"net/url"
+	"reflect"
 	"testing"
 )
 
@@ -35,6 +38,21 @@ const (
 			}
 		]
 	}`
+
+	listOfPlaylists = `[
+		{
+			"id": 1,
+			"uid": "BmMFcuVVz",
+			"name": "screen",
+			"interval": "1m"
+		},
+		{
+			"id": 2,
+			"uid": "uEH1YqVVz",
+			"name": "screen2",
+			"interval": "1m"
+		}
+	]`
 )
 
 func TestPlaylistCreateAndUpdate(t *testing.T) {
@@ -88,6 +106,37 @@ func TestGetPlaylist(t *testing.T) {
 
 	if len(playlist.Items) != 2 {
 		t.Errorf("Invalid len(items) - %d, Expected %d", len(playlist.Items), 2)
+	}
+}
+
+func TestGetAllPlaylists(t *testing.T) {
+	server, client := gapiTestTools(t, 200, listOfPlaylists)
+	defer server.Close()
+	existingPlaylists := []Playlist{}
+	err := json.Unmarshal([]byte(listOfPlaylists), &existingPlaylists)
+	if err != nil {
+		t.Errorf("Unable to unmarshal listOfPlaylists - %s", listOfPlaylists)
+	}
+
+	playlists, err := client.Playlists(url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	existingID := false
+	for _, playlist := range *playlists {
+		if playlist.ID == 2 {
+			existingID = true
+			if !reflect.DeepEqual(playlist, existingPlaylists[1]) {
+				t.Errorf("The existing playlists definition don't match the listed item")
+			}
+		}
+	}
+	if !existingID {
+		t.Errorf("Playlists didn't include any ID == 2 and thus didn't get the correct data")
+	}
+	if len(*playlists) != 2 {
+		t.Errorf("The number of playlists should be 2 but was %v", len(*playlists))
 	}
 }
 
