@@ -16,6 +16,7 @@ type ReportSchedule struct {
 	IntervalAmount    int64      `json:"intervalAmount"`
 	WorkdaysOnly      bool       `json:"workdaysOnly"`
 	TimeZone          string     `json:"timeZone"`
+	DayOfMonth        string     `json:"dayOfMonth,omitempty"`
 }
 
 // ReportTimeRange represents the time range from a Grafana report.
