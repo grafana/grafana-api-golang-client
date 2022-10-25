@@ -20,6 +20,7 @@ type DatasourcePermission struct {
 	UserID       int64  `json:"userId"`
 	UserEmail    string `json:"userEmail"`
 	TeamID       int64  `json:"teamId"`
+	BuiltInRole  string `json:"builtInRole"`
 
 	// Permission levels are
 	// 1 = Query
