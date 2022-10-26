@@ -11,6 +11,7 @@ type DatasourcePermissionType int
 const (
 	_ DatasourcePermissionType = iota // 0 is not a valid permission
 	DatasourcePermissionQuery
+	DatasourcePermissionEdit
 )
 
 // DatasourcePermission has information such as a datasource, user, team, role and permission.
