@@ -47,7 +47,7 @@ type UserSearch struct {
 // Users fetches and returns Grafana users.
 func (c *Client) Users() (users []UserSearch, err error) {
 	var (
-		page     = 0
+		page     = 1
 		newUsers []UserSearch
 	)
 	for len(newUsers) > 0 || page == 0 {
