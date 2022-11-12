@@ -46,7 +46,20 @@ type UserSearch struct {
 
 // Users fetches and returns Grafana users.
 func (c *Client) Users() (users []UserSearch, err error) {
-	err = c.request("GET", "/api/users", nil, nil, &users)
+	var (
+		page     = 0
+		newUsers []UserSearch
+	)
+	for len(newUsers) > 0 || page == 0 {
+		query := url.Values{}
+		query.Add("page", fmt.Sprintf("%d", page))
+		if err = c.request("GET", "/api/users", query, nil, &users); err != nil {
+			return
+		}
+		users = append(users, newUsers...)
+		page++
+	}
+
 	return
 }
 
