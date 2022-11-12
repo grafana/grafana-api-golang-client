@@ -50,7 +50,7 @@ func (c *Client) Users() (users []UserSearch, err error) {
 		page     = 1
 		newUsers []UserSearch
 	)
-	for len(newUsers) > 0 || page == 0 {
+	for len(newUsers) > 0 || page == 1 {
 		query := url.Values{}
 		query.Add("page", fmt.Sprintf("%d", page))
 		if err = c.request("GET", "/api/users", query, nil, &newUsers); err != nil {
