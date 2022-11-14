@@ -85,3 +85,25 @@ func (c *Client) UpdateOrg(id int64, name string) error {
 func (c *Client) DeleteOrg(id int64) error {
 	return c.request("DELETE", fmt.Sprintf("/api/orgs/%d", id), nil, nil, nil)
 }
+
+// OrgPreferences fetches and returns preferences for a Grafana org.
+func (c *Client) OrgPreferences() (*Preferences, error) {
+	preferences := &Preferences{}
+	err := c.request("GET", "/api/orgs/%d/preferences", nil, nil, preferences)
+	if err != nil {
+		return nil, err
+	}
+
+	return preferences, nil
+}
+
+// UpdateOrgPreferences updates team preferences for a Grafana org.
+func (c *Client) UpdateOrgPreferences(preferences Preferences) error {
+	path := "/api/orgs/preferences"
+	data, err := json.Marshal(preferences)
+	if err != nil {
+		return err
+	}
+
+	return c.request("PATCH", path, nil, bytes.NewBuffer(data), nil)
+}
