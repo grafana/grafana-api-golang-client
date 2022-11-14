@@ -31,6 +31,14 @@ const (
 			"permissionName": "Query",
 			"created": "2017-06-20T02:00:00+02:00",
 			"updated": "2017-06-20T02:00:00+02:00"
+		},
+		{
+			"datasourceId": 1,
+			"permission": 2,
+			"permissionName": "Edit",
+			"builtInRole": "Viewer",
+			"created": "2017-06-20T02:00:00+02:00",
+			"updated": "2017-06-20T02:00:00+02:00"
 		}
 	]
 }`
@@ -92,6 +100,10 @@ func TestAddDatasourcePermissions(t *testing.T) {
 		{
 			UserID:     11,
 			Permission: 1,
+		},
+		{
+			BuiltInRole: "Viewer",
+			Permission:  2,
 		},
 	} {
 		err := client.AddDatasourcePermission(1, item)
