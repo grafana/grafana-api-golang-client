@@ -132,3 +132,10 @@ func (c *Client) DeleteDataSource(id int64) error {
 
 	return c.request("DELETE", path, nil, nil, nil)
 }
+
+// DeleteDataSourceByName deletes the Grafana data source whose NAME it's passed.
+func (c *Client) DeleteDataSourceByName(name string) error {
+	path := fmt.Sprintf("/api/datasources/name/%s", name)
+
+	return c.request("DELETE", path, nil, nil, nil)
+}
