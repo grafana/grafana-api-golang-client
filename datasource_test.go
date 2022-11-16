@@ -317,3 +317,13 @@ func TestDataSourceIDByName(t *testing.T) {
 		t.Error("Not correctly parsing returned datasources.")
 	}
 }
+
+func TestDeleteDataSourceByName(t *testing.T) {
+	server, client := gapiTestTools(t, 200, "")
+	defer server.Close()
+
+	err := client.DeleteDataSourceByName("foo")
+	if err != nil {
+		t.Fatal(err)
+	}
+}
