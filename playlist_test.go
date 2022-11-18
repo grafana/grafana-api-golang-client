@@ -100,7 +100,6 @@ func TestDeletePlaylist(t *testing.T) {
 
 	err := client.DeletePlaylist("1")
 	if err != nil {
-
 		t.Fatal(err)
 	}
 }

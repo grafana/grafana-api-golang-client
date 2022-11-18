@@ -117,7 +117,6 @@ func TestDashboardGet(t *testing.T) {
 }
 
 func TestDashboardDelete(t *testing.T) {
-
 	server, client := gapiTestTools(t, 200, "")
 	err := client.DeleteDashboard("test")
 	if err != nil {

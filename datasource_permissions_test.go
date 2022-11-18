@@ -89,7 +89,6 @@ func TestDatasourcePermissions(t *testing.T) {
 }
 
 func TestAddDatasourcePermissions(t *testing.T) {
-
 	for _, item := range []*DatasourcePermissionAddPayload{
 		{
 			TeamID:     1,
