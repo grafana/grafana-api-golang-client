@@ -69,7 +69,7 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 	}
 
 	for _, code := range []int{400, 401, 403, 412} {
-		server.code = code
+		_, client = gapiTestTools(t, code, "error")
 		_, err = client.NewDashboard(dashboard)
 		if err == nil {
 			t.Errorf("%d not detected", code)
@@ -90,6 +90,9 @@ func TestDashboardGet(t *testing.T) {
 		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
 	}
 
+	server, client = gapiTestTools(t, 200, getDashboardResponse)
+	defer server.Close()
+
 	resp, err = client.DashboardByUID("cIBgcSjkk")
 	if err != nil {
 		t.Fatal(err)
@@ -100,7 +103,7 @@ func TestDashboardGet(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 404} {
-		server.code = code
+		_, client = gapiTestTools(t, code, "error")
 		_, err = client.Dashboard("test")
 		if err == nil {
 			t.Errorf("%d not detected", code)
@@ -114,21 +117,23 @@ func TestDashboardGet(t *testing.T) {
 }
 
 func TestDashboardDelete(t *testing.T) {
-	server, client := gapiTestTools(t, 200, "")
-	defer server.Close()
 
+	server, client := gapiTestTools(t, 200, "")
 	err := client.DeleteDashboard("test")
 	if err != nil {
 		t.Error(err)
 	}
+	server.Close()
 
+	server, client = gapiTestTools(t, 200, "")
 	err = client.DeleteDashboardByUID("cIBgcSjkk")
 	if err != nil {
 		t.Fatal(err)
 	}
+	server.Close()
 
 	for _, code := range []int{401, 403, 404, 412} {
-		server.code = code
+		_, client = gapiTestTools(t, code, "error")
 
 		err = client.DeleteDashboard("test")
 		if err == nil {

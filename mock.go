@@ -8,9 +8,15 @@ import (
 	"testing"
 )
 
+type mockServerCall struct {
+	code int
+	body string
+}
+
 type mockServer struct {
-	code   int
-	server *httptest.Server
+	upcomingCalls []mockServerCall
+	executedCalls []mockServerCall
+	server        *httptest.Server
 }
 
 func (m *mockServer) Close() {
@@ -18,16 +24,27 @@ func (m *mockServer) Close() {
 }
 
 func gapiTestTools(t *testing.T, code int, body string) (*mockServer, *Client) {
+	return gapiTestToolsFromCalls(t, []mockServerCall{{code, body}})
+}
+
+func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) (*mockServer, *Client) {
 	t.Helper()
 
 	mock := &mockServer{
-		code: code,
+		upcomingCalls: calls,
 	}
 
 	mock.server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(mock.code)
+		call := mock.upcomingCalls[0]
+		if len(calls) > 1 {
+			mock.upcomingCalls = mock.upcomingCalls[1:]
+		} else {
+			mock.upcomingCalls = nil
+		}
+		w.WriteHeader(call.code)
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, body)
+		fmt.Fprint(w, call.body)
+		mock.executedCalls = append(mock.executedCalls, call)
 	}))
 
 	tr := &http.Transport{

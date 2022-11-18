@@ -74,7 +74,10 @@ func TestUserByEmail(t *testing.T) {
 }
 
 func TestUserUpdate(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getUserUpdateJSON)
+	server, client := gapiTestToolsFromCalls(t, []mockServerCall{
+		{200, getUserJSON},
+		{200, getUserUpdateJSON},
+	})
 	defer server.Close()
 
 	user, err := client.User(4)
