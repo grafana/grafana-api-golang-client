@@ -14,8 +14,7 @@ const (
 )
 
 func TestUsers(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getUsersJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getUsersJSON)
 
 	resp, err := client.Users()
 	if err != nil {
@@ -38,8 +37,7 @@ func TestUsers(t *testing.T) {
 }
 
 func TestUser(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getUserJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getUserJSON)
 
 	user, err := client.User(1)
 	if err != nil {
@@ -56,8 +54,7 @@ func TestUser(t *testing.T) {
 }
 
 func TestUserByEmail(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getUserByEmailJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getUserByEmailJSON)
 
 	user, err := client.UserByEmail("admin@localhost")
 	if err != nil {
@@ -74,11 +71,10 @@ func TestUserByEmail(t *testing.T) {
 }
 
 func TestUserUpdate(t *testing.T) {
-	server, client := gapiTestToolsFromCalls(t, []mockServerCall{
+	client := gapiTestToolsFromCalls(t, []mockServerCall{
 		{200, getUserJSON},
 		{200, getUserUpdateJSON},
 	})
-	defer server.Close()
 
 	user, err := client.User(4)
 	if err != nil {

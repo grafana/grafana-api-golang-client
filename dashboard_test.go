@@ -45,8 +45,7 @@ const (
 )
 
 func TestDashboardCreateAndUpdate(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdAndUpdateDashboardResponse)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdAndUpdateDashboardResponse)
 
 	dashboard := Dashboard{
 		Model: map[string]interface{}{
@@ -69,7 +68,7 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 	}
 
 	for _, code := range []int{400, 401, 403, 412} {
-		_, client = gapiTestTools(t, code, "error")
+		client = gapiTestTools(t, code, "error")
 		_, err = client.NewDashboard(dashboard)
 		if err == nil {
 			t.Errorf("%d not detected", code)
@@ -78,8 +77,7 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 }
 
 func TestDashboardGet(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDashboardResponse)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getDashboardResponse)
 
 	resp, err := client.Dashboard("test")
 	if err != nil {
@@ -90,8 +88,7 @@ func TestDashboardGet(t *testing.T) {
 		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
 	}
 
-	server, client = gapiTestTools(t, 200, getDashboardResponse)
-	defer server.Close()
+	client = gapiTestTools(t, 200, getDashboardResponse)
 
 	resp, err = client.DashboardByUID("cIBgcSjkk")
 	if err != nil {
@@ -103,7 +100,7 @@ func TestDashboardGet(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 404} {
-		_, client = gapiTestTools(t, code, "error")
+		client = gapiTestTools(t, code, "error")
 		_, err = client.Dashboard("test")
 		if err == nil {
 			t.Errorf("%d not detected", code)
@@ -117,22 +114,20 @@ func TestDashboardGet(t *testing.T) {
 }
 
 func TestDashboardDelete(t *testing.T) {
-	server, client := gapiTestTools(t, 200, "")
+	client := gapiTestTools(t, 200, "")
 	err := client.DeleteDashboard("test")
 	if err != nil {
 		t.Error(err)
 	}
-	server.Close()
 
-	server, client = gapiTestTools(t, 200, "")
+	client = gapiTestTools(t, 200, "")
 	err = client.DeleteDashboardByUID("cIBgcSjkk")
 	if err != nil {
 		t.Fatal(err)
 	}
-	server.Close()
 
 	for _, code := range []int{401, 403, 404, 412} {
-		_, client = gapiTestTools(t, code, "error")
+		client = gapiTestTools(t, code, "error")
 
 		err = client.DeleteDashboard("test")
 		if err == nil {
@@ -147,8 +142,7 @@ func TestDashboardDelete(t *testing.T) {
 }
 
 func TestDashboards(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDashboardsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getDashboardsJSON)
 
 	dashboards, err := client.Dashboards()
 	if err != nil {

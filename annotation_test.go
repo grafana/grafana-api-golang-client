@@ -48,8 +48,7 @@ const (
 )
 
 func TestAnnotations(t *testing.T) {
-	server, client := gapiTestTools(t, 200, annotationsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, annotationsJSON)
 
 	params := url.Values{}
 	params.Add("from", "1506676478816")
@@ -69,8 +68,7 @@ func TestAnnotations(t *testing.T) {
 }
 
 func TestNewAnnotation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, newAnnotationJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, newAnnotationJSON)
 
 	a := Annotation{
 		DashboardID: 123,
@@ -94,8 +92,7 @@ func TestNewAnnotation(t *testing.T) {
 }
 
 func TestUpdateAnnotation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateAnnotationJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updateAnnotationJSON)
 
 	a := Annotation{
 		Text: "new text description",
@@ -113,8 +110,7 @@ func TestUpdateAnnotation(t *testing.T) {
 }
 
 func TestPatchAnnotation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, patchAnnotationJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, patchAnnotationJSON)
 
 	a := Annotation{
 		Text: "new text description",
@@ -132,8 +128,7 @@ func TestPatchAnnotation(t *testing.T) {
 }
 
 func TestNewGraphiteAnnotation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, newGraphiteAnnotationJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, newGraphiteAnnotationJSON)
 
 	a := GraphiteAnnotation{
 		What: "what",
@@ -154,8 +149,7 @@ func TestNewGraphiteAnnotation(t *testing.T) {
 }
 
 func TestDeleteAnnotation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deleteAnnotationJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, deleteAnnotationJSON)
 
 	res, err := client.DeleteAnnotation(1)
 	if err != nil {
@@ -170,8 +164,7 @@ func TestDeleteAnnotation(t *testing.T) {
 }
 
 func TestDeleteAnnotationByRegionID(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deleteAnnotationJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, deleteAnnotationJSON)
 
 	res, err := client.DeleteAnnotationByRegionID(1)
 	if err != nil {

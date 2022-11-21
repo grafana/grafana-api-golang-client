@@ -23,11 +23,11 @@ func (m *mockServer) Close() {
 	m.server.Close()
 }
 
-func gapiTestTools(t *testing.T, code int, body string) (*mockServer, *Client) {
+func gapiTestTools(t *testing.T, code int, body string) *Client {
 	return gapiTestToolsFromCalls(t, []mockServerCall{{code, body}})
 }
 
-func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) (*mockServer, *Client) {
+func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) *Client {
 	t.Helper()
 
 	mock := &mockServer{
@@ -59,5 +59,10 @@ func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) (*mockServer, 
 	if err != nil {
 		t.Fatal(err)
 	}
-	return mock, client
+
+	t.Cleanup(func() {
+		mock.Close()
+	})
+
+	return client
 }

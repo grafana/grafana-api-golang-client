@@ -82,8 +82,7 @@ var (
 )
 
 func TestReport(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getReportJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getReportJSON)
 
 	report := int64(4)
 	resp, err := client.Report(report)
@@ -99,8 +98,7 @@ func TestReport(t *testing.T) {
 }
 
 func TestNewReport(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createReportJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createReportJSON)
 
 	resp, err := client.NewReport(testReport)
 	if err != nil {
@@ -115,8 +113,7 @@ func TestNewReport(t *testing.T) {
 }
 
 func TestUpdateReport(t *testing.T) {
-	server, client := gapiTestTools(t, 200, "")
-	defer server.Close()
+	client := gapiTestTools(t, 200, "")
 
 	err := client.UpdateReport(testReport)
 	if err != nil {
@@ -125,8 +122,7 @@ func TestUpdateReport(t *testing.T) {
 }
 
 func TestDeleteReport(t *testing.T) {
-	server, client := gapiTestTools(t, 200, "")
-	defer server.Close()
+	client := gapiTestTools(t, 200, "")
 
 	err := client.DeleteReport(4)
 	if err != nil {
