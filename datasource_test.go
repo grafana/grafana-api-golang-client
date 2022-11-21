@@ -13,8 +13,7 @@ const (
 )
 
 func TestNewDataSource(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
 	jd, err := JSONData{
 		AssumeRoleArn:           "arn:aws:iam::123:role/some-role",
@@ -57,8 +56,7 @@ func TestNewDataSource(t *testing.T) {
 }
 
 func TestNewPrometheusDataSource(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
 	jd, err := JSONData{
 		HTTPMethod:   "POST",
@@ -91,8 +89,7 @@ func TestNewPrometheusDataSource(t *testing.T) {
 }
 
 func TestNewPrometheusSigV4DataSource(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
 	jd, err := JSONData{
 		HTTPMethod:    "POST",
@@ -134,8 +131,7 @@ func TestNewPrometheusSigV4DataSource(t *testing.T) {
 }
 
 func TestNewElasticsearchDataSource(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
 	jd, err := JSONData{
 		EsVersion:                  "7.0.0",
@@ -170,8 +166,7 @@ func TestNewElasticsearchDataSource(t *testing.T) {
 }
 
 func TestNewInfluxDBDataSource(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
 	jd, err := JSONData{
 		DefaultBucket: "telegraf",
@@ -211,8 +206,7 @@ func TestNewInfluxDBDataSource(t *testing.T) {
 }
 
 func TestNewOpenTSDBDataSource(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
 	jd, err := JSONData{
 		TsdbResolution: 1,
@@ -244,8 +238,7 @@ func TestNewOpenTSDBDataSource(t *testing.T) {
 }
 
 func TestNewAzureDataSource(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdDataSourceJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
 	jd, err := JSONData{
 		ClientID:       "lorem-ipsum",
@@ -286,8 +279,7 @@ func TestNewAzureDataSource(t *testing.T) {
 }
 
 func TestDataSources(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDataSourcesJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getDataSourcesJSON)
 
 	datasources, err := client.DataSources()
 	if err != nil {
@@ -305,8 +297,7 @@ func TestDataSources(t *testing.T) {
 }
 
 func TestDataSourceIDByName(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDataSourceJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getDataSourceJSON)
 
 	datasourceID, err := client.DataSourceIDByName("foo")
 	if err != nil {
@@ -319,8 +310,7 @@ func TestDataSourceIDByName(t *testing.T) {
 }
 
 func TestDeleteDataSourceByName(t *testing.T) {
-	server, client := gapiTestTools(t, 200, "")
-	defer server.Close()
+	client := gapiTestTools(t, 200, "")
 
 	err := client.DeleteDataSourceByName("foo")
 	if err != nil {

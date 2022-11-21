@@ -92,8 +92,7 @@ const (
 )
 
 func TestStacks(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getStacksJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getStacksJSON)
 
 	stacks, err := client.Stacks()
 
@@ -132,8 +131,7 @@ func TestStacks(t *testing.T) {
 }
 
 func TestCreateStack(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createStackJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createStackJSON)
 
 	stack := &CreateStackInput{
 		Name:   "mystack",
@@ -160,8 +158,7 @@ func TestCreateStack(t *testing.T) {
 }
 
 func TestStackBySlug(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getStackJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getStackJSON)
 
 	expectedStackSlug := "mystack"
 	resp, err := client.StackBySlug(expectedStackSlug)
@@ -177,8 +174,7 @@ func TestStackBySlug(t *testing.T) {
 }
 
 func TestStackByID(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getStackJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getStackJSON)
 
 	expectedStackID := int64(1)
 	resp, err := client.StackByID(expectedStackID)
@@ -195,8 +191,7 @@ func TestStackByID(t *testing.T) {
 }
 
 func TestUpdateStack(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getStacksJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getStacksJSON)
 
 	stack := &UpdateStackInput{
 		Name:        "mystack2",
@@ -211,8 +206,7 @@ func TestUpdateStack(t *testing.T) {
 }
 
 func TestDeleteStack(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getStacksJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getStacksJSON)
 
 	err := client.DeleteStack("mystack")
 

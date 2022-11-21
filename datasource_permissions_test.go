@@ -48,8 +48,7 @@ const (
 )
 
 func TestDatasourcePermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDatasourcePermissionsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getDatasourcePermissionsJSON)
 
 	resp, err := client.DatasourcePermissions(1)
 	if err != nil {
@@ -89,9 +88,6 @@ func TestDatasourcePermissions(t *testing.T) {
 }
 
 func TestAddDatasourcePermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, addDatasourcePermissionsJSON)
-	defer server.Close()
-
 	for _, item := range []*DatasourcePermissionAddPayload{
 		{
 			TeamID:     1,
@@ -106,6 +102,7 @@ func TestAddDatasourcePermissions(t *testing.T) {
 			Permission:  2,
 		},
 	} {
+		client := gapiTestTools(t, 200, addDatasourcePermissionsJSON)
 		err := client.AddDatasourcePermission(1, item)
 		if err != nil {
 			t.Error(err)

@@ -38,8 +38,10 @@ const (
 )
 
 func TestPlaylistCreateAndUpdate(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createAndUpdatePlaylistResponse)
-	defer server.Close()
+	client := gapiTestToolsFromCalls(t, []mockServerCall{
+		{200, createAndUpdatePlaylistResponse},
+		{200, createAndUpdatePlaylistResponse},
+	})
 
 	playlist := Playlist{
 		Name:     "my playlist",
@@ -74,8 +76,7 @@ func TestPlaylistCreateAndUpdate(t *testing.T) {
 }
 
 func TestGetPlaylist(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getPlaylistResponse)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getPlaylistResponse)
 
 	playlist, err := client.Playlist("2")
 	if err != nil {
@@ -92,8 +93,7 @@ func TestGetPlaylist(t *testing.T) {
 }
 
 func TestDeletePlaylist(t *testing.T) {
-	server, client := gapiTestTools(t, 200, "")
-	defer server.Close()
+	client := gapiTestTools(t, 200, "")
 
 	err := client.DeletePlaylist("1")
 	if err != nil {
