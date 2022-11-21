@@ -14,7 +14,10 @@ const (
 )
 
 func TestUsers(t *testing.T) {
-	client := gapiTestTools(t, 200, getUsersJSON)
+	client := gapiTestToolsFromCalls(t, []mockServerCall{
+		{200, getUsersJSON},
+		{200, "null"},
+	})
 
 	resp, err := client.Users()
 	if err != nil {
