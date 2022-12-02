@@ -15,8 +15,7 @@ const (
 )
 
 func TestOrgs(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getOrgsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getOrgsJSON)
 
 	orgs, err := client.Orgs()
 	if err != nil {
@@ -34,8 +33,7 @@ func TestOrgs(t *testing.T) {
 }
 
 func TestOrgByName(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getOrgJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getOrgJSON)
 
 	org := "Main Org."
 	resp, err := client.OrgByName(org)
@@ -51,8 +49,7 @@ func TestOrgByName(t *testing.T) {
 }
 
 func TestOrg(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getOrgJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getOrgJSON)
 
 	org := int64(1)
 	resp, err := client.Org(org)
@@ -68,8 +65,7 @@ func TestOrg(t *testing.T) {
 }
 
 func TestNewOrg(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdOrgJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdOrgJSON)
 
 	resp, err := client.NewOrg("test-org")
 	if err != nil {
@@ -84,8 +80,7 @@ func TestNewOrg(t *testing.T) {
 }
 
 func TestUpdateOrg(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updatedOrgJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updatedOrgJSON)
 
 	err := client.UpdateOrg(int64(1), "test-org")
 	if err != nil {
@@ -94,8 +89,7 @@ func TestUpdateOrg(t *testing.T) {
 }
 
 func TestDeleteOrg(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deletedOrgJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, deletedOrgJSON)
 
 	err := client.DeleteOrg(int64(1))
 	if err != nil {

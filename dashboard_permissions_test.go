@@ -57,8 +57,7 @@ const (
 )
 
 func TestDashboardPermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDashboardPermissionsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getDashboardPermissionsJSON)
 
 	resp, err := client.DashboardPermissions(1)
 	if err != nil {
@@ -110,8 +109,7 @@ func TestDashboardPermissions(t *testing.T) {
 }
 
 func TestUpdateDashboardPermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateDashboardPermissionsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updateDashboardPermissionsJSON)
 
 	items := &PermissionItems{
 		Items: []*PermissionItem{

@@ -29,13 +29,14 @@ type Team struct {
 
 // TeamMember represents a Grafana team member.
 type TeamMember struct {
-	OrgID      int64  `json:"orgId,omitempty"`
-	TeamID     int64  `json:"teamId,omitempty"`
-	UserID     int64  `json:"userID,omitempty"`
-	Email      string `json:"email,omitempty"`
-	Login      string `json:"login,omitempty"`
-	AvatarURL  string `json:"avatarUrl,omitempty"`
-	Permission int64  `json:"permission,omitempty"`
+	OrgID      int64    `json:"orgId,omitempty"`
+	TeamID     int64    `json:"teamId,omitempty"`
+	UserID     int64    `json:"userID,omitempty"`
+	Email      string   `json:"email,omitempty"`
+	Login      string   `json:"login,omitempty"`
+	AvatarURL  string   `json:"avatarUrl,omitempty"`
+	Permission int64    `json:"permission,omitempty"`
+	Labels     []string `json:"labels,omitempty"`
 }
 
 // SearchTeam searches Grafana teams and returns the results.
