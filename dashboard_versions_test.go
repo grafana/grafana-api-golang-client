@@ -151,7 +151,7 @@ func TestCompareDashboardVersions(t *testing.T) {
 		body:      compareDashboardsResponse,
 		reqURI:    "/api/dashboards/calculate-diff",
 		reqMethod: http.MethodPost,
-		reqBody:   `{"base":{"dashboardId":1,"version":2},"new":{"dashboardId":3,"version":4},"diffType":"json"}`,
+		reqBody:   `{"base":{"dashboardId":1,"version":2},"new":{"dashboardId":3,"version":4},"diffType":"basic"}`,
 	}})
 
 	compare, err := client.CompareDashboardVersions(CompareDashboardsInput{
@@ -159,7 +159,6 @@ func TestCompareDashboardVersions(t *testing.T) {
 		BaseDashboardVersion: 2,
 		NewDashboardID:       3,
 		NewDashboardVersion:  4,
-		DiffType:             "json",
 	})
 	if err != nil {
 		t.Errorf("did not expect an error from dashboard compare: %v", err)

@@ -2,7 +2,7 @@ package gapi
 
 import (
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -91,7 +91,7 @@ func (c mockServerCall) testRequestData(t *testing.T, req *http.Request) {
 		return
 	}
 
-	reqBody, err := io.ReadAll(req.Body)
+	reqBody, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		t.Errorf("got unexpected error reading request body: %v", err)
 	}

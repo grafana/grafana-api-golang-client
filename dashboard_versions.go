@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 )
@@ -119,7 +119,7 @@ func (c *Client) CompareDashboardVersions(compareDashboards CompareDashboardsInp
 	}
 	defer resp.Body.Close()
 
-	bodyContents, err := io.ReadAll(resp.Body)
+	bodyContents, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("reading body: %w", err)
 	}
