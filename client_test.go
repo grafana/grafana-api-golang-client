@@ -3,6 +3,7 @@ package gapi
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/url"
 	"testing"
 )
@@ -100,20 +101,28 @@ func TestRequest_201(t *testing.T) {
 func TestRequest_400(t *testing.T) {
 	client := gapiTestTools(t, 400, `{"foo":"bar"}`)
 
-	expected := `status: 400, body: {"foo":"bar"}`
+	expected := `invalid status: 400, body: {"foo":"bar"}`
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
 	if err.Error() != expected {
 		t.Errorf("expected error: %v; got: %s", expected, err)
+	}
+
+	if !errors.Is(err, ErrInvalidStatus) {
+		t.Errorf("expected error: %v; got: %s", ErrInvalidStatus, err)
 	}
 }
 
 func TestRequest_500(t *testing.T) {
 	client := gapiTestTools(t, 500, `{"foo":"bar"}`)
 
-	expected := `status: 500, body: {"foo":"bar"}`
+	expected := `invalid status: 500, body: {"foo":"bar"}`
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
 	if err.Error() != expected {
 		t.Errorf("expected error: %v; got: %s", expected, err)
+	}
+
+	if !errors.Is(err, ErrInvalidStatus) {
+		t.Errorf("expected error: %v; got: %s", ErrInvalidStatus, err)
 	}
 }
 

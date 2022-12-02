@@ -17,6 +17,11 @@ import (
 	"github.com/hashicorp/go-cleanhttp"
 )
 
+var (
+	// ErrInvalidStatus is returned when Grafana replies with an HTTP status code > 400.
+	ErrInvalidStatus = fmt.Errorf("invalid status")
+)
+
 // Client is a Grafana API client.
 type Client struct {
 	config  Config
@@ -127,8 +132,8 @@ func (c *Client) request(method, requestPath string, query url.Values, body io.R
 	}
 
 	// check status code.
-	if resp.StatusCode >= 400 {
-		return fmt.Errorf("status: %d, body: %v", resp.StatusCode, string(bodyContents))
+	if resp.StatusCode >= http.StatusBadRequest {
+		return fmt.Errorf("%w: %d, body: %v", ErrInvalidStatus, resp.StatusCode, string(bodyContents))
 	}
 
 	if responseStruct == nil {

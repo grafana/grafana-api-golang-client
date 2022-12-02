@@ -80,7 +80,7 @@ func (c *Client) IsCloudPluginInstalled(stackSlug string, pluginSlug string) (bo
 			return false, err
 		}
 
-		return false, fmt.Errorf("status: %d, body: %v", resp.StatusCode, string(bodyContents))
+		return false, fmt.Errorf("%w: %d, body: %v", ErrInvalidStatus, resp.StatusCode, string(bodyContents))
 	}
 
 	return true, nil

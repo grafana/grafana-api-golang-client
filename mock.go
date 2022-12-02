@@ -2,15 +2,20 @@ package gapi
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
 )
 
 type mockServerCall struct {
-	code int
-	body string
+	code      int
+	body      string
+	reqURI    string
+	reqMethod string
+	reqBody   string
 }
 
 type mockServer struct {
@@ -24,7 +29,7 @@ func (m *mockServer) Close() {
 }
 
 func gapiTestTools(t *testing.T, code int, body string) *Client {
-	return gapiTestToolsFromCalls(t, []mockServerCall{{code, body}})
+	return gapiTestToolsFromCalls(t, []mockServerCall{{code: code, body: body}})
 }
 
 func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) *Client {
@@ -45,6 +50,7 @@ func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) *Client {
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprint(w, call.body)
 		mock.executedCalls = append(mock.executedCalls, call)
+		call.testRequestData(t, r)
 	}))
 
 	tr := &http.Transport{
@@ -65,4 +71,32 @@ func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) *Client {
 	})
 
 	return client
+}
+
+func (c mockServerCall) testRequestData(t *testing.T, req *http.Request) {
+	t.Helper()
+
+	if c.reqURI != "" && c.reqURI != req.URL.RequestURI() {
+		t.Errorf("got wrong request URI, expected: %s, got: %s", c.reqURI, req.URL.RequestURI())
+	}
+
+	if c.reqMethod != "" && c.reqMethod != req.Method {
+		t.Errorf("got wrong request method, expected: %s, got: %s", c.reqMethod, req.Method)
+	}
+
+	if c.reqBody == "" {
+		return
+	} else if req.Body == nil {
+		t.Errorf("got wrong request body, expected: %s, got: <nil>", c.reqBody)
+		return
+	}
+
+	reqBody, err := io.ReadAll(req.Body)
+	if err != nil {
+		t.Errorf("got unexpected error reading request body: %v", err)
+	}
+
+	if strings.TrimSpace(c.reqBody) != strings.TrimSpace(string(reqBody)) {
+		t.Errorf("got wrong request body, expected: %s, got: %s", c.reqBody, string(reqBody))
+	}
 }

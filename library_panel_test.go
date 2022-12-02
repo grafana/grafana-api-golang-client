@@ -225,8 +225,8 @@ func TestLibraryPanelGetByUID(t *testing.T) {
 
 func TestPatchLibraryPanel(t *testing.T) {
 	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, getLibraryPanelUIDResponse},
-		{200, patchLibraryPanelResponse},
+		{code: 200, body: getLibraryPanelUIDResponse},
+		{code: 200, body: patchLibraryPanelResponse},
 	})
 
 	panel := LibraryPanel{
