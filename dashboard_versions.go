@@ -9,7 +9,7 @@ import (
 	"net/url"
 )
 
-// DashboardVersion is the data returned from the GetDashboardVersion* methods.
+// DashboardVersion is the data returned from the DashboardVersion* methods.
 type DashboardVersion struct {
 	ID            int64  `json:"id"`
 	DashboardID   int64  `json:"dashboardId"`
@@ -47,10 +47,10 @@ type CompareDashboardsInput struct {
 	DiffType string
 }
 
-// GetDashboardVersions returns all dashboard versions for a specific dashboard UID.
+// DashboardVersions returns all dashboard versions for a specific dashboard UID.
 // limit = Maximum number of results to return,
 // start = Version to start from when returning queries.
-func (c *Client) GetDashboardVersions(dashboardUID string, limit, start int) ([]*DashboardVersion, error) {
+func (c *Client) DashboardVersions(dashboardUID string, limit, start int) ([]*DashboardVersion, error) {
 	var (
 		params = make(url.Values)
 		result = []*DashboardVersion{}
@@ -67,9 +67,9 @@ func (c *Client) GetDashboardVersions(dashboardUID string, limit, start int) ([]
 	return result, nil
 }
 
-// GetDashboardVersion returns a single dashboard version for a specific dashboard UID.
+// DashboardVersion returns a single dashboard version for a specific dashboard UID.
 // version = The version number to return. Empty data is returned if it does not exist.
-func (c *Client) GetDashboardVersion(dashboardUID string, version int) (*DashboardVersion, error) {
+func (c *Client) DashboardVersion(dashboardUID string, version int) (*DashboardVersion, error) {
 	var (
 		params = make(url.Values)
 		result = DashboardVersion{}

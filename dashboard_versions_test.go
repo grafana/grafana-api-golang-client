@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	// This must be wraoped in [] to make it a list.
+	// This must be wrapped in [] to make it a list.
 	getDashboardVersionsResponse = `{
 		"id": 2,
 		"dashboardId": 1,
@@ -87,7 +87,7 @@ func TestGetDashboardVersions(t *testing.T) {
 		reqMethod: http.MethodGet,
 	}})
 
-	dashboardVersions, err := client.GetDashboardVersions("QA7wKklGz", count, 0)
+	dashboardVersions, err := client.DashboardVersions("QA7wKklGz", count, 0)
 	if err != nil {
 		t.Errorf("did not expect an error: %v", err)
 	}
@@ -106,7 +106,7 @@ func TestGetDashboardVersion(t *testing.T) {
 		reqMethod: http.MethodGet,
 	}})
 
-	dashboard, err := client.GetDashboardVersion("QA7wKklGz", 45)
+	dashboard, err := client.DashboardVersion("QA7wKklGz", 45)
 	if err != nil {
 		t.Errorf("did not expect an error from dashboard version: %v", err)
 	}
