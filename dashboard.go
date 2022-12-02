@@ -84,7 +84,7 @@ func (c *Client) Dashboards() ([]FolderDashboardSearchResponse, error) {
 		query         = make(url.Values)
 	)
 
-	query.Set("type", fmt.Sprint("dash-db"))
+	query.Set("type", "dash-db")
 	query.Set("limit", fmt.Sprint(limit))
 
 	for {
