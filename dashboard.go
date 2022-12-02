@@ -75,10 +75,32 @@ func (c *Client) NewDashboard(dashboard Dashboard) (*DashboardSaveResponse, erro
 
 // Dashboards fetches and returns all dashboards.
 func (c *Client) Dashboards() ([]FolderDashboardSearchResponse, error) {
-	params := url.Values{
-		"type": {"dash-db"},
+	const limit = 1000
+
+	var (
+		page          = 0
+		newDashboards []FolderDashboardSearchResponse
+		dashboards    []FolderDashboardSearchResponse
+		query         = make(url.Values)
+	)
+
+	query.Set("type", fmt.Sprint("dash-db"))
+	query.Set("limit", fmt.Sprint(limit))
+
+	for {
+		page++
+		query.Set("page", fmt.Sprint(page))
+
+		if err := c.request("GET", "/api/search", query, nil, &newDashboards); err != nil {
+			return nil, err
+		}
+
+		dashboards = append(dashboards, newDashboards...)
+
+		if len(newDashboards) < limit {
+			return dashboards, nil
+		}
 	}
-	return c.FolderDashboardSearch(params)
 }
 
 // Dashboard will be removed.
