@@ -50,7 +50,7 @@ type CompareDashboardsInput struct {
 // DashboardVersions returns all dashboard versions for a specific dashboard UID.
 // limit = Maximum number of results to return,
 // start = Version to start from when returning queries.
-func (c *Client) DashboardVersions(dashboardUID string, limit, start int) ([]*DashboardVersion, error) {
+func (c *Client) DashboardVersions(dashboardUID string, limit, start int64) ([]*DashboardVersion, error) {
 	var (
 		params = make(url.Values)
 		result = []*DashboardVersion{}
@@ -69,7 +69,7 @@ func (c *Client) DashboardVersions(dashboardUID string, limit, start int) ([]*Da
 
 // DashboardVersion returns a single dashboard version for a specific dashboard UID.
 // version = The version number to return. Empty data is returned if it does not exist.
-func (c *Client) DashboardVersion(dashboardUID string, version int) (*DashboardVersion, error) {
+func (c *Client) DashboardVersion(dashboardUID string, version int64) (*DashboardVersion, error) {
 	var (
 		params = make(url.Values)
 		result = DashboardVersion{}
@@ -85,7 +85,7 @@ func (c *Client) DashboardVersion(dashboardUID string, version int) (*DashboardV
 
 // RestoreDashboardVersion restores a dashboard version for a specific dashboard UID.
 // version = The version number to restore.
-func (c *Client) RestoreDashboardVersion(dashboardUID string, version int) (*DashboardVersionRestore, error) {
+func (c *Client) RestoreDashboardVersion(dashboardUID string, version int64) (*DashboardVersionRestore, error) {
 	var (
 		params = make(url.Values)
 		result = DashboardVersionRestore{}
