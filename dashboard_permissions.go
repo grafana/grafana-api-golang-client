@@ -45,3 +45,25 @@ func (c *Client) UpdateDashboardPermissions(id int64, items *PermissionItems) er
 
 	return c.request("POST", path, nil, bytes.NewBuffer(data), nil)
 }
+
+// DashboardPermissionsByUID fetches and returns the permissions for the dashboard whose UID it's passed.
+func (c *Client) DashboardPermissionsByUID(uid string) ([]*DashboardPermission, error) {
+	permissions := make([]*DashboardPermission, 0)
+	err := c.request("GET", fmt.Sprintf("/api/dashboards/uid/%s/permissions", uid), nil, nil, &permissions)
+	if err != nil {
+		return permissions, err
+	}
+
+	return permissions, nil
+}
+
+// UpdateDashboardPermissionsByUID remove existing permissions if items are not included in the request.
+func (c *Client) UpdateDashboardPermissionsByUID(uid string, items *PermissionItems) error {
+	path := fmt.Sprintf("/api/dashboards/uid/%s/permissions", uid)
+	data, err := json.Marshal(items)
+	if err != nil {
+		return err
+	}
+
+	return c.request("POST", path, nil, bytes.NewBuffer(data), nil)
+}
