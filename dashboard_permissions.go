@@ -28,11 +28,7 @@ type DashboardPermission struct {
 func (c *Client) DashboardPermissions(id int64) ([]*DashboardPermission, error) {
 	permissions := make([]*DashboardPermission, 0)
 	err := c.request("GET", fmt.Sprintf("/api/dashboards/id/%d/permissions", id), nil, nil, &permissions)
-	if err != nil {
-		return permissions, err
-	}
-
-	return permissions, nil
+	return permissions, err
 }
 
 // UpdateDashboardPermissions remove existing permissions if items are not included in the request.
@@ -50,11 +46,7 @@ func (c *Client) UpdateDashboardPermissions(id int64, items *PermissionItems) er
 func (c *Client) DashboardPermissionsByUID(uid string) ([]*DashboardPermission, error) {
 	permissions := make([]*DashboardPermission, 0)
 	err := c.request("GET", fmt.Sprintf("/api/dashboards/uid/%s/permissions", uid), nil, nil, &permissions)
-	if err != nil {
-		return permissions, err
-	}
-
-	return permissions, nil
+	return permissions, err
 }
 
 // UpdateDashboardPermissionsByUID remove existing permissions if items are not included in the request.
