@@ -28,16 +28,30 @@ type DashboardPermission struct {
 func (c *Client) DashboardPermissions(id int64) ([]*DashboardPermission, error) {
 	permissions := make([]*DashboardPermission, 0)
 	err := c.request("GET", fmt.Sprintf("/api/dashboards/id/%d/permissions", id), nil, nil, &permissions)
-	if err != nil {
-		return permissions, err
-	}
-
-	return permissions, nil
+	return permissions, err
 }
 
 // UpdateDashboardPermissions remove existing permissions if items are not included in the request.
 func (c *Client) UpdateDashboardPermissions(id int64, items *PermissionItems) error {
 	path := fmt.Sprintf("/api/dashboards/id/%d/permissions", id)
+	data, err := json.Marshal(items)
+	if err != nil {
+		return err
+	}
+
+	return c.request("POST", path, nil, bytes.NewBuffer(data), nil)
+}
+
+// DashboardPermissionsByUID fetches and returns the permissions for the dashboard whose UID it's passed.
+func (c *Client) DashboardPermissionsByUID(uid string) ([]*DashboardPermission, error) {
+	permissions := make([]*DashboardPermission, 0)
+	err := c.request("GET", fmt.Sprintf("/api/dashboards/uid/%s/permissions", uid), nil, nil, &permissions)
+	return permissions, err
+}
+
+// UpdateDashboardPermissionsByUID remove existing permissions if items are not included in the request.
+func (c *Client) UpdateDashboardPermissionsByUID(uid string, items *PermissionItems) error {
+	path := fmt.Sprintf("/api/dashboards/uid/%s/permissions", uid)
 	data, err := json.Marshal(items)
 	if err != nil {
 		return err
