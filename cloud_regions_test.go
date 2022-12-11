@@ -91,8 +91,7 @@ var (
 )
 
 func TestCloudRegions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, cloudRegionsResponse)
-	defer server.Close()
+	client := gapiTestTools(t, 200, cloudRegionsResponse)
 
 	regions, err := client.GetCloudRegions()
 
@@ -111,8 +110,7 @@ func TestCloudRegions(t *testing.T) {
 }
 
 func TestCloudRegionBySlug(t *testing.T) {
-	server, client := gapiTestTools(t, 200, cloudRegionResponse)
-	defer server.Close()
+	client := gapiTestTools(t, 200, cloudRegionResponse)
 
 	resp, err := client.GetCloudRegionBySlug("us")
 	if err != nil {

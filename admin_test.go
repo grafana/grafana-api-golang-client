@@ -21,8 +21,7 @@ const (
 )
 
 func TestCreateUser(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createUserJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createUserJSON)
 	user := User{
 		Email:    "admin@localhost",
 		Login:    "admin",
@@ -40,8 +39,7 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deleteUserJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, deleteUserJSON)
 
 	err := client.DeleteUser(int64(1))
 	if err != nil {
@@ -50,8 +48,7 @@ func TestDeleteUser(t *testing.T) {
 }
 
 func TestUpdateUserPassword(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateUserPasswordJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updateUserPasswordJSON)
 
 	err := client.UpdateUserPassword(int64(1), "new-password")
 	if err != nil {
@@ -60,8 +57,7 @@ func TestUpdateUserPassword(t *testing.T) {
 }
 
 func TestUpdateUserPermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateUserPermissionsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updateUserPermissionsJSON)
 
 	err := client.UpdateUserPermissions(int64(1), false)
 	if err != nil {
@@ -70,8 +66,7 @@ func TestUpdateUserPermissions(t *testing.T) {
 }
 
 func TestPauseAllAlerts(t *testing.T) {
-	server, client := gapiTestTools(t, 200, pauseAllAlertsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, pauseAllAlertsJSON)
 
 	res, err := client.PauseAllAlerts()
 	if err != nil {
@@ -86,8 +81,7 @@ func TestPauseAllAlerts(t *testing.T) {
 }
 
 func TestPauseAllAlerts_500(t *testing.T) {
-	server, client := gapiTestTools(t, 500, pauseAllAlertsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 500, pauseAllAlertsJSON)
 
 	_, err := client.PauseAllAlerts()
 	if !strings.Contains(err.Error(), "status: 500") {

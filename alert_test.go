@@ -47,8 +47,7 @@ const (
 )
 
 func TestAlerts(t *testing.T) {
-	server, client := gapiTestTools(t, 200, alertsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, alertsJSON)
 
 	params := url.Values{}
 	params.Add("dashboardId", "123")
@@ -66,8 +65,7 @@ func TestAlerts(t *testing.T) {
 }
 
 func TestAlerts_500(t *testing.T) {
-	server, client := gapiTestTools(t, 500, alertsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 500, alertsJSON)
 
 	params := url.Values{}
 	params.Add("dashboardId", "123")
@@ -79,8 +77,7 @@ func TestAlerts_500(t *testing.T) {
 }
 
 func TestAlert(t *testing.T) {
-	server, client := gapiTestTools(t, 200, alertJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, alertJSON)
 
 	res, err := client.Alert(1)
 	if err != nil {
@@ -95,8 +92,7 @@ func TestAlert(t *testing.T) {
 }
 
 func TestAlert_500(t *testing.T) {
-	server, client := gapiTestTools(t, 500, alertJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 500, alertJSON)
 
 	_, err := client.Alert(1)
 	if !strings.Contains(err.Error(), "status: 500") {
@@ -105,8 +101,7 @@ func TestAlert_500(t *testing.T) {
 }
 
 func TestPauseAlert(t *testing.T) {
-	server, client := gapiTestTools(t, 200, pauseAlertJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, pauseAlertJSON)
 
 	res, err := client.PauseAlert(1)
 	if err != nil {
@@ -121,8 +116,7 @@ func TestPauseAlert(t *testing.T) {
 }
 
 func TestPauseAlert_500(t *testing.T) {
-	server, client := gapiTestTools(t, 500, pauseAlertJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 500, pauseAlertJSON)
 
 	_, err := client.PauseAlert(1)
 	if !strings.Contains(err.Error(), "status: 500") {
