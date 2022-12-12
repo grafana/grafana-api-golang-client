@@ -19,17 +19,30 @@ type ReportSchedule struct {
 	DayOfMonth        string     `json:"dayOfMonth,omitempty"`
 }
 
-// ReportTimeRange represents the time range from a Grafana report.
-type ReportTimeRange struct {
+// ReportOptions represents the options for a Grafana report.
+type ReportOptions struct {
+	Orientation string `json:"orientation"`
+	Layout      string `json:"layout"`
+}
+
+// ReportDashboardTimeRange represents the time range from a dashboard on a Grafana report.
+type ReportDashboardTimeRange struct {
 	From string `json:"from"`
 	To   string `json:"to"`
 }
 
-// ReportOptions represents the options for a Grafana report.
-type ReportOptions struct {
-	Orientation string          `json:"orientation"`
-	Layout      string          `json:"layout"`
-	TimeRange   ReportTimeRange `json:"timeRange"`
+// ReportDashboardIdentifier represents the identifier for a dashboard on a Grafana report.
+type ReportDashboardIdentifier struct {
+	ID   int64  `json:"id,omitempty"`
+	UID  string `json:"uid,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+// ReportDashboard represents a dashboard on a Grafana report.
+type ReportDashboard struct {
+	Dashboard ReportDashboardIdentifier `json:"dashboard"`
+	TimeRange ReportDashboardTimeRange  `json:"timeRange"`
+	Variables map[string]string         `json:"reportVariables"`
 }
 
 // Report represents a Grafana report.
@@ -40,8 +53,8 @@ type Report struct {
 	OrgID  int64  `json:"orgId,omitempty"`
 	State  string `json:"state,omitempty"`
 
-	DashboardID        int64          `json:"dashboardId"`
-	DashboardUID       string         `json:"dashboardUid"`
+	Dashboards []ReportDashboard `json:"dashboards"`
+
 	Name               string         `json:"name"`
 	Recipients         string         `json:"recipients"`
 	ReplyTo            string         `json:"replyTo"`
