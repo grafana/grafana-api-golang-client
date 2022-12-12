@@ -1,6 +1,7 @@
 package gapi
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/gobs/pretty"
@@ -29,8 +30,7 @@ const (
 		}
 	}`
 
-	getDashboardsJSON = `[
-    {
+	getDashboardsJSON = `{
       "id": 1,
       "uid": "RGAPB1cZz",
       "title": "Grafana Stats",
@@ -40,8 +40,7 @@ const (
       "type": "dash-db",
       "tags": [],
       "isStarred": false
-    }
-  ]`
+    }`
 )
 
 func TestDashboardCreateAndUpdate(t *testing.T) {
@@ -142,20 +141,32 @@ func TestDashboardDelete(t *testing.T) {
 }
 
 func TestDashboards(t *testing.T) {
-	client := gapiTestTools(t, 200, getDashboardsJSON)
+	mockData := strings.Repeat(getDashboardsJSON+",", 1000) // make 1000 dashboards.
+	mockData = "[" + mockData[:len(mockData)-1] + "]"       // remove trailing comma; make a json list.
+
+	// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of dashboards.
+	client := gapiTestToolsFromCalls(t, []mockServerCall{
+		{200, mockData},
+		{200, mockData},
+		{200, "[" + getDashboardsJSON + "]"},
+	})
+
+	const dashCount = 2001
 
 	dashboards, err := client.Dashboards()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Log(pretty.PrettyFormat(dashboards))
-
-	if len(dashboards) != 1 {
-		t.Error("Length of returned dashboards should be 1")
+	if len(dashboards) != dashCount {
+		t.Errorf("Length of returned dashboards should be %d", dashCount)
 	}
 
 	if dashboards[0].ID != 1 || dashboards[0].Title != "Grafana Stats" {
+		t.Error("Not correctly parsing returned dashboards.")
+	}
+
+	if dashboards[dashCount-1].ID != 1 || dashboards[dashCount-1].Title != "Grafana Stats" {
 		t.Error("Not correctly parsing returned dashboards.")
 	}
 }
