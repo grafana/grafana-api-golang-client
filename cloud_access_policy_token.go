@@ -79,7 +79,7 @@ func (c *Client) UpdateCloudAccessPolicyToken(region, id string, input UpdateClo
 		return token, err
 	}
 
-	err = c.request("PUT", fmt.Sprintf("/api/v1/tokens/%s", id), url.Values{
+	err = c.request("POST", fmt.Sprintf("/api/v1/tokens/%s", id), url.Values{
 		"region": []string{region},
 	}, bytes.NewBuffer(data), &token)
 
