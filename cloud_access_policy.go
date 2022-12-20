@@ -89,7 +89,7 @@ func (c *Client) UpdateCloudAccessPolicy(region, id string, input UpdateCloudAcc
 		return result, err
 	}
 
-	err = c.request("PUT", fmt.Sprintf("/api/v1/accesspolicies/%s", id), url.Values{
+	err = c.request("POST", fmt.Sprintf("/api/v1/accesspolicies/%s", id), url.Values{
 		"region": []string{region},
 	}, bytes.NewBuffer(data), &result)
 
