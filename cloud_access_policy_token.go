@@ -28,6 +28,8 @@ type CloudAccessPolicyToken struct {
 	FirstUsedAt    time.Time `json:"firstUsedAt"`
 	CreatedAt      time.Time `json:"createdAt"`
 	UpdatedAt      time.Time `json:"updatedAt"`
+
+	Token string `json:"token,omitempty"` // Only returned when creating a token.
 }
 
 type CloudAccessPolicyTokenItems struct {
