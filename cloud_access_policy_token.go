@@ -44,7 +44,6 @@ func (c *Client) CloudAccessPolicyTokens(region, accessPolicyID string) (CloudAc
 	}, nil, &tokens)
 
 	return tokens, err
-
 }
 
 func (c *Client) CloudAccessPolicyTokenByID(region, id string) (CloudAccessPolicyToken, error) {
