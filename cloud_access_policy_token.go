@@ -9,10 +9,10 @@ import (
 )
 
 type CreateCloudAccessPolicyTokenInput struct {
-	AccessPolicyID string    `json:"accessPolicyId"`
-	Name           string    `json:"name"`
-	DisplayName    string    `json:"displayName"`
-	ExpiresAt      time.Time `json:"expiresAt"`
+	AccessPolicyID string     `json:"accessPolicyId"`
+	Name           string     `json:"name"`
+	DisplayName    string     `json:"displayName,omitempty"`
+	ExpiresAt      *time.Time `json:"expiresAt,omitempty"`
 }
 
 type UpdateCloudAccessPolicyTokenInput struct {
@@ -20,14 +20,14 @@ type UpdateCloudAccessPolicyTokenInput struct {
 }
 
 type CloudAccessPolicyToken struct {
-	ID             string    `json:"id"`
-	AccessPolicyID string    `json:"accessPolicyId"`
-	Name           string    `json:"name"`
-	DisplayName    string    `json:"displayName"`
-	ExpiresAt      time.Time `json:"expiresAt"`
-	FirstUsedAt    time.Time `json:"firstUsedAt"`
-	CreatedAt      time.Time `json:"createdAt"`
-	UpdatedAt      time.Time `json:"updatedAt"`
+	ID             string     `json:"id"`
+	AccessPolicyID string     `json:"accessPolicyId"`
+	Name           string     `json:"name"`
+	DisplayName    string     `json:"displayName"`
+	ExpiresAt      *time.Time `json:"expiresAt"`
+	FirstUsedAt    time.Time  `json:"firstUsedAt"`
+	CreatedAt      time.Time  `json:"createdAt"`
+	UpdatedAt      *time.Time `json:"updatedAt"`
 
 	Token string `json:"token,omitempty"` // Only returned when creating a token.
 }
