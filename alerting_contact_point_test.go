@@ -11,8 +11,7 @@ import (
 
 func TestContactPoints(t *testing.T) {
 	t.Run("get contact points succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, getContactPointsJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, getContactPointsJSON)
 
 		ps, err := client.ContactPoints()
 
@@ -32,8 +31,7 @@ func TestContactPoints(t *testing.T) {
 	})
 
 	t.Run("get contact points by name succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, getContactPointsQueryJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, getContactPointsQueryJSON)
 
 		ps, err := client.ContactPointsByName("slack-receiver-1")
 
@@ -50,8 +48,7 @@ func TestContactPoints(t *testing.T) {
 	})
 
 	t.Run("get contact point succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, getContactPointsJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, getContactPointsJSON)
 
 		p, err := client.ContactPoint("rc5r0bjnz")
 
@@ -65,8 +62,7 @@ func TestContactPoints(t *testing.T) {
 	})
 
 	t.Run("get non-existent contact point fails", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, getContactPointsJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, getContactPointsJSON)
 
 		p, err := client.ContactPoint("does not exist")
 
@@ -77,8 +73,7 @@ func TestContactPoints(t *testing.T) {
 	})
 
 	t.Run("create contact point succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 201, writeContactPointJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 201, writeContactPointJSON)
 		p := createContactPoint()
 
 		uid, err := client.NewContactPoint(&p)
@@ -92,8 +87,7 @@ func TestContactPoints(t *testing.T) {
 	})
 
 	t.Run("update contact point succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, writeContactPointJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, writeContactPointJSON)
 		p := createContactPoint()
 		p.UID = "on7otbj7k"
 
@@ -105,8 +99,7 @@ func TestContactPoints(t *testing.T) {
 	})
 
 	t.Run("delete contact point succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 204, "")
-		defer server.Close()
+		client := gapiTestTools(t, 204, "")
 
 		err := client.DeleteContactPoint("rc5r0bjnz")
 

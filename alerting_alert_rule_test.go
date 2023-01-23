@@ -13,8 +13,7 @@ import (
 
 func TestAlertRules(t *testing.T) {
 	t.Run("get alert rule succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, getAlertRuleJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, getAlertRuleJSON)
 
 		alertRule, err := client.AlertRule("123abcd")
 
@@ -27,8 +26,7 @@ func TestAlertRules(t *testing.T) {
 	})
 
 	t.Run("get alert rule group succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, getAlertRuleGroupJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, getAlertRuleGroupJSON)
 
 		group, err := client.AlertRuleGroup("project_test", "eval_group_1")
 
@@ -48,8 +46,7 @@ func TestAlertRules(t *testing.T) {
 	})
 
 	t.Run("get non-existent alert rule fails", func(t *testing.T) {
-		server, client := gapiTestTools(t, 404, "")
-		defer server.Close()
+		client := gapiTestTools(t, 404, "")
 
 		alertRule, err := client.AlertRule("does not exist")
 
@@ -60,8 +57,7 @@ func TestAlertRules(t *testing.T) {
 	})
 
 	t.Run("get non-existent rule group fails", func(t *testing.T) {
-		server, client := gapiTestTools(t, 404, "")
-		defer server.Close()
+		client := gapiTestTools(t, 404, "")
 
 		group, err := client.AlertRuleGroup("d8-gk06nz", "does not exist")
 
@@ -72,8 +68,7 @@ func TestAlertRules(t *testing.T) {
 	})
 
 	t.Run("create alert rule succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 201, writeAlertRuleJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 201, writeAlertRuleJSON)
 		alertRule := createAlertRule()
 
 		uid, err := client.NewAlertRule(&alertRule)
@@ -87,8 +82,7 @@ func TestAlertRules(t *testing.T) {
 	})
 
 	t.Run("set alert rule group succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, getAlertRuleGroupJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, getAlertRuleGroupJSON)
 		group := createAlertRuleGroup()
 
 		err := client.SetAlertRuleGroup(group)
@@ -99,8 +93,7 @@ func TestAlertRules(t *testing.T) {
 	})
 
 	t.Run("update alert rule succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, writeAlertRuleJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, writeAlertRuleJSON)
 		alertRule := createAlertRule()
 		alertRule.UID = "foobar"
 
@@ -112,8 +105,7 @@ func TestAlertRules(t *testing.T) {
 	})
 
 	t.Run("delete alert rule succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 204, "")
-		defer server.Close()
+		client := gapiTestTools(t, 204, "")
 
 		err := client.DeleteAlertRule("123abcd")
 

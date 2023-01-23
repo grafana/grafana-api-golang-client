@@ -60,8 +60,7 @@ const (
 )
 
 func TestFolderPermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getFolderPermissionsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getFolderPermissionsJSON)
 
 	fid := "nErXDvCkzz"
 	resp, err := client.FolderPermissions(fid)
@@ -108,8 +107,7 @@ func TestFolderPermissions(t *testing.T) {
 }
 
 func TestUpdateFolderPermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateFolderPermissionsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updateFolderPermissionsJSON)
 
 	items := &PermissionItems{
 		Items: []*PermissionItem{

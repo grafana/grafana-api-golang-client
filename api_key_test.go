@@ -29,8 +29,7 @@ const (
 )
 
 func TestCreateAPIKey(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createAPIKeyJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createAPIKeyJSON)
 
 	req := CreateAPIKeyRequest{
 		Name:          "key-name",
@@ -47,8 +46,7 @@ func TestCreateAPIKey(t *testing.T) {
 }
 
 func TestDeleteAPIKey(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deleteAPIKeyJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, deleteAPIKeyJSON)
 
 	res, err := client.DeleteAPIKey(int64(1))
 	if err != nil {
@@ -59,8 +57,7 @@ func TestDeleteAPIKey(t *testing.T) {
 }
 
 func TestGetAPIKeys(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getAPIKeysJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getAPIKeysJSON)
 
 	res, err := client.GetAPIKeys(true)
 	if err != nil {

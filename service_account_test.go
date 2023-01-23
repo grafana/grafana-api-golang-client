@@ -81,8 +81,7 @@ const (
 )
 
 func TestCreateServiceAccountToken(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, createServiceAccountTokenJSON)
-	defer server.Close()
+	client := gapiTestTools(t, http.StatusOK, createServiceAccountTokenJSON)
 
 	req := CreateServiceAccountTokenRequest{
 		Name:          "key-name",
@@ -98,8 +97,7 @@ func TestCreateServiceAccountToken(t *testing.T) {
 }
 
 func TestCreateServiceAccount(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
-	defer server.Close()
+	client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
 
 	isDisabled := true
 	req := CreateServiceAccountRequest{
@@ -117,8 +115,7 @@ func TestCreateServiceAccount(t *testing.T) {
 }
 
 func TestUpdateServiceAccount(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
-	defer server.Close()
+	client := gapiTestTools(t, http.StatusOK, serviceAccountJSON)
 
 	isDisabled := false
 	req := UpdateServiceAccountRequest{
@@ -136,8 +133,7 @@ func TestUpdateServiceAccount(t *testing.T) {
 }
 
 func TestDeleteServiceAccount(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, deleteServiceAccountJSON)
-	defer server.Close()
+	client := gapiTestTools(t, http.StatusOK, deleteServiceAccountJSON)
 
 	res, err := client.DeleteServiceAccount(int64(1))
 	if err != nil {
@@ -148,8 +144,7 @@ func TestDeleteServiceAccount(t *testing.T) {
 }
 
 func TestDeleteServiceAccountToken(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, deleteServiceAccountTokenJSON)
-	defer server.Close()
+	client := gapiTestTools(t, http.StatusOK, deleteServiceAccountTokenJSON)
 
 	res, err := client.DeleteServiceAccountToken(int64(1), int64(1))
 	if err != nil {
@@ -160,8 +155,7 @@ func TestDeleteServiceAccountToken(t *testing.T) {
 }
 
 func TestGetServiceAccounts(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, searchServiceAccountsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, http.StatusOK, searchServiceAccountsJSON)
 
 	res, err := client.GetServiceAccounts()
 	if err != nil {
@@ -172,8 +166,7 @@ func TestGetServiceAccounts(t *testing.T) {
 }
 
 func TestGetServiceAccountTokens(t *testing.T) {
-	server, client := gapiTestTools(t, http.StatusOK, getServiceAccountTokensJSON)
-	defer server.Close()
+	client := gapiTestTools(t, http.StatusOK, getServiceAccountTokensJSON)
 
 	res, err := client.GetServiceAccountTokens(5)
 	if err != nil {

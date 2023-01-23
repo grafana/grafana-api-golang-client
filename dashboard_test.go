@@ -4,6 +4,7 @@
 package gapi
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/gobs/pretty"
@@ -32,8 +33,7 @@ const (
 		}
 	}`
 
-	getDashboardsJSON = `[
-    {
+	getDashboardsJSON = `{
       "id": 1,
       "uid": "RGAPB1cZz",
       "title": "Grafana Stats",
@@ -43,13 +43,11 @@ const (
       "type": "dash-db",
       "tags": [],
       "isStarred": false
-    }
-  ]`
+    }`
 )
 
 func TestDashboardCreateAndUpdate(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdAndUpdateDashboardResponse)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdAndUpdateDashboardResponse)
 
 	dashboard := Dashboard{
 		Model: map[string]interface{}{
@@ -72,7 +70,7 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 	}
 
 	for _, code := range []int{400, 401, 403, 412} {
-		server.code = code
+		client = gapiTestTools(t, code, "error")
 		_, err = client.NewDashboard(dashboard)
 		if err == nil {
 			t.Errorf("%d not detected", code)
@@ -81,8 +79,7 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 }
 
 func TestDashboardGet(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDashboardResponse)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getDashboardResponse)
 
 	resp, err := client.Dashboard("test")
 	if err != nil {
@@ -92,6 +89,8 @@ func TestDashboardGet(t *testing.T) {
 	if !ok || uid != "cIBgcSjkk" {
 		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
 	}
+
+	client = gapiTestTools(t, 200, getDashboardResponse)
 
 	resp, err = client.DashboardByUID("cIBgcSjkk")
 	if err != nil {
@@ -103,7 +102,7 @@ func TestDashboardGet(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 404} {
-		server.code = code
+		client = gapiTestTools(t, code, "error")
 		_, err = client.Dashboard("test")
 		if err == nil {
 			t.Errorf("%d not detected", code)
@@ -117,21 +116,20 @@ func TestDashboardGet(t *testing.T) {
 }
 
 func TestDashboardDelete(t *testing.T) {
-	server, client := gapiTestTools(t, 200, "")
-	defer server.Close()
-
+	client := gapiTestTools(t, 200, "")
 	err := client.DeleteDashboard("test")
 	if err != nil {
 		t.Error(err)
 	}
 
+	client = gapiTestTools(t, 200, "")
 	err = client.DeleteDashboardByUID("cIBgcSjkk")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	for _, code := range []int{401, 403, 404, 412} {
-		server.code = code
+		client = gapiTestTools(t, code, "error")
 
 		err = client.DeleteDashboard("test")
 		if err == nil {
@@ -146,21 +144,32 @@ func TestDashboardDelete(t *testing.T) {
 }
 
 func TestDashboards(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDashboardsJSON)
-	defer server.Close()
+	mockData := strings.Repeat(getDashboardsJSON+",", 1000) // make 1000 dashboards.
+	mockData = "[" + mockData[:len(mockData)-1] + "]"       // remove trailing comma; make a json list.
+
+	// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of dashboards.
+	client := gapiTestToolsFromCalls(t, []mockServerCall{
+		{200, mockData},
+		{200, mockData},
+		{200, "[" + getDashboardsJSON + "]"},
+	})
+
+	const dashCount = 2001
 
 	dashboards, err := client.Dashboards()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Log(pretty.PrettyFormat(dashboards))
-
-	if len(dashboards) != 1 {
-		t.Error("Length of returned dashboards should be 1")
+	if len(dashboards) != dashCount {
+		t.Errorf("Length of returned dashboards should be %d", dashCount)
 	}
 
 	if dashboards[0].ID != 1 || dashboards[0].Title != "Grafana Stats" {
+		t.Error("Not correctly parsing returned dashboards.")
+	}
+
+	if dashboards[dashCount-1].ID != 1 || dashboards[dashCount-1].Title != "Grafana Stats" {
 		t.Error("Not correctly parsing returned dashboards.")
 	}
 }

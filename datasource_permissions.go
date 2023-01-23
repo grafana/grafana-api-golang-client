@@ -11,6 +11,7 @@ type DatasourcePermissionType int
 const (
 	_ DatasourcePermissionType = iota // 0 is not a valid permission
 	DatasourcePermissionQuery
+	DatasourcePermissionEdit
 )
 
 // DatasourcePermission has information such as a datasource, user, team, role and permission.
@@ -20,9 +21,11 @@ type DatasourcePermission struct {
 	UserID       int64  `json:"userId"`
 	UserEmail    string `json:"userEmail"`
 	TeamID       int64  `json:"teamId"`
+	BuiltInRole  string `json:"builtInRole"`
 
 	// Permission levels are
 	// 1 = Query
+	// 2 = Edit
 	Permission     DatasourcePermissionType `json:"permission"`
 	PermissionName string                   `json:"permissionName"`
 }
@@ -34,9 +37,10 @@ type DatasourcePermissionsResponse struct {
 }
 
 type DatasourcePermissionAddPayload struct {
-	UserID     int64                    `json:"userId"`
-	TeamID     int64                    `json:"teamId"`
-	Permission DatasourcePermissionType `json:"permission"`
+	UserID      int64                    `json:"userId"`
+	TeamID      int64                    `json:"teamId"`
+	BuiltInRole string                   `json:"builtinRole"`
+	Permission  DatasourcePermissionType `json:"permission"`
 }
 
 // EnableDatasourcePermissions enables the datasource permissions (this is a datasource setting)

@@ -20,8 +20,7 @@ const (
 )
 
 func TestSnapshotCreate(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdSnapshotResponse)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdSnapshotResponse)
 
 	snapshot := Snapshot{
 		Model: map[string]interface{}{
@@ -42,7 +41,7 @@ func TestSnapshotCreate(t *testing.T) {
 	}
 
 	for _, code := range []int{400, 401, 403, 412} {
-		server.code = code
+		client = gapiTestTools(t, code, "error")
 		_, err = client.NewSnapshot(snapshot)
 		if err == nil {
 			t.Errorf("%d not detected", code)

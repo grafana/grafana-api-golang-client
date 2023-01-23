@@ -17,8 +17,7 @@ const (
 )
 
 func TestOrgUsersCurrent(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getOrgUsersJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getOrgUsersJSON)
 
 	resp, err := client.OrgUsersCurrent()
 	if err != nil {
@@ -39,8 +38,7 @@ func TestOrgUsersCurrent(t *testing.T) {
 }
 
 func TestOrgUsers(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getOrgUsersJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getOrgUsersJSON)
 
 	org := int64(1)
 	resp, err := client.OrgUsers(org)
@@ -64,8 +62,7 @@ func TestOrgUsers(t *testing.T) {
 }
 
 func TestAddOrgUser(t *testing.T) {
-	server, client := gapiTestTools(t, 200, addOrgUserJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, addOrgUserJSON)
 
 	orgID, user, role := int64(1), "admin@localhost", "Admin"
 
@@ -76,8 +73,7 @@ func TestAddOrgUser(t *testing.T) {
 }
 
 func TestUpdateOrgUser(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateOrgUserJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updateOrgUserJSON)
 
 	orgID, userID, role := int64(1), int64(1), "Editor"
 
@@ -88,8 +84,7 @@ func TestUpdateOrgUser(t *testing.T) {
 }
 
 func TestRemoveOrgUser(t *testing.T) {
-	server, client := gapiTestTools(t, 200, removeOrgUserJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, removeOrgUserJSON)
 
 	orgID, userID := int64(1), int64(1)
 

@@ -11,8 +11,7 @@ import (
 
 func TestMessageTemplates(t *testing.T) {
 	t.Run("get message templates succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, getMessageTemplatesJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, getMessageTemplatesJSON)
 
 		ts, err := client.MessageTemplates()
 
@@ -32,8 +31,7 @@ func TestMessageTemplates(t *testing.T) {
 	})
 
 	t.Run("get message template succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, messageTemplateJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, messageTemplateJSON)
 
 		tmpl, err := client.MessageTemplate("template-one")
 
@@ -47,8 +45,7 @@ func TestMessageTemplates(t *testing.T) {
 	})
 
 	t.Run("get non-existent message template fails", func(t *testing.T) {
-		server, client := gapiTestTools(t, 404, ``)
-		defer server.Close()
+		client := gapiTestTools(t, 404, ``)
 
 		tmpl, err := client.MessageTemplate("does not exist")
 
@@ -59,8 +56,7 @@ func TestMessageTemplates(t *testing.T) {
 	})
 
 	t.Run("put message template succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 202, messageTemplateJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 202, messageTemplateJSON)
 
 		err := client.SetMessageTemplate("template-three", "{{define \"template-one\" }}\n  content three\n{{ end }}")
 
@@ -70,8 +66,7 @@ func TestMessageTemplates(t *testing.T) {
 	})
 
 	t.Run("delete message template succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 204, ``)
-		defer server.Close()
+		client := gapiTestTools(t, 204, ``)
 
 		err := client.DeleteMessageTemplate("template-three")
 

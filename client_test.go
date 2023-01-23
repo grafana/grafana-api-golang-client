@@ -83,8 +83,7 @@ func TestNew_invalidURL(t *testing.T) {
 }
 
 func TestRequest_200(t *testing.T) {
-	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
-	defer server.Close()
+	client := gapiTestTools(t, 200, `{"foo":"bar"}`)
 
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
 	if err != nil {
@@ -93,8 +92,7 @@ func TestRequest_200(t *testing.T) {
 }
 
 func TestRequest_201(t *testing.T) {
-	server, client := gapiTestTools(t, 201, `{"foo":"bar"}`)
-	defer server.Close()
+	client := gapiTestTools(t, 201, `{"foo":"bar"}`)
 
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
 	if err != nil {
@@ -103,8 +101,7 @@ func TestRequest_201(t *testing.T) {
 }
 
 func TestRequest_400(t *testing.T) {
-	server, client := gapiTestTools(t, 400, `{"foo":"bar"}`)
-	defer server.Close()
+	client := gapiTestTools(t, 400, `{"foo":"bar"}`)
 
 	expected := `status: 400, body: {"foo":"bar"}`
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
@@ -114,8 +111,7 @@ func TestRequest_400(t *testing.T) {
 }
 
 func TestRequest_500(t *testing.T) {
-	server, client := gapiTestTools(t, 500, `{"foo":"bar"}`)
-	defer server.Close()
+	client := gapiTestTools(t, 500, `{"foo":"bar"}`)
 
 	expected := `status: 500, body: {"foo":"bar"}`
 	err := client.request("GET", "/foo", url.Values{}, nil, nil)
@@ -125,13 +121,12 @@ func TestRequest_500(t *testing.T) {
 }
 
 func TestRequest_badURL(t *testing.T) {
-	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
+	client := gapiTestTools(t, 200, `{"foo":"bar"}`)
 	baseURL, err := url.Parse("bad-url")
 	if err != nil {
 		t.Fatal(err)
 	}
 	client.baseURL = *baseURL
-	defer server.Close()
 
 	expected := `Get "bad-url/foo": unsupported protocol scheme ""`
 	err = client.request("GET", "/foo", url.Values{}, nil, nil)
@@ -141,8 +136,7 @@ func TestRequest_badURL(t *testing.T) {
 }
 
 func TestRequest_200Unmarshal(t *testing.T) {
-	server, client := gapiTestTools(t, 200, `{"foo":"bar"}`)
-	defer server.Close()
+	client := gapiTestTools(t, 200, `{"foo":"bar"}`)
 
 	result := struct {
 		Foo string `json:"foo"`
@@ -158,8 +152,7 @@ func TestRequest_200Unmarshal(t *testing.T) {
 }
 
 func TestRequest_200UnmarshalPut(t *testing.T) {
-	server, client := gapiTestTools(t, 200, `{"name":"mike"}`)
-	defer server.Close()
+	client := gapiTestTools(t, 200, `{"name":"mike"}`)
 
 	u := User{
 		Name: "mike",

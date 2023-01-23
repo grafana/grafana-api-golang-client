@@ -93,8 +93,7 @@ const (
 )
 
 func TestSearchTeam(t *testing.T) {
-	server, client := gapiTestTools(t, 200, searchTeamJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, searchTeamJSON)
 
 	query := "myteam"
 	resp, err := client.SearchTeam(query)
@@ -128,8 +127,7 @@ func TestSearchTeam(t *testing.T) {
 }
 
 func TestTeam(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getTeamJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getTeamJSON)
 
 	id := int64(1)
 	resp, err := client.Team(id)
@@ -156,8 +154,7 @@ func TestTeam(t *testing.T) {
 }
 
 func TestAddTeam(t *testing.T) {
-	server, client := gapiTestTools(t, 200, addTeamsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, addTeamsJSON)
 
 	name := "TestTeam"
 	email := ""
@@ -172,8 +169,7 @@ func TestAddTeam(t *testing.T) {
 }
 
 func TestUpdateTeam(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateTeamJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updateTeamJSON)
 
 	id := int64(1)
 	name := "TestTeam"
@@ -186,8 +182,7 @@ func TestUpdateTeam(t *testing.T) {
 }
 
 func TestDeleteTeam(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deleteTeamJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, deleteTeamJSON)
 
 	id := int64(1)
 
@@ -198,8 +193,7 @@ func TestDeleteTeam(t *testing.T) {
 }
 
 func TestTeamMembers(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getTeamMembersJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getTeamMembersJSON)
 
 	id := int64(1)
 
@@ -238,8 +232,7 @@ func TestTeamMembers(t *testing.T) {
 }
 
 func TestAddTeamMember(t *testing.T) {
-	server, client := gapiTestTools(t, 200, addTeamMemberJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, addTeamMemberJSON)
 
 	id := int64(1)
 	userID := int64(2)
@@ -250,8 +243,7 @@ func TestAddTeamMember(t *testing.T) {
 }
 
 func TestRemoveMemberFromTeam(t *testing.T) {
-	server, client := gapiTestTools(t, 200, removeMemberFromTeamJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, removeMemberFromTeamJSON)
 
 	id := int64(1)
 	userID := int64(2)
@@ -262,8 +254,7 @@ func TestRemoveMemberFromTeam(t *testing.T) {
 }
 
 func TestTeamPreferences(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getTeamPreferencesJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getTeamPreferencesJSON)
 
 	id := int64(1)
 
@@ -285,8 +276,7 @@ func TestTeamPreferences(t *testing.T) {
 }
 
 func TestUpdateTeamPreferences(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateTeamPreferencesJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updateTeamPreferencesJSON)
 
 	id := int64(1)
 	preferences := Preferences{

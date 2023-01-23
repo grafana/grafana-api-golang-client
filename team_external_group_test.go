@@ -33,8 +33,7 @@ const (
 )
 
 func TestTeamGroups(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getTeamGroupsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getTeamGroupsJSON)
 
 	teamID := int64(1)
 	teamGroups, err := client.TeamGroups(teamID)
@@ -53,8 +52,7 @@ func TestTeamGroups(t *testing.T) {
 }
 
 func TestNewTeamGroup(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdTeamGroupJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdTeamGroupJSON)
 
 	err := client.NewTeamGroup(int64(1), "test")
 	if err != nil {
@@ -63,8 +61,7 @@ func TestNewTeamGroup(t *testing.T) {
 }
 
 func TestDeleteTeamGroup(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deletedTeamGroupJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, deletedTeamGroupJSON)
 
 	err := client.DeleteTeamGroup(int64(1), "test")
 	if err != nil {

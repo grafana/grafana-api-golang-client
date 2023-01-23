@@ -47,8 +47,7 @@ const (
 )
 
 func TestInstallCloudPlugin(t *testing.T) {
-	server, client := gapiTestTools(t, 200, installPluginJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, installPluginJSON)
 
 	installation, err := client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
 	if err != nil {
@@ -66,7 +65,7 @@ func TestInstallCloudPlugin(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 404, 412} {
-		server.code = code
+		client = gapiTestTools(t, code, "error")
 
 		installation, err = client.InstallCloudPlugin("some-stack", "some-plugin", "1.2.3")
 		if err == nil {
@@ -79,8 +78,7 @@ func TestInstallCloudPlugin(t *testing.T) {
 }
 
 func TestUninstallCloudPlugin(t *testing.T) {
-	server, client := gapiTestTools(t, 200, uninstallPluginJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, uninstallPluginJSON)
 
 	err := client.UninstallCloudPlugin("some-stack", "some-plugin")
 	if err != nil {
@@ -88,7 +86,7 @@ func TestUninstallCloudPlugin(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 404, 412} {
-		server.code = code
+		client = gapiTestTools(t, code, "error")
 
 		err = client.UninstallCloudPlugin("some-stack", "some-plugin")
 		if err == nil {
@@ -98,7 +96,7 @@ func TestUninstallCloudPlugin(t *testing.T) {
 }
 
 func TestIsCloudPluginInstalled(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getPluginJSON)
+	client := gapiTestTools(t, 200, getPluginJSON)
 
 	ok, err := client.IsCloudPluginInstalled("some-stack", "some-plugin")
 	if err != nil {
@@ -109,7 +107,7 @@ func TestIsCloudPluginInstalled(t *testing.T) {
 		t.Errorf("Expected plugin installation - Expected true, got false")
 	}
 
-	server.code = 404
+	client = gapiTestTools(t, 404, "error")
 	ok, err = client.IsCloudPluginInstalled("some-stack", "some-plugin")
 	if err != nil {
 		t.Error(err)
@@ -120,7 +118,7 @@ func TestIsCloudPluginInstalled(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 412} {
-		server.code = code
+		client = gapiTestTools(t, code, "error")
 
 		_, err := client.IsCloudPluginInstalled("some-stack", "some-plugin")
 		if err == nil {
@@ -130,8 +128,7 @@ func TestIsCloudPluginInstalled(t *testing.T) {
 }
 
 func TestGetCloudPluginInstallation(t *testing.T) {
-	server, client := gapiTestTools(t, 200, installPluginJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, installPluginJSON)
 
 	installation, err := client.GetCloudPluginInstallation("some-stack", "some-plugin")
 	if err != nil {
@@ -149,7 +146,7 @@ func TestGetCloudPluginInstallation(t *testing.T) {
 	}
 
 	for _, code := range []int{401, 403, 404, 412} {
-		server.code = code
+		client = gapiTestTools(t, code, "error")
 
 		installation, err = client.GetCloudPluginInstallation("some-stack", "some-plugin")
 		if err == nil {
@@ -162,8 +159,7 @@ func TestGetCloudPluginInstallation(t *testing.T) {
 }
 
 func TestPlugin(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getPluginJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getPluginJSON)
 
 	plugin, err := client.PluginBySlug("some-plugin")
 	if err != nil {
@@ -181,7 +177,7 @@ func TestPlugin(t *testing.T) {
 	}
 
 	for _, code := range []int{404} {
-		server.code = code
+		client = gapiTestTools(t, code, "error")
 
 		_, err = client.PluginBySlug("some-plugin")
 		if err == nil {
@@ -191,8 +187,7 @@ func TestPlugin(t *testing.T) {
 }
 
 func TestPluginByID(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getPluginJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getPluginJSON)
 
 	plugin, err := client.PluginBySlug("some-plugin")
 	if err != nil {
@@ -210,7 +205,7 @@ func TestPluginByID(t *testing.T) {
 	}
 
 	for _, code := range []int{404} {
-		server.code = code
+		client = gapiTestTools(t, code, "error")
 
 		_, err = client.PluginByID(123)
 		if err == nil {
