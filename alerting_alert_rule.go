@@ -25,7 +25,7 @@ type AlertRule struct {
 	For          string            `json:"for"`
 	ForDuration  time.Duration     `json:"-"`
 	Provenance   string            `json:"provenance"`
-	IsPaused     bool              `json:"is_paused"`
+	IsPaused     bool              `json:"isPaused"`
 }
 
 // RuleGroup represents a group of rules in Grafana Alerting.
