@@ -160,12 +160,11 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 		return req, err
 	}
 
+	// cannot use both API key and org ID. API keys are scoped to single org
 	if c.config.APIKey != "" {
-		if c.config.OrgID != 0 {
-			return req, fmt.Errorf("cannot use both API key and org ID. API keys are scoped to single org")
-		}
 		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.config.APIKey))
-	} else if c.config.OrgID != 0 {
+	}
+	if c.config.OrgID != 0 {
 		req.Header.Add("X-Grafana-Org-Id", strconv.FormatInt(c.config.OrgID, 10))
 	}
 
