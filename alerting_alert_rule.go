@@ -24,6 +24,7 @@ type AlertRule struct {
 	Updated      time.Time         `json:"updated"`
 	For          string            `json:"for"`
 	ForDuration  time.Duration     `json:"-"`
+	ForError     string            `json:"forError"`
 	Provenance   string            `json:"provenance"`
 	IsPaused     bool              `json:"isPaused"`
 }

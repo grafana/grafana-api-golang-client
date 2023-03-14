@@ -132,6 +132,7 @@ func createAlertRule() AlertRule {
 		RuleGroup:    "eval_group_1",
 		Title:        "Always in alarm",
 		ForDuration:  60 * time.Second,
+		ForError:     "4m",
 	}
 }
 
@@ -158,7 +159,8 @@ const writeAlertRuleJSON = `
 	"orgId": 1,
 	"ruleGroup": "eval_group_1",
 	"title": "Always in alarm",
-	"for": "1m"
+	"for": "1m",
+    "forError": "4m"
 }
 `
 
@@ -173,7 +175,8 @@ const getAlertRuleJSON = `
 	"uid": "123abcd",
 	"ruleGroup": "eval_group_1",
 	"title": "Always in alarm",
-	"for": "1m"
+	"for": "1m",
+    "forError": "4m"
 }
 `
 
@@ -250,7 +253,8 @@ const getAlertRuleGroupJSON = `
 		"updated": "2022-08-12T15:44:43-05:00",
 		"noDataState": "OK",
 		"execErrState": "OK",
-		"for": "2m"
+		"for": "2m",
+        "forError": "4m"
 	  }
 	]
   }`
