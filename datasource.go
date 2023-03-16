@@ -139,3 +139,10 @@ func (c *Client) DeleteDataSourceByName(name string) error {
 
 	return c.request("DELETE", path, nil, nil, nil)
 }
+
+// CheckDataSourceHealth checks the grafana data source health whose ID is passed.
+func (c *Client) CheckDataSourceHealth(id int64) error {
+	path := fmt.Sprintf("/api/datasources/%d/health", id)
+
+	return c.request("GET", path, nil, nil, nil)
+}
