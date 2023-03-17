@@ -164,7 +164,7 @@ func TestCompareDashboardVersions(t *testing.T) {
 		t.Errorf("did not expect an error from dashboard compare: %v", err)
 	}
 
-	if string(compare) != compareDashboardsResponse {
+	if compare != compareDashboardsResponse {
 		t.Error("got wrong responnse from dashboard compare")
 	}
 }
