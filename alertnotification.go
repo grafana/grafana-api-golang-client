@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 // AlertNotification represents a Grafana alert notification.
@@ -17,6 +18,7 @@ type AlertNotification struct {
 	DisableResolveMessage bool        `json:"disableResolveMessage"`
 	SendReminder          bool        `json:"sendReminder"`
 	Frequency             string      `json:"frequency"`
+	Created               time.Time   `json:"created"`
 	Settings              interface{} `json:"settings"`
 	SecureFields          interface{} `json:"secureFields,omitempty"`
 	SecureSettings        interface{} `json:"secureSettings,omitempty"`

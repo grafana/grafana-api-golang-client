@@ -7,19 +7,20 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 // DashboardVersion is the data returned from the DashboardVersion* methods.
 type DashboardVersion struct {
-	ID            int64  `json:"id"`
-	DashboardID   int64  `json:"dashboardId"`
-	UID           string `json:"uid"`
-	ParentVersion int64  `json:"parentVersion"`
-	RestoredFrom  int64  `json:"restoredFrom"`
-	Version       int64  `json:"version"`
-	Created       string `json:"created"`
-	CreatedBy     string `json:"createdBy"`
-	Message       string `json:"message"`
+	ID            int64     `json:"id"`
+	DashboardID   int64     `json:"dashboardId"`
+	UID           string    `json:"uid"`
+	ParentVersion int64     `json:"parentVersion"`
+	RestoredFrom  int64     `json:"restoredFrom"`
+	Version       int64     `json:"version"`
+	Created       time.Time `json:"created"`
+	CreatedBy     string    `json:"createdBy"`
+	Message       string    `json:"message"`
 	// Data is the dashboard model, and only gets filled when a single version is requested.
 	Data map[string]interface{} `json:"data"`
 }
@@ -101,35 +102,35 @@ func (c *Client) RestoreDashboardVersion(dashboardUID string, version int64) (*D
 }
 
 // CompareDashboardVersions compares two different dashboard versions. Can even compare different dashboards IDs.
-// Returns "text" (formatted html) not json. You can wrap the []byte in string() to convert it.
-func (c *Client) CompareDashboardVersions(compareDashboards CompareDashboardsInput) ([]byte, error) {
+// Returns "text" (formatted html or xml) and not json.
+func (c *Client) CompareDashboardVersions(compareDashboards CompareDashboardsInput) (string, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(compareDashboards); err != nil {
-		return nil, fmt.Errorf("json encoding input: %w", err)
+		return "", fmt.Errorf("json encoding input: %w", err)
 	}
 
 	req, err := c.newRequest(http.MethodPost, "/api/dashboards/calculate-diff", url.Values{}, &body)
 	if err != nil {
-		return nil, fmt.Errorf("creating request: %w", err)
+		return "", fmt.Errorf("creating request: %w", err)
 	}
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("making request: %w", err)
+		return "", fmt.Errorf("making request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	bodyContents, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("reading body: %w", err)
+		return "", fmt.Errorf("reading body: %w", err)
 	}
 
 	// check status code.
 	if resp.StatusCode >= http.StatusBadRequest {
-		return nil, fmt.Errorf("%w: %d, body: %v", ErrInvalidStatus, resp.StatusCode, string(bodyContents))
+		return "", fmt.Errorf("%w: %d, body: %v", ErrInvalidStatus, resp.StatusCode, string(bodyContents))
 	}
 
-	return bodyContents, nil
+	return string(bodyContents), nil
 }
 
 // MarshalJSON turns a CompareDashboardsInput into the json Grafana requires.
