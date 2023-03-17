@@ -13,9 +13,19 @@ var (
 		"id": 4,
 		"userId": 0,
 		"orgId": 1,
-		"dashboardId": 33,
-		"dashboardName": "Terraform Acceptance Test",
-		"dashboardUid": "",
+		"dashboards": [
+			{
+				"dashboard": {
+					"id": 33,
+					"uid": "nErXDvCkzz",
+					"name": "Terraform Acceptance Test"
+				},
+				"timeRange": {
+					"from": "now-1h",
+					"to": "now"
+				}
+			}
+		],
 		"name": "My Report",
 		"recipients": "test@test.com",
 		"replyTo": "",
@@ -35,11 +45,7 @@ var (
 		},
 		"options": {
 			"orientation": "landscape",
-			"layout": "grid",
-			"timeRange": {
-				"from": "now-1h",
-				"to": "now"
-			}
+			"layout": "grid"
 		},
 		"templateVars": {},
 		"enableDashboardUrl": true,
@@ -56,9 +62,8 @@ var (
 `
 	now        = time.Now()
 	testReport = Report{
-		DashboardID: 33,
-		Name:        "My Report",
-		Recipients:  "test@test.com",
+		Name:       "My Report",
+		Recipients: "test@test.com",
 		Schedule: ReportSchedule{
 			StartDate:         &now,
 			EndDate:           nil,
@@ -68,13 +73,21 @@ var (
 			WorkdaysOnly:      true,
 			TimeZone:          "GMT",
 		},
+		Dashboards: []ReportDashboard{
+			{
+				Dashboard: ReportDashboardIdentifier{
+					ID:  33,
+					UID: "nErXDvCkzz",
+				},
+				TimeRange: ReportDashboardTimeRange{
+					From: "now-1h",
+					To:   "now",
+				},
+			},
+		},
 		Options: ReportOptions{
 			Orientation: "landscape",
 			Layout:      "grid",
-			TimeRange: ReportTimeRange{
-				From: "now-1h",
-				To:   "now",
-			},
 		},
 		EnableDashboardURL: true,
 		EnableCSV:          true,
