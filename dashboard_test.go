@@ -146,9 +146,9 @@ func TestDashboards(t *testing.T) {
 
 	// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of dashboards.
 	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, mockData},
-		{200, mockData},
-		{200, "[" + getDashboardsJSON + "]"},
+		{code: 200, body: mockData},
+		{code: 200, body: mockData},
+		{code: 200, body: "[" + getDashboardsJSON + "]"},
 	})
 
 	const dashCount = 2001
