@@ -31,7 +31,7 @@ type Client struct {
 
 // Config contains client configuration.
 type Config struct {
-	// APIKey is an optional API key.
+	// APIKey is an optional API key or service account token.
 	APIKey string
 	// BasicAuth is optional basic auth credentials.
 	BasicAuth *url.Userinfo
@@ -41,7 +41,7 @@ type Config struct {
 	Client *http.Client
 	// OrgID provides an optional organization ID
 	// with BasicAuth, it defaults to last used org
-	// with APIKey, it is disallowed because API keys are scoped to a single org
+	// with APIKey, it is disallowed because service account tokens are scoped to a single org
 	OrgID int64
 	// NumRetries contains the number of attempted retries
 	NumRetries int
