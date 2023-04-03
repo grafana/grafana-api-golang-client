@@ -87,9 +87,9 @@ func TestFolders(t *testing.T) {
 
 	// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of folders.
 	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, mockData},
-		{200, mockData},
-		{200, "[" + getFolderJSON + "]"},
+		{code: 200, body: mockData},
+		{code: 200, body: mockData},
+		{code: 200, body: "[" + getFolderJSON + "]"},
 	})
 
 	const dashCount = 2001
