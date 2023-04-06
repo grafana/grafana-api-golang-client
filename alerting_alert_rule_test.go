@@ -20,7 +20,7 @@ func TestAlertRules(t *testing.T) {
 		{200, "[" + getFolderJSON + "]"},
 	})
 
-	const dashCount = 2001
+	const dashCount = 1000
 
 	alertRules, err := client.AlertRules()
 	if err != nil {
@@ -32,11 +32,11 @@ func TestAlertRules(t *testing.T) {
 	if len(alertRules) != dashCount {
 		t.Errorf("Length of returned folders should be %d", dashCount)
 	}
-	if alertRules[0].ID != 1 || alertRules[0].Title != "Departmenet ABC" {
-		t.Error("Not correctly parsing returned folders.")
+	if alertRules[0].UID != "123abcd" || alertRules[0].Title != "Always in alarm" {
+		t.Error("Not correctly parsing returned alertRules.")
 	}
-	if alertRules[dashCount-1].ID != 1 || alertRules[dashCount-1].Title != "Departmenet ABC" {
-		t.Error("Not correctly parsing returned folders.")
+	if alertRules[dashCount-1].UID != "123abcd" || alertRules[dashCount-1].Title != "Always in alarm" {
+		t.Error("Not correctly parsing returned alertRules.")
 	}
 }
 

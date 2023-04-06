@@ -64,6 +64,7 @@ type RelativeTimeRange struct {
 	To   time.Duration `json:"to"`
 }
 
+// AlertRules fetches and returns Grafana alertRules.
 func (c *Client) AlertRules() ([]AlertRule, error) {
 	const limit = 1000
 
