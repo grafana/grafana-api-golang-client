@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"time"
 )
 
@@ -61,6 +62,33 @@ const (
 type RelativeTimeRange struct {
 	From time.Duration `json:"from"`
 	To   time.Duration `json:"to"`
+}
+
+func (c *Client) AlertRules() ([]AlertRule, error) {
+	const limit = 1000
+
+	var (
+		page          = 0
+		newAlertRules []AlertRule
+		alertRules    []AlertRule
+		query         = make(url.Values)
+	)
+	query.Set("limit", fmt.Sprint(limit))
+
+	for {
+		page++
+		query.Set("page", fmt.Sprint(page))
+
+		if err := c.request("GET", "/api/v1/provisioning/alert-rules", query, nil, &newAlertRules); err != nil {
+			return nil, err
+		}
+
+		alertRules = append(alertRules, newAlertRules...)
+
+		if len(newAlertRules) < limit {
+			return alertRules, nil
+		}
+	}
 }
 
 // AlertRule fetches a single alert rule, identified by its UID.
