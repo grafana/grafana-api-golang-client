@@ -10,17 +10,17 @@ import (
 )
 
 func TestAlertRules(t *testing.T) {
-	mockData := strings.Repeat(getAlertRulesJSON+",", 1000) // make 1000 folders.
+	mockData := strings.Repeat(getAlertRulesJSON+",", 1000) // make 1000 alertRules.
 	mockData = "[" + mockData[:len(mockData)-1] + "]"       // remove trailing comma; make a json list.
 
-	// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of folders.
+	// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of alertRules.
 	client := gapiTestToolsFromCalls(t, []mockServerCall{
 		{200, mockData},
 		{200, mockData},
 		{200, "[" + getFolderJSON + "]"},
 	})
 
-	const dashCount = 1000
+	const dashCount = 2001
 
 	alertRules, err := client.AlertRules()
 	if err != nil {
