@@ -112,7 +112,20 @@ func (c *Client) UpdateFolder(uid string, title string, newUID ...string) error 
 	return c.request("PUT", fmt.Sprintf("/api/folders/%s", uid), nil, bytes.NewBuffer(data), nil)
 }
 
+func ForceDeleteFolderRules() url.Values {
+	query := make(url.Values)
+	query.Set("forceDeleteRules", "true")
+	return query
+}
+
 // DeleteFolder deletes the folder whose ID it's passed.
-func (c *Client) DeleteFolder(id string) error {
-	return c.request("DELETE", fmt.Sprintf("/api/folders/%s", id), nil, nil, nil)
+func (c *Client) DeleteFolder(id string, optionalQueryParams ...url.Values) error {
+	var query url.Values
+	for _, param := range optionalQueryParams {
+		for paramKey := range param {
+			query.Set(paramKey, param.Get(paramKey))
+		}
+	}
+
+	return c.request("DELETE", fmt.Sprintf("/api/folders/%s", id), query, nil, nil)
 }
