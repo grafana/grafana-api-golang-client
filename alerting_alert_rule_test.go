@@ -18,7 +18,7 @@ func TestAlertRules(t *testing.T) {
 	client := gapiTestToolsFromCalls(t, []mockServerCall{
 		{200, mockData},
 		{200, mockData},
-		{200, "[" + getFolderJSON + "]"},
+		{200, "[" + getAlertRulesJSON + "]"},
 	})
 
 	const dashCount = 2001
