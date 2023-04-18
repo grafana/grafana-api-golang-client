@@ -22,7 +22,7 @@ const (
 			"role": "Admin",
 			"expiration": "2021-10-30T10:52:03+03:00"
 		}
-	]` //#nosec
+	]`//#nosec
 )
 
 func TestCreateAPIKey(t *testing.T) {
