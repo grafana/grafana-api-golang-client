@@ -10,7 +10,6 @@ import (
 )
 
 func TestAlertRules(t *testing.T) {
-
 	mockData := strings.Repeat(getAlertRulesJSON+",", 1000) // make 1000 alertRules.
 	mockData = "[" + mockData[:len(mockData)-1] + "]"       // remove trailing comma; make a json list.
 
