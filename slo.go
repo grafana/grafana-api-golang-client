@@ -1,5 +1,13 @@
 package gapi
 
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+)
+
+var sloPath string = "/api/plugins/grafana-slo-app/resources/v1/slo"
+
 type Slos struct {
 	Slos []Slo `json:"slos"`
 }
@@ -82,7 +90,7 @@ type Query struct {
 	GroupByLabels []string   `json:"groupBy,omitempty"`
 }
 
-type POSTResponse struct {
+type CreateSLOResponse struct {
 	Message string `json:"message,omitempty"`
 	Uuid    string `json:"uuid,omitempty"`
 }
@@ -91,9 +99,37 @@ type POSTResponse struct {
 func (c *Client) ListSLOs() (Slos, error) {
 	var slos Slos
 
-	if err := c.request("GET", "/api/plugins/grafana-slo-app/resources/v1/slo", nil, nil, &slos); err != nil {
-		return slos, err
+	if err := c.request("GET", sloPath, nil, nil, &slos); err != nil {
+		return Slos{}, err
 	}
 
 	return slos, nil
+}
+
+// GetSLO returns a single SLO based on its uuid
+func (c *Client) GetSlo(uuid string) (Slo, error) {
+	var slo Slo
+	path := fmt.Sprintf("%s/%s", sloPath, uuid)
+
+	if err := c.request("GET", path, nil, nil, &slo); err != nil {
+		return Slo{}, err
+	}
+
+	return slo, nil
+}
+
+// CreateSLO creates a single SLO
+func (c *Client) CreateSLO(slo Slo) (CreateSLOResponse, error) {
+	response := CreateSLOResponse{}
+
+	data, err := json.Marshal(slo)
+	if err != nil {
+		return response, err
+	}
+
+	if err := c.request("POST", sloPath, nil, bytes.NewBuffer(data), &response); err != nil {
+		return CreateSLOResponse{}, err
+	}
+
+	return response, err
 }
