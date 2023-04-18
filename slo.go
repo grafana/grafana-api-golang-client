@@ -95,8 +95,8 @@ type CreateSLOResponse struct {
 	Uuid    string `json:"uuid,omitempty"`
 }
 
-// ListSLOs retrieves a list of all SLOs
-func (c *Client) ListSLOs() (Slos, error) {
+// ListSlos retrieves a list of all Slos
+func (c *Client) ListSlos() (Slos, error) {
 	var slos Slos
 
 	if err := c.request("GET", sloPath, nil, nil, &slos); err != nil {
@@ -106,7 +106,7 @@ func (c *Client) ListSLOs() (Slos, error) {
 	return slos, nil
 }
 
-// GetSLO returns a single SLO based on its uuid
+// GetSLO returns a single Slo based on its uuid
 func (c *Client) GetSlo(uuid string) (Slo, error) {
 	var slo Slo
 	path := fmt.Sprintf("%s/%s", sloPath, uuid)
@@ -118,8 +118,8 @@ func (c *Client) GetSlo(uuid string) (Slo, error) {
 	return slo, nil
 }
 
-// CreateSLO creates a single SLO
-func (c *Client) CreateSLO(slo Slo) (CreateSLOResponse, error) {
+// CreateSLO creates a single Slo
+func (c *Client) CreateSlo(slo Slo) (CreateSLOResponse, error) {
 	response := CreateSLOResponse{}
 
 	data, err := json.Marshal(slo)
@@ -134,12 +134,23 @@ func (c *Client) CreateSLO(slo Slo) (CreateSLOResponse, error) {
 	return response, err
 }
 
-// DeleteSLO deletes the SLO with the passed in UUID
-func (c *Client) DeleteSLO(uuid string) error {
+// DeleteSLO deletes the Slo with the passed in UUID
+func (c *Client) DeleteSlo(uuid string) error {
 	var slo Slo
 	path := fmt.Sprintf("%s/%s", sloPath, uuid)
 
 	if err := c.request("DELETE", path, nil, nil, &slo); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateSLO updates the Slo with the passed in UUID and Slo
+func (c *Client) UpdateSlo(uuid string, slo Slo) error {
+	path := fmt.Sprintf("%s/%s", sloPath, uuid)
+
+	if err := c.request("PUT", path, nil, nil, &slo); err != nil {
 		return err
 	}
 
