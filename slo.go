@@ -133,3 +133,15 @@ func (c *Client) CreateSLO(slo Slo) (CreateSLOResponse, error) {
 
 	return response, err
 }
+
+// DeleteSLO deletes the SLO with the passed in UUID
+func (c *Client) DeleteSLO(uuid string) error {
+	var slo Slo
+	path := fmt.Sprintf("%s/%s", sloPath, uuid)
+
+	if err := c.request("DELETE", path, nil, nil, &slo); err != nil {
+		return err
+	}
+
+	return nil
+}
