@@ -138,7 +138,6 @@ func (c *Client) CreateSlo(slo Slo) (CreateSLOResponse, error) {
 }
 
 // DeleteSLO deletes the Slo with the passed in UUID
-// EV - to check the error handling on DeleteSlo
 func (c *Client) DeleteSlo(uuid string) error {
 	response := Response{}
 	path := fmt.Sprintf("%s/%s", sloPath, uuid)
@@ -151,7 +150,6 @@ func (c *Client) DeleteSlo(uuid string) error {
 }
 
 // UpdateSLO updates the Slo with the passed in UUID and Slo
-// EV - to check the error handling on UpdateSlo
 func (c *Client) UpdateSlo(uuid string, slo Slo) error {
 	path := fmt.Sprintf("%s/%s", sloPath, uuid)
 
@@ -166,13 +164,3 @@ func (c *Client) UpdateSlo(uuid string, slo Slo) error {
 
 	return nil
 }
-
-// func (c *Client) UpdateSlo(uuid string, slo Slo) error {
-// 	path := fmt.Sprintf("%s/%s", sloPath, uuid)
-
-// 	if err := c.request("PUT", path, nil, nil, &slo); err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
