@@ -21,7 +21,6 @@ type Slo struct {
 	Alerting              *Alerting     `json:"alerting,omitempty"`
 	Labels                *[]Label      `json:"labels,omitempty"`
 	Objectives            []Objective   `json:"objectives"`
-	DrilldownDashboardUid string        `json:"dashboardUid,omitempty"`
 	DrilldownDashboardRef *DashboardRef `json:"drillDownDashboardRef,omitempty"`
 }
 
@@ -49,7 +48,6 @@ type Objective struct {
 }
 
 type DashboardRef struct {
-	ID  int    `json:"id,omitempty"`
 	UID string `json:"uid,omitempty"`
 }
 
@@ -95,6 +93,11 @@ type CreateSLOResponse struct {
 	Uuid    string `json:"uuid,omitempty"`
 }
 
+type Response struct {
+	Code  string `json:"message,omitempty"`
+	Error string `json:"uuid,omitempty"`
+}
+
 // ListSlos retrieves a list of all Slos
 func (c *Client) ListSlos() (Slos, error) {
 	var slos Slos
@@ -135,11 +138,12 @@ func (c *Client) CreateSlo(slo Slo) (CreateSLOResponse, error) {
 }
 
 // DeleteSLO deletes the Slo with the passed in UUID
+// EV - to check the error handling on DeleteSlo
 func (c *Client) DeleteSlo(uuid string) error {
-	var slo Slo
+	response := Response{}
 	path := fmt.Sprintf("%s/%s", sloPath, uuid)
 
-	if err := c.request("DELETE", path, nil, nil, &slo); err != nil {
+	if err := c.request("DELETE", path, nil, nil, &response); err != nil {
 		return err
 	}
 
@@ -147,12 +151,28 @@ func (c *Client) DeleteSlo(uuid string) error {
 }
 
 // UpdateSLO updates the Slo with the passed in UUID and Slo
+// EV - to check the error handling on UpdateSlo
 func (c *Client) UpdateSlo(uuid string, slo Slo) error {
 	path := fmt.Sprintf("%s/%s", sloPath, uuid)
 
-	if err := c.request("PUT", path, nil, nil, &slo); err != nil {
+	data, err := json.Marshal(slo)
+	if err != nil {
+		return err
+	}
+
+	if err := c.request("PUT", path, nil, bytes.NewBuffer(data), nil); err != nil {
 		return err
 	}
 
 	return nil
 }
+
+// func (c *Client) UpdateSlo(uuid string, slo Slo) error {
+// 	path := fmt.Sprintf("%s/%s", sloPath, uuid)
+
+// 	if err := c.request("PUT", path, nil, nil, &slo); err != nil {
+// 		return err
+// 	}
+
+// 	return nil
+// }
