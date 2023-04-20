@@ -13,7 +13,7 @@ type Slos struct {
 }
 
 type Slo struct {
-	Uuid                  string        `json:"uuid"`
+	UUID                  string        `json:"uuid"`
 	Name                  string        `json:"name"`
 	Description           string        `json:"description"`
 	Service               string        `json:"service,omitempty"`
@@ -90,7 +90,7 @@ type Query struct {
 
 type CreateSLOResponse struct {
 	Message string `json:"message,omitempty"`
-	Uuid    string `json:"uuid,omitempty"`
+	UUID    string `json:"uuid,omitempty"`
 }
 
 type Response struct {
