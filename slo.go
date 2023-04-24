@@ -48,7 +48,7 @@ type Objective struct {
 }
 
 type DashboardRef struct {
-	UID string `json:"uid,omitempty"`
+	Uid string `json:"uid,omitempty"`
 }
 
 type FreeformQuery struct {
