@@ -93,11 +93,6 @@ type CreateSLOResponse struct {
 	UUID    string `json:"uuid,omitempty"`
 }
 
-type Response struct {
-	Code  string `json:"message,omitempty"`
-	Error string `json:"uuid,omitempty"`
-}
-
 // ListSlos retrieves a list of all Slos
 func (c *Client) ListSlos() (Slos, error) {
 	var slos Slos
@@ -139,14 +134,8 @@ func (c *Client) CreateSlo(slo Slo) (CreateSLOResponse, error) {
 
 // DeleteSLO deletes the Slo with the passed in UUID
 func (c *Client) DeleteSlo(uuid string) error {
-	response := Response{}
 	path := fmt.Sprintf("%s/%s", sloPath, uuid)
-
-	if err := c.request("DELETE", path, nil, nil, &response); err != nil {
-		return err
-	}
-
-	return nil
+	return c.request("DELETE", path, nil, nil, nil)
 }
 
 // UpdateSLO updates the Slo with the passed in UUID and Slo
