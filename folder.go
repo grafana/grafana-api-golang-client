@@ -120,7 +120,7 @@ func ForceDeleteFolderRules() url.Values {
 
 // DeleteFolder deletes the folder whose ID it's passed.
 func (c *Client) DeleteFolder(id string, optionalQueryParams ...url.Values) error {
-	var query url.Values
+	query := url.Values{}
 	for _, param := range optionalQueryParams {
 		for paramKey := range param {
 			query.Set(paramKey, param.Get(paramKey))
