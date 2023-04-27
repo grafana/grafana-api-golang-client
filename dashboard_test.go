@@ -26,7 +26,9 @@ const (
 		"meta": {
 			"isStarred": false,
 			"url": "/d/cIBgcSjkk/production-overview",
-			"slug": "production-overview"
+			"slug": "production-overview",
+			"folderID": 3,
+			"folderUid": "test"
 		}
 	}`
 
