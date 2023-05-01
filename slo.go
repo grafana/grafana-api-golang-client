@@ -1,3 +1,4 @@
+// Slo types lifted from github.com/grafana/slo/pkg/api/slo.go
 package gapi
 
 import (
@@ -16,18 +17,16 @@ type Slo struct {
 	UUID                  string        `json:"uuid"`
 	Name                  string        `json:"name"`
 	Description           string        `json:"description"`
-	Service               string        `json:"service,omitempty"`
+	Labels                []Label       `json:"labels,omitempty"`
 	Query                 Query         `json:"query"`
-	Alerting              *Alerting     `json:"alerting,omitempty"`
-	Labels                *[]Label      `json:"labels,omitempty"`
 	Objectives            []Objective   `json:"objectives"`
-	DrilldownDashboardRef *DashboardRef `json:"drillDownDashboardRef,omitempty"`
+	Alerting              *Alerting     `json:"alerting,omitempty"`
+	DrillDownDashboardRef *DashboardRef `json:"drillDownDashboardRef,omitempty"`
 }
 
 type Alerting struct {
-	Name        string         `json:"name"`
 	Annotations *[]Label       `json:"annotations,omitempty"`
-	Labels      *[]Label       `json:"labels,omitempty"`
+	Labels      *[]Label       `json:"labels"`
 	FastBurn    *AlertMetadata `json:"fastBurn,omitempty"`
 	SlowBurn    *AlertMetadata `json:"slowBurn,omitempty"`
 }
@@ -36,7 +35,6 @@ type AlertMetadata struct {
 	Annotations *[]Label `json:"annotations,omitempty"`
 	Labels      *[]Label `json:"labels,omitempty"`
 }
-
 type Label struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
@@ -49,6 +47,15 @@ type Objective struct {
 
 type DashboardRef struct {
 	UID string `json:"uid,omitempty"`
+}
+
+type Query struct {
+	ThresholdQuery
+	RatioQuery
+	PercentileQuery
+	FreeformQuery
+	Threshold     *Threshold `json:"threshold,omitempty"`
+	GroupByLabels []string   `json:"groupBy,omitempty"`
 }
 
 type FreeformQuery struct {
@@ -69,23 +76,16 @@ type PercentileQuery struct {
 	Percentile      float64    `json:"percentile,omitempty"`
 }
 
-type Threshold struct {
-	Value    float64 `json:"value,omitempty"`
-	Operator string  `json:"operator,omitempty"`
-}
-
 type MetricDef struct {
 	PrometheusMetric string `json:"prometheusMetric,omitempty"`
 	Type             string `json:"type,omitempty"`
+	// This struct will be extended to support additional data types in the future. For example:
+	// DataSource      string          `json:"dataSource"`
 }
 
-type Query struct {
-	ThresholdQuery
-	RatioQuery
-	PercentileQuery
-	FreeformQuery
-	Threshold     *Threshold `json:"threshold,omitempty"`
-	GroupByLabels []string   `json:"groupBy,omitempty"`
+type Threshold struct {
+	Value    float64 `json:"value,omitempty"`
+	Operator string  `json:"operator,omitempty"`
 }
 
 type CreateSLOResponse struct {
