@@ -1,4 +1,4 @@
-// Slo types lifted from github.com/grafana/slo/pkg/api/slo.go
+// Slo types lifted from github.com/grafana/slo/pkg/generated/models/slo/slo_type_gen.go
 package gapi
 
 import (
@@ -13,31 +13,56 @@ type Slos struct {
 	Slos []Slo `json:"slos"`
 }
 
-type Slo struct {
-	UUID                  string        `json:"uuid"`
-	Name                  string        `json:"name"`
-	Description           string        `json:"description"`
-	Labels                []Label       `json:"labels,omitempty"`
-	Query                 Query         `json:"query"`
-	Objectives            []Objective   `json:"objectives"`
-	Alerting              *Alerting     `json:"alerting,omitempty"`
-	DrillDownDashboardRef *DashboardRef `json:"drillDownDashboardRef,omitempty"`
-}
+const (
+	QueryTypeFreeform  QueryType = "freeform"
+	QueryTypeHistogram QueryType = "histogram"
+	QueryTypeRatio     QueryType = "ratio"
+	QueryTypeThreshold QueryType = "threshold"
+)
+
+const (
+	ThresholdOperatorEmpty      ThresholdOperator = "<"
+	ThresholdOperatorEqualEqual ThresholdOperator = "=="
+	ThresholdOperatorN1         ThresholdOperator = "<="
+	ThresholdOperatorN2         ThresholdOperator = ">="
+	ThresholdOperatorN3         ThresholdOperator = ">"
+)
 
 type Alerting struct {
-	Annotations *[]Label       `json:"annotations,omitempty"`
-	Labels      *[]Label       `json:"labels"`
-	FastBurn    *AlertMetadata `json:"fastBurn,omitempty"`
-	SlowBurn    *AlertMetadata `json:"slowBurn,omitempty"`
+	Annotations []Label           `json:"annotations,omitempty"`
+	FastBurn    *AlertingMetadata `json:"fastBurn,omitempty"`
+	Labels      []Label           `json:"labels,omitempty"`
+	SlowBurn    *AlertingMetadata `json:"slowBurn,omitempty"`
 }
 
-type AlertMetadata struct {
-	Annotations *[]Label `json:"annotations,omitempty"`
-	Labels      *[]Label `json:"labels,omitempty"`
+type AlertingMetadata struct {
+	Annotations []Label `json:"annotations,omitempty"`
+	Labels      []Label `json:"labels,omitempty"`
 }
+
+type DashboardRef struct {
+	UID string `json:"UID"`
+}
+
+type FreeformQuery struct {
+	Query string `json:"query"`
+}
+
+type HistogramQuery struct {
+	GroupByLabels []string  `json:"groupByLabels,omitempty"`
+	Metric        MetricDef `json:"metric"`
+	Percentile    float64   `json:"percentile"`
+	Threshold     Threshold `json:"threshold"`
+}
+
 type Label struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
+}
+
+type MetricDef struct {
+	PrometheusMetric string  `json:"prometheusMetric"`
+	Type             *string `json:"type,omitempty"`
 }
 
 type Objective struct {
@@ -45,47 +70,44 @@ type Objective struct {
 	Window string  `json:"window"`
 }
 
-type DashboardRef struct {
-	UID string `json:"uid,omitempty"`
-}
-
 type Query struct {
-	ThresholdQuery
-	RatioQuery
-	PercentileQuery
-	FreeformQuery
-	Threshold     *Threshold `json:"threshold,omitempty"`
-	GroupByLabels []string   `json:"groupBy,omitempty"`
+	Freeform  *FreeformQuery  `json:"freeform,omitempty"`
+	Histogram *HistogramQuery `json:"histogram,omitempty"`
+	Ratio     *RatioQuery     `json:"ratio,omitempty"`
+	Threshold *ThresholdQuery `json:"threshold,omitempty"`
+	Type      QueryType       `json:"type"`
 }
 
-type FreeformQuery struct {
-	Query string `json:"freeformQuery,omitempty"`
-}
-
-type ThresholdQuery struct {
-	ThresholdMetric *MetricDef `json:"thresholdMetric,omitempty"`
-}
+type QueryType string
 
 type RatioQuery struct {
-	SuccessMetric *MetricDef `json:"successMetric,omitempty"`
-	TotalMetric   *MetricDef `json:"totalMetric,omitempty"`
+	GroupByLabels []string  `json:"groupByLabels,omitempty"`
+	SuccessMetric MetricDef `json:"successMetric"`
+	TotalMetric   MetricDef `json:"totalMetric"`
 }
 
-type PercentileQuery struct {
-	HistogramMetric *MetricDef `json:"histogramMetric,omitempty"`
-	Percentile      float64    `json:"percentile,omitempty"`
-}
-
-type MetricDef struct {
-	PrometheusMetric string `json:"prometheusMetric,omitempty"`
-	Type             string `json:"type,omitempty"`
-	// This struct will be extended to support additional data types in the future. For example:
-	// DataSource      string          `json:"dataSource"`
+type Slo struct {
+	Alerting              *Alerting     `json:"alerting,omitempty"`
+	Description           string        `json:"description"`
+	DrillDownDashboardRef *DashboardRef `json:"drillDownDashboardRef,omitempty"`
+	Labels                []Label       `json:"labels,omitempty"`
+	Name                  string        `json:"name"`
+	Objectives            []Objective   `json:"objectives"`
+	Query                 Query         `json:"query"`
+	UUID                  string        `json:"uuid"`
 }
 
 type Threshold struct {
-	Value    float64 `json:"value,omitempty"`
-	Operator string  `json:"operator,omitempty"`
+	Operator ThresholdOperator `json:"operator"`
+	Value    float64           `json:"value"`
+}
+
+type ThresholdOperator string
+
+type ThresholdQuery struct {
+	GroupByLabels []string  `json:"groupByLabels,omitempty"`
+	Metric        MetricDef `json:"metric"`
+	Threshold     Threshold `json:"threshold"`
 }
 
 type CreateSLOResponse struct {

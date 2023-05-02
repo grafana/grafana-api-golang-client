@@ -96,8 +96,11 @@ const getSlosJSON = `
             "uuid": "qkkrknp12w6tmsdcrfkdf",
             "name": "list-slos",
             "description": "list-slos-description",
-            "query": {
-                "freeformQuery": "sum(rate(apiserver_request_total{code!=\"500\"}[$__rate_interval])) / sum(rate(apiserver_request_total[$__rate_interval]))"
+			"query": {
+                "freeform": {
+                    "query": "sum(rate(apiserver_request_total{code!=\"500\"}[$__rate_interval])) / sum(rate(apiserver_request_total[$__rate_interval]))"
+                },
+                "type": "freeform"
             },
             "objectives": [
                 {
@@ -117,9 +120,12 @@ const getSloJSON = `
     "uuid": "qkkrknp12w6tmsdcrfkdf",
     "name": "Name-Test",
     "description": "Description-Test",
-    "query": {
-        "freeformQuery": "sum(rate(apiserver_request_total{code!=\"500\"}[$__rate_interval])) / sum(rate(apiserver_request_total[$__rate_interval]))"
-    },
+	"query": {
+		"freeform": {
+			"query": "sum(rate(apiserver_request_total{code!=\"500\"}[$__rate_interval])) / sum(rate(apiserver_request_total[$__rate_interval]))"
+		},
+		"type": "freeform"
+	},
     "objectives": [
         {
             "value": 0.995,
@@ -136,9 +142,12 @@ const createSloJSON = `
     "uuid": "sjnp8wobcbs3eit28n8yb",
     "name": "test-name",
     "description": "test-description",
-    "query": {
-        "freeformQuery": "sum(rate(apiserver_request_total{code!=\"500\"}[$__rate_interval])) / sum(rate(apiserver_request_total[$__rate_interval]))"
-    },
+	"query": {
+		"freeform": {
+			"query": "sum(rate(apiserver_request_total{code!=\"500\"}[$__rate_interval])) / sum(rate(apiserver_request_total[$__rate_interval]))"
+		},
+		"type": "freeform"
+	},
     "objectives": [
         {
             "value": 0.995,
@@ -154,9 +163,10 @@ const createSloJSON = `
 func generateSlo() Slo {
 	objective := []Objective{{Value: 0.995, Window: "30d"}}
 	query := Query{
-		FreeformQuery: FreeformQuery{
+		Freeform: &FreeformQuery{
 			Query: "sum(rate(apiserver_request_total{code!=\"500\"}[$__rate_interval])) / sum(rate(apiserver_request_total[$__rate_interval]))",
 		},
+		Type: QueryTypeFreeform,
 	}
 
 	slo := Slo{
