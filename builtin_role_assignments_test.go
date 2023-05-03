@@ -41,10 +41,7 @@ const (
 )
 
 func TestNewBuiltInRoleAssignment(t *testing.T) {
-	server, client := gapiTestTools(t, 200, newBuiltInRoleAssignmentResponse)
-	t.Cleanup(func() {
-		server.Close()
-	})
+	client := gapiTestTools(t, 200, newBuiltInRoleAssignmentResponse)
 
 	br := BuiltInRoleAssignment{
 		Global:      false,
@@ -59,10 +56,7 @@ func TestNewBuiltInRoleAssignment(t *testing.T) {
 }
 
 func TestGetBuiltInRoleAssignments(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getBuiltInRoleAssignmentsResponse)
-	t.Cleanup(func() {
-		server.Close()
-	})
+	client := gapiTestTools(t, 200, getBuiltInRoleAssignmentsResponse)
 
 	resp, err := client.GetBuiltInRoleAssignments()
 
@@ -97,10 +91,7 @@ func TestGetBuiltInRoleAssignments(t *testing.T) {
 }
 
 func TestDeleteBuiltInRoleAssignment(t *testing.T) {
-	server, client := gapiTestTools(t, 200, removeBuiltInRoleAssignmentResponse)
-	t.Cleanup(func() {
-		server.Close()
-	})
+	client := gapiTestTools(t, 200, removeBuiltInRoleAssignmentResponse)
 
 	br := BuiltInRoleAssignment{
 		Global:      false,

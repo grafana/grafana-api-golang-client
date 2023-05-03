@@ -8,8 +8,7 @@ import (
 
 func TestMuteTimings(t *testing.T) {
 	t.Run("get mute timings succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, getMuteTimingsJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, getMuteTimingsJSON)
 
 		mts, err := client.MuteTimings()
 
@@ -29,8 +28,7 @@ func TestMuteTimings(t *testing.T) {
 	})
 
 	t.Run("get mute timing succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, muteTimingJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, muteTimingJSON)
 
 		mt, err := client.MuteTiming("timing one")
 
@@ -44,8 +42,7 @@ func TestMuteTimings(t *testing.T) {
 	})
 
 	t.Run("get non-existent mute timing fails", func(t *testing.T) {
-		server, client := gapiTestTools(t, 404, muteTimingJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 404, muteTimingJSON)
 
 		mt, err := client.MuteTiming("does not exist")
 
@@ -56,8 +53,7 @@ func TestMuteTimings(t *testing.T) {
 	})
 
 	t.Run("create mute timing succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 201, muteTimingJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 201, muteTimingJSON)
 		mt := createMuteTiming()
 
 		err := client.NewMuteTiming(&mt)
@@ -68,8 +64,7 @@ func TestMuteTimings(t *testing.T) {
 	})
 
 	t.Run("update mute timing succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, muteTimingJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, muteTimingJSON)
 		mt := createMuteTiming()
 		mt.TimeIntervals[0].Weekdays = []WeekdayRange{"tuesday", "thursday"}
 
@@ -81,8 +76,7 @@ func TestMuteTimings(t *testing.T) {
 	})
 
 	t.Run("delete mute timing succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 204, muteTimingJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 204, muteTimingJSON)
 
 		err := client.DeleteMuteTiming("timing two")
 

@@ -58,10 +58,7 @@ const (
 )
 
 func TestNewRole(t *testing.T) {
-	server, client := gapiTestTools(t, 201, newRoleResponse)
-	t.Cleanup(func() {
-		server.Close()
-	})
+	client := gapiTestTools(t, 201, newRoleResponse)
 
 	roleReq := Role{
 		Global:      false,
@@ -88,10 +85,7 @@ func TestNewRole(t *testing.T) {
 }
 
 func TestGetRole(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getRoleResponse)
-	t.Cleanup(func() {
-		server.Close()
-	})
+	client := gapiTestTools(t, 200, getRoleResponse)
 
 	uid := "vc3SCSsGz"
 
@@ -126,10 +120,7 @@ func TestGetRole(t *testing.T) {
 }
 
 func TestUpdateRole(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updatedRoleResponse)
-	t.Cleanup(func() {
-		server.Close()
-	})
+	client := gapiTestTools(t, 200, updatedRoleResponse)
 
 	roleReq := Role{
 		Global:      false,
@@ -150,10 +141,7 @@ func TestUpdateRole(t *testing.T) {
 }
 
 func TestDeleteRole(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deleteRoleResponse)
-	t.Cleanup(func() {
-		server.Close()
-	})
+	client := gapiTestTools(t, 200, deleteRoleResponse)
 
 	err := client.DeleteRole("vc3SCSsGz", false)
 	if err != nil {

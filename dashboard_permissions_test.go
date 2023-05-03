@@ -57,8 +57,7 @@ const (
 )
 
 func TestDashboardPermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDashboardPermissionsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getDashboardPermissionsJSON)
 
 	resp, err := client.DashboardPermissions(1)
 	if err != nil {
@@ -110,8 +109,7 @@ func TestDashboardPermissions(t *testing.T) {
 }
 
 func TestUpdateDashboardPermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updateDashboardPermissionsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updateDashboardPermissionsJSON)
 
 	items := &PermissionItems{
 		Items: []*PermissionItem{
@@ -134,6 +132,87 @@ func TestUpdateDashboardPermissions(t *testing.T) {
 		},
 	}
 	err := client.UpdateDashboardPermissions(1, items)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestDashboardPermissionsByUID(t *testing.T) {
+	client := gapiTestTools(t, 200, getDashboardPermissionsJSON)
+
+	resp, err := client.DashboardPermissionsByUID("nErXDvCkzz")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(pretty.PrettyFormat(resp))
+
+	expects := []*DashboardPermission{
+		{
+			DashboardID:    1,
+			DashboardUID:   "nErXDvCkzz",
+			Role:           "Viewer",
+			UserID:         0,
+			TeamID:         0,
+			IsFolder:       false,
+			Inherited:      false,
+			Permission:     1,
+			PermissionName: "View",
+		},
+		{
+			DashboardID:    2,
+			DashboardUID:   "nErXDvCkzz",
+			Role:           "Editor",
+			UserID:         0,
+			TeamID:         0,
+			IsFolder:       false,
+			Inherited:      true,
+			Permission:     2,
+			PermissionName: "Edit",
+		},
+	}
+
+	for i, expect := range expects {
+		t.Run("check data", func(t *testing.T) {
+			if resp[i].DashboardID != expect.DashboardID ||
+				resp[i].DashboardUID != expect.DashboardUID ||
+				resp[i].Role != expect.Role ||
+				resp[i].UserID != expect.UserID ||
+				resp[i].TeamID != expect.TeamID ||
+				resp[i].IsFolder != expect.IsFolder ||
+				resp[i].Inherited != expect.Inherited ||
+				resp[i].Permission != expect.Permission ||
+				resp[i].PermissionName != expect.PermissionName {
+				t.Error("Not correctly parsing returned dashboard permission")
+			}
+		})
+	}
+}
+
+func TestUpdateDashboardPermissionsByUID(t *testing.T) {
+	client := gapiTestTools(t, 200, updateDashboardPermissionsJSON)
+
+	items := &PermissionItems{
+		Items: []*PermissionItem{
+			{
+				Role:       "viewer",
+				Permission: 1,
+			},
+			{
+				Role:       "Editor",
+				Permission: 2,
+			},
+			{
+				TeamID:     1,
+				Permission: 1,
+			},
+			{
+				UserID:     11,
+				Permission: 4,
+			},
+		},
+	}
+	err := client.UpdateDashboardPermissionsByUID("nErXDvCkzz", items)
 	if err != nil {
 		t.Error(err)
 	}

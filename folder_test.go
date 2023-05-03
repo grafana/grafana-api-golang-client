@@ -1,15 +1,14 @@
 package gapi
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/gobs/pretty"
 )
 
 const (
-	getFoldersJSON = `
-[
-  {
+	getFoldersJSON = `{
     "id":1,
     "uid": "nErXDvCkzz",
     "title": "Departmenet ABC",
@@ -23,9 +22,7 @@ const (
     "updatedBy": "admin",
     "updated": "2018-01-31T17:43:12+01:00",
     "version": 1
-  }
-]
-	`
+	}`
 	getFolderJSON = `
 {
   "id":1,
@@ -85,8 +82,17 @@ const (
 )
 
 func TestFolders(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getFoldersJSON)
-	defer server.Close()
+	mockData := strings.Repeat(getFoldersJSON+",", 1000) // make 1000 folders.
+	mockData = "[" + mockData[:len(mockData)-1] + "]"    // remove trailing comma; make a json list.
+
+	// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of folders.
+	client := gapiTestToolsFromCalls(t, []mockServerCall{
+		{200, mockData},
+		{200, mockData},
+		{200, "[" + getFolderJSON + "]"},
+	})
+
+	const dashCount = 2001
 
 	folders, err := client.Folders()
 	if err != nil {
@@ -95,17 +101,19 @@ func TestFolders(t *testing.T) {
 
 	t.Log(pretty.PrettyFormat(folders))
 
-	if len(folders) != 1 {
-		t.Error("Length of returned folders should be 1")
+	if len(folders) != dashCount {
+		t.Errorf("Length of returned folders should be %d", dashCount)
 	}
 	if folders[0].ID != 1 || folders[0].Title != "Departmenet ABC" {
+		t.Error("Not correctly parsing returned folders.")
+	}
+	if folders[dashCount-1].ID != 1 || folders[dashCount-1].Title != "Departmenet ABC" {
 		t.Error("Not correctly parsing returned folders.")
 	}
 }
 
 func TestFolder(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getFolderJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getFolderJSON)
 
 	folder := int64(1)
 	resp, err := client.Folder(folder)
@@ -121,8 +129,7 @@ func TestFolder(t *testing.T) {
 }
 
 func TestFolderByUid(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getFolderJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getFolderJSON)
 
 	folder := "nErXDvCkzz"
 	resp, err := client.FolderByUID(folder)
@@ -138,8 +145,7 @@ func TestFolderByUid(t *testing.T) {
 }
 
 func TestNewFolder(t *testing.T) {
-	server, client := gapiTestTools(t, 200, createdFolderJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, createdFolderJSON)
 
 	resp, err := client.NewFolder("test-folder")
 	if err != nil {
@@ -154,8 +160,7 @@ func TestNewFolder(t *testing.T) {
 }
 
 func TestUpdateFolder(t *testing.T) {
-	server, client := gapiTestTools(t, 200, updatedFolderJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, updatedFolderJSON)
 
 	err := client.UpdateFolder("nErXDvCkzz", "test-folder")
 	if err != nil {
@@ -164,8 +169,7 @@ func TestUpdateFolder(t *testing.T) {
 }
 
 func TestDeleteFolder(t *testing.T) {
-	server, client := gapiTestTools(t, 200, deletedFolderJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, deletedFolderJSON)
 
 	err := client.DeleteFolder("nErXDvCkzz")
 	if err != nil {

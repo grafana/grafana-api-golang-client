@@ -31,6 +31,14 @@ const (
 			"permissionName": "Query",
 			"created": "2017-06-20T02:00:00+02:00",
 			"updated": "2017-06-20T02:00:00+02:00"
+		},
+		{
+			"datasourceId": 1,
+			"permission": 2,
+			"permissionName": "Edit",
+			"builtInRole": "Viewer",
+			"created": "2017-06-20T02:00:00+02:00",
+			"updated": "2017-06-20T02:00:00+02:00"
 		}
 	]
 }`
@@ -40,8 +48,7 @@ const (
 )
 
 func TestDatasourcePermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, getDatasourcePermissionsJSON)
-	defer server.Close()
+	client := gapiTestTools(t, 200, getDatasourcePermissionsJSON)
 
 	resp, err := client.DatasourcePermissions(1)
 	if err != nil {
@@ -81,9 +88,6 @@ func TestDatasourcePermissions(t *testing.T) {
 }
 
 func TestAddDatasourcePermissions(t *testing.T) {
-	server, client := gapiTestTools(t, 200, addDatasourcePermissionsJSON)
-	defer server.Close()
-
 	for _, item := range []*DatasourcePermissionAddPayload{
 		{
 			TeamID:     1,
@@ -93,7 +97,12 @@ func TestAddDatasourcePermissions(t *testing.T) {
 			UserID:     11,
 			Permission: 1,
 		},
+		{
+			BuiltInRole: "Viewer",
+			Permission:  2,
+		},
 	} {
+		client := gapiTestTools(t, 200, addDatasourcePermissionsJSON)
 		err := client.AddDatasourcePermission(1, item)
 		if err != nil {
 			t.Error(err)

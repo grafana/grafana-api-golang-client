@@ -8,8 +8,7 @@ import (
 
 func TestNotificationPolicies(t *testing.T) {
 	t.Run("get policy tree succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, notificationPolicyJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, notificationPolicyJSON)
 
 		np, err := client.NotificationPolicyTree()
 
@@ -26,8 +25,7 @@ func TestNotificationPolicies(t *testing.T) {
 	})
 
 	t.Run("set policy tree succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 202, `{"message":"created"}`)
-		defer server.Close()
+		client := gapiTestTools(t, 202, `{"message":"created"}`)
 		np := createNotificationPolicy()
 
 		err := client.SetNotificationPolicyTree(&np)
@@ -38,8 +36,7 @@ func TestNotificationPolicies(t *testing.T) {
 	})
 
 	t.Run("reset policy tree succeeds", func(t *testing.T) {
-		server, client := gapiTestTools(t, 200, notificationPolicyJSON)
-		defer server.Close()
+		client := gapiTestTools(t, 200, notificationPolicyJSON)
 
 		err := client.ResetNotificationPolicyTree()
 

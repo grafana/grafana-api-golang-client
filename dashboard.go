@@ -12,6 +12,7 @@ type DashboardMeta struct {
 	IsStarred bool   `json:"isStarred"`
 	Slug      string `json:"slug"`
 	Folder    int64  `json:"folderId"`
+	FolderUID string `json:"folderUid"`
 	URL       string `json:"url"`
 }
 
@@ -26,14 +27,16 @@ type DashboardSaveResponse struct {
 
 // Dashboard represents a Grafana dashboard.
 type Dashboard struct {
-	Meta      DashboardMeta          `json:"meta"`
-	Model     map[string]interface{} `json:"dashboard"`
-	FolderID  int64                  `json:"folderId"`
-	FolderUID string                 `json:"folderUid"`
-	Overwrite bool                   `json:"overwrite"`
+	Model    map[string]interface{} `json:"dashboard"`
+	FolderID int64                  `json:"folderId"`
 
-	// This is only used when creating a new dashboard, it will always be empty when getting a dashboard.
-	Message string `json:"message"`
+	// This field is read-only. It is not used when creating a new dashboard.
+	Meta DashboardMeta `json:"meta"`
+
+	// These fields are only used when creating a new dashboard, they will always be empty when getting a dashboard.
+	Overwrite bool   `json:"overwrite,omitempty"`
+	Message   string `json:"message,omitempty"`
+	FolderUID string `json:"folderUid,omitempty"`
 }
 
 // SaveDashboard is a deprecated method for saving a Grafana dashboard. Use NewDashboard.
@@ -75,10 +78,32 @@ func (c *Client) NewDashboard(dashboard Dashboard) (*DashboardSaveResponse, erro
 
 // Dashboards fetches and returns all dashboards.
 func (c *Client) Dashboards() ([]FolderDashboardSearchResponse, error) {
-	params := url.Values{
-		"type": {"dash-db"},
+	const limit = 1000
+
+	var (
+		page          = 0
+		newDashboards []FolderDashboardSearchResponse
+		dashboards    []FolderDashboardSearchResponse
+		query         = make(url.Values)
+	)
+
+	query.Set("type", "dash-db")
+	query.Set("limit", fmt.Sprint(limit))
+
+	for {
+		page++
+		query.Set("page", fmt.Sprint(page))
+
+		if err := c.request("GET", "/api/search", query, nil, &newDashboards); err != nil {
+			return nil, err
+		}
+
+		dashboards = append(dashboards, newDashboards...)
+
+		if len(newDashboards) < limit {
+			return dashboards, nil
+		}
 	}
-	return c.FolderDashboardSearch(params)
 }
 
 // Dashboard will be removed.
