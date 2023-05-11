@@ -73,18 +73,13 @@ func (c Client) WithOrgID(orgID int64) *Client {
 	return &c
 }
 
-func (c *Client) request(method, requestPath string, query url.Values, bodyRd io.Reader, responseStruct interface{}) error {
+func (c *Client) request(method, requestPath string, query url.Values, body []byte, responseStruct interface{}) error {
 	var (
 		req          *http.Request
 		resp         *http.Response
 		err          error
 		bodyContents []byte
 	)
-
-	body, err := io.ReadAll(bodyRd)
-	if err != nil {
-		return fmt.Errorf("cannot read request body: %w", err)
-	}
 
 	// retry logic
 	for n := 0; n <= c.config.NumRetries; n++ {

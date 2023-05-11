@@ -169,7 +169,7 @@ func TestRequest_200UnmarshalPut(t *testing.T) {
 	}{}
 	q := url.Values{}
 	q.Add("a", "b")
-	err = client.request("PUT", "/foo", q, bytes.NewBuffer(data), &result)
+	err = client.request("PUT", "/foo", q, data, &result)
 	if err != nil {
 		t.Error(err)
 	}
@@ -243,7 +243,7 @@ func TestClient_requestWithRetries(t *testing.T) {
 
 	var got res
 
-	if err := c.request(http.MethodPost, "/", nil, bytes.NewReader(body), &got); err != nil {
+	if err := c.request(http.MethodPost, "/", nil, body, &got); err != nil {
 		t.Fatalf("unexpected error sending request: %v", err)
 	}
 
