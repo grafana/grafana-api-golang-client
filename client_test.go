@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+	"time"
 )
 
 func TestNew_basicAuth(t *testing.T) {
@@ -228,8 +229,9 @@ func TestClient_requestWithRetries(t *testing.T) {
 	}
 
 	c, err := New(ts.URL, Config{
-		NumRetries: 5,
-		Client:     httpClient,
+		NumRetries:   5,
+		Client:       httpClient,
+		RetryTimeout: 50 * time.Millisecond,
 	})
 	if err != nil {
 		t.Fatalf("unexpected error creating client: %v", err)

@@ -40,6 +40,8 @@ type Config struct {
 	OrgID int64
 	// NumRetries contains the number of attempted retries
 	NumRetries int
+	// RetryTimeout says how long to wait before retrying a request
+	RetryTimeout time.Duration
 }
 
 // New creates a new Grafana client.
@@ -93,7 +95,10 @@ func (c *Client) request(method, requestPath string, query url.Values, bodyRd io
 
 		// Wait a bit if that's not the first request
 		if n != 0 {
-			time.Sleep(time.Second * 5)
+			if c.config.RetryTimeout == 0 {
+				c.config.RetryTimeout = time.Second * 5
+			}
+			time.Sleep(c.config.RetryTimeout)
 		}
 
 		resp, err = c.client.Do(req)
