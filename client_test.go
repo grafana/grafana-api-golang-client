@@ -3,6 +3,10 @@ package gapi
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"testing"
 )
@@ -172,4 +176,93 @@ func TestRequest_200UnmarshalPut(t *testing.T) {
 	if result.Name != "mike" {
 		t.Errorf("expected: name; got: %s", result.Name)
 	}
+}
+
+func TestClient_requestWithRetries(t *testing.T) {
+	// It looks like if the call to c.client.Do doesn't read the body
+	// before returning an error, then bodyBuffer never gets populated
+	// and every retry ends up with a blank body.
+
+	body := []byte(`lorem ipsum dolor sit amet`)
+
+	var try int
+
+	// This is our actual test, checking that we do in fact receive a body.
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+
+		try++
+
+		got, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Errorf("retry %d: unexpected error reading body: %v", try, err)
+		}
+
+		if !bytes.Equal(body, got) {
+			t.Errorf("retry %d: request body doesn't match body sent by client:\nexp: %v\ngot: %v", try, body, got)
+		}
+
+		switch try {
+		case 1:
+			http.Error(w, `{"error":"waiting for the right time"}`, http.StatusInternalServerError)
+
+		case 2:
+			http.Error(w, `{"error":"calm down"}`, http.StatusTooManyRequests)
+
+		default:
+			w.Write([]byte(`{"foo":"bar"}`))
+		}
+	}))
+	defer ts.Close()
+
+	// From http.Client.Do documentation: an error is returned if
+	// caused by client policy (such as CheckRedirect), or failure to
+	// speak HTTP (such as a network connectivity problem). A non-2xx
+	// status code doesn't cause an error.
+	//
+	// For this reason we build a custom http.Client that will fail
+	// the first time with an error *before* the request is sent, and
+	// succeed afterwards. See customRoundTripper below.
+	httpClient := &http.Client{
+		Transport: &customRoundTripper{},
+	}
+
+	c, err := New(ts.URL, Config{
+		NumRetries: 5,
+		Client:     httpClient,
+	})
+	if err != nil {
+		t.Fatalf("unexpected error creating client: %v", err)
+	}
+
+	type res struct {
+		Foo string `json:"foo"`
+	}
+
+	var got res
+
+	if err := c.request(http.MethodPost, "/", nil, bytes.NewReader(body), &got); err != nil {
+		t.Fatalf("unexpected error sending request: %v", err)
+	}
+
+	exp := res{Foo: "bar"}
+
+	if exp != got {
+		t.Fatalf("response doesn't match\nexp: %#v\ngot: %#v", exp, got)
+	}
+
+	t.Logf("request successful after %d retries", try)
+}
+
+type customRoundTripper struct {
+	rt  http.RoundTripper
+	try int
+}
+
+func (rt *customRoundTripper) RoundTrip(r *http.Request) (*http.Response, error) {
+	if rt.try++; rt.try < 2 {
+		return nil, errors.New("failure")
+	}
+
+	return http.DefaultTransport.RoundTrip(r)
 }
