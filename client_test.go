@@ -211,7 +211,7 @@ func TestClient_requestWithRetries(t *testing.T) {
 			http.Error(w, `{"error":"calm down"}`, http.StatusTooManyRequests)
 
 		default:
-			w.Write([]byte(`{"foo":"bar"}`))
+			w.Write([]byte(`{"foo":"bar"}`)) //nolint:errcheck
 		}
 	}))
 	defer ts.Close()
@@ -257,7 +257,6 @@ func TestClient_requestWithRetries(t *testing.T) {
 }
 
 type customRoundTripper struct {
-	rt  http.RoundTripper
 	try int
 }
 
