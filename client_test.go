@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -194,7 +194,7 @@ func TestClient_requestWithRetries(t *testing.T) {
 
 		try++
 
-		got, err := io.ReadAll(r.Body)
+		got, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			t.Errorf("retry %d: unexpected error reading body: %v", try, err)
 		}
