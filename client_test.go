@@ -180,9 +180,8 @@ func TestRequest_200UnmarshalPut(t *testing.T) {
 }
 
 func TestClient_requestWithRetries(t *testing.T) {
-	// It looks like if the call to c.client.Do doesn't read the body
-	// before returning an error, then bodyBuffer never gets populated
-	// and every retry ends up with a blank body.
+	// Test that calls to c.client.Do will retry correctly,
+	// even if the original request fails prematurely
 
 	body := []byte(`lorem ipsum dolor sit amet`)
 
