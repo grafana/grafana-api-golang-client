@@ -3,6 +3,7 @@ package gapi
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 type Role struct {
@@ -20,6 +21,32 @@ type Role struct {
 type Permission struct {
 	Action string `json:"action"`
 	Scope  string `json:"scope"`
+}
+
+// GetRole fetches and returns Grafana roles. Available only in Grafana Enterprise 8.+.
+func (c *Client) GetRoles() ([]Role, error) {
+	const limit = 1000
+	var (
+		page     = 0
+		newRoles []Role
+		roles    []Role
+		query    = make(url.Values)
+	)
+	query.Set("limit", fmt.Sprint(limit))
+	for {
+		page++
+		query.Set("page", fmt.Sprint(page))
+
+		if err := c.request("GET", "/api/access-control/roles", query, nil, &newRoles); err != nil {
+			return nil, err
+		}
+
+		roles = append(roles, newRoles...)
+
+		if len(newRoles) < limit {
+			return roles, nil
+		}
+	}
 }
 
 // GetRole gets a role with permissions for the given UID. Available only in Grafana Enterprise 8.+.
