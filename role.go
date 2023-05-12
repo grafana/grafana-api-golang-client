@@ -1,7 +1,6 @@
 package gapi
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -42,7 +41,7 @@ func (c *Client) NewRole(role Role) (*Role, error) {
 
 	r := &Role{}
 
-	err = c.request("POST", "/api/access-control/roles", nil, bytes.NewBuffer(data), &r)
+	err = c.request("POST", "/api/access-control/roles", nil, data, &r)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +56,7 @@ func (c *Client) UpdateRole(role Role) error {
 		return err
 	}
 
-	err = c.request("PUT", buildURL(role.UID), nil, bytes.NewBuffer(data), nil)
+	err = c.request("PUT", buildURL(role.UID), nil, data, nil)
 
 	return err
 }
