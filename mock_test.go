@@ -19,11 +19,8 @@ type mockServer struct {
 	server        *httptest.Server
 }
 
-func (m *mockServer) Close() {
-	m.server.Close()
-}
-
 func gapiTestTools(t *testing.T, code int, body string) *Client {
+	t.Helper()
 	return gapiTestToolsFromCalls(t, []mockServerCall{{code, body}})
 }
 
@@ -35,6 +32,9 @@ func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) *Client {
 	}
 
 	mock.server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if len(mock.upcomingCalls) == 0 {
+			t.Fatalf("unexpected call to %s %s", r.Method, r.URL)
+		}
 		call := mock.upcomingCalls[0]
 		if len(calls) > 1 {
 			mock.upcomingCalls = mock.upcomingCalls[1:]
@@ -61,7 +61,7 @@ func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) *Client {
 	}
 
 	t.Cleanup(func() {
-		mock.Close()
+		mock.server.Close()
 	})
 
 	return client
