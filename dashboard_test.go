@@ -1,6 +1,7 @@
 package gapi
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -78,67 +79,79 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 }
 
 func TestDashboardGet(t *testing.T) {
-	client := gapiTestTools(t, 200, getDashboardResponse)
+	t.Run("By slug", func(t *testing.T) {
+		client := gapiTestTools(t, 200, getDashboardResponse)
 
-	resp, err := client.Dashboard("test")
-	if err != nil {
-		t.Error(err)
-	}
-	uid, ok := resp.Model["uid"]
-	if !ok || uid != "cIBgcSjkk" {
-		t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
-	}
+		resp, err := client.Dashboard("test")
+		if err != nil {
+			t.Error(err)
+		}
+		uid, ok := resp.Model["uid"]
+		if !ok || uid != "cIBgcSjkk" {
+			t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
+		}
+	})
 
-	client = gapiTestTools(t, 200, getDashboardResponse)
+	t.Run("By UID", func(t *testing.T) {
+		client := gapiTestTools(t, 200, getDashboardResponse)
 
-	resp, err = client.DashboardByUID("cIBgcSjkk")
-	if err != nil {
-		t.Fatal(err)
-	}
-	uid, ok = resp.Model["uid"]
-	if !ok || uid != "cIBgcSjkk" {
-		t.Fatalf("Invalid UID - %s, Expected %s", uid, "cIBgcSjkk")
-	}
+		resp, err := client.DashboardByUID("cIBgcSjkk")
+		if err != nil {
+			t.Fatal(err)
+		}
+		uid, ok := resp.Model["uid"]
+		if !ok || uid != "cIBgcSjkk" {
+			t.Fatalf("Invalid UID - %s, Expected %s", uid, "cIBgcSjkk")
+		}
+	})
 
 	for _, code := range []int{401, 403, 404} {
-		client = gapiTestTools(t, code, "error")
-		_, err = client.Dashboard("test")
-		if err == nil {
-			t.Errorf("%d not detected", code)
-		}
+		t.Run(fmt.Sprintf("Dashboard error: %d", code), func(t *testing.T) {
+			client := gapiTestToolsFromCalls(t, []mockServerCall{{code, "error"}, {code, "error"}})
+			_, err := client.Dashboard("test")
+			if err == nil {
+				t.Errorf("%d not detected", code)
+			}
 
-		_, err = client.DashboardByUID("cIBgcSjkk")
-		if err == nil {
-			t.Errorf("%d not detected", code)
-		}
+			_, err = client.DashboardByUID("cIBgcSjkk")
+			if err == nil {
+				t.Errorf("%d not detected", code)
+			}
+		})
 	}
 }
 
 func TestDashboardDelete(t *testing.T) {
-	client := gapiTestTools(t, 200, "")
-	err := client.DeleteDashboard("test")
-	if err != nil {
-		t.Error(err)
-	}
+	t.Run("By slug", func(t *testing.T) {
+		client := gapiTestTools(t, 200, "")
+		err := client.DeleteDashboard("test")
+		if err != nil {
+			t.Error(err)
+		}
+	})
 
-	client = gapiTestTools(t, 200, "")
-	err = client.DeleteDashboardByUID("cIBgcSjkk")
-	if err != nil {
-		t.Fatal(err)
-	}
+	t.Run("By UID", func(t *testing.T) {
+		client := gapiTestTools(t, 200, "")
+		err := client.DeleteDashboardByUID("cIBgcSjkk")
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
 
 	for _, code := range []int{401, 403, 404, 412} {
-		client = gapiTestTools(t, code, "error")
+		t.Run(fmt.Sprintf("Dashboard error: %d", code), func(t *testing.T) {
+			client := gapiTestToolsFromCalls(t, []mockServerCall{{code, "error"}, {code, "error"}})
 
-		err = client.DeleteDashboard("test")
-		if err == nil {
-			t.Errorf("%d not detected", code)
-		}
+			err := client.DeleteDashboard("test")
+			if err == nil {
+				t.Errorf("%d not detected", code)
+			}
 
-		err = client.DeleteDashboardByUID("cIBgcSjkk")
-		if err == nil {
-			t.Errorf("%d not detected", code)
-		}
+			err = client.DeleteDashboardByUID("cIBgcSjkk")
+			if err == nil {
+				t.Errorf("%d not detected", code)
+			}
+		})
 	}
 }
 

@@ -42,6 +42,8 @@ type Config struct {
 	NumRetries int
 	// RetryTimeout says how long to wait before retrying a request
 	RetryTimeout time.Duration
+	// RetryStatusCodes contains the list of status codes to retry, use "x" as a wildcard for a single digit (default: [429, 5xx])
+	RetryStatusCodes []string
 }
 
 // New creates a new Grafana client.
@@ -80,6 +82,10 @@ func (c *Client) request(method, requestPath string, query url.Values, body []by
 		err          error
 		bodyContents []byte
 	)
+	retryStatusCodes := c.config.RetryStatusCodes
+	if len(retryStatusCodes) == 0 {
+		retryStatusCodes = []string{"429", "5xx"}
+	}
 
 	// retry logic
 	for n := 0; n <= c.config.NumRetries; n++ {
@@ -115,8 +121,11 @@ func (c *Client) request(method, requestPath string, query url.Values, body []by
 			continue
 		}
 
-		// Exit the loop if we have something final to return. This is anything < 500, if it's not a 429.
-		if resp.StatusCode < http.StatusInternalServerError && resp.StatusCode != http.StatusTooManyRequests {
+		shouldRetry, err := matchRetryCode(resp.StatusCode, retryStatusCodes)
+		if err != nil {
+			return err
+		}
+		if !shouldRetry {
 			break
 		}
 	}
@@ -178,4 +187,30 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 
 	req.Header.Add("Content-Type", "application/json")
 	return req, err
+}
+
+// matchRetryCode checks if the status code matches any of the configured retry status codes.
+func matchRetryCode(gottenCode int, retryCodes []string) (bool, error) {
+	gottenCodeStr := strconv.Itoa(gottenCode)
+	for _, retryCode := range retryCodes {
+		if len(retryCode) != 3 {
+			return false, fmt.Errorf("invalid retry status code: %s", retryCode)
+		}
+		matched := true
+		for i := range retryCode {
+			c := retryCode[i]
+			if c == 'x' {
+				continue
+			}
+			if gottenCodeStr[i] != c {
+				matched = false
+				break
+			}
+		}
+		if matched {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }

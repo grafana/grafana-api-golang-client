@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
 )
@@ -209,8 +211,11 @@ func TestClient_requestWithRetries(t *testing.T) {
 		case 2:
 			http.Error(w, `{"error":"calm down"}`, http.StatusTooManyRequests)
 
-		default:
+		case 3:
 			w.Write([]byte(`{"foo":"bar"}`)) //nolint:errcheck
+
+		default:
+			t.Errorf("unexpected retry %d", try)
 		}
 	}))
 	defer ts.Close()
@@ -253,6 +258,49 @@ func TestClient_requestWithRetries(t *testing.T) {
 	}
 
 	t.Logf("request successful after %d retries", try)
+}
+
+func TestClient_CustomRetryStatusCode(t *testing.T) {
+	body := []byte(`lorem ipsum dolor sit amet`)
+	var try int
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+
+		try++
+
+		switch try {
+		case 1, 2:
+			http.Error(w, `{"error":"weird error"}`, http.StatusUpgradeRequired)
+		default:
+			http.Error(w, `{"error":"failed"}`, http.StatusInternalServerError)
+		}
+	}))
+	defer ts.Close()
+
+	httpClient := &http.Client{
+		Transport: &customRoundTripper{},
+	}
+
+	c, err := New(ts.URL, Config{
+		NumRetries:       5,
+		Client:           httpClient,
+		RetryTimeout:     50 * time.Millisecond,
+		RetryStatusCodes: []string{strconv.Itoa(http.StatusUpgradeRequired)},
+	})
+	if err != nil {
+		t.Fatalf("unexpected error creating client: %v", err)
+	}
+
+	var got interface{}
+	err = c.request(http.MethodPost, "/", nil, body, &got)
+	expectedErr := "status: 500, body: {\"error\":\"failed\"}" // The 500 is not retried because it's not in RetryStatusCodes
+	if strings.TrimSpace(err.Error()) != expectedErr {
+		t.Fatalf("expected err: %s, got err: %v", expectedErr, err)
+	}
+
+	if try != 3 {
+		t.Fatalf("unexpected number of tries: %d", try)
+	}
 }
 
 type customRoundTripper struct {
