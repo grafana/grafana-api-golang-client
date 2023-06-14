@@ -11,6 +11,14 @@ type Org struct {
 	Name string `json:"name"`
 }
 
+// CurrentOrg fetches current active org.
+func (c *Client) CurrentOrg() (Org, error) {
+	org := Org{}
+	err := c.request("GET", "/api/org/", nil, nil, &org)
+	return org, err
+}
+
+
 // Orgs fetches and returns the Grafana orgs.
 func (c *Client) Orgs() ([]Org, error) {
 	orgs := make([]Org, 0)
