@@ -8,11 +8,17 @@ min-confidence = 3
 min-len = 5
 min-occurrences = 5
 
+[linters-settings.depguard.rules.main]
+allow = [
+ "$gostd", # Go std library
+ "github.com/hashicorp/go-cleanhttp",
+ "github.com/gobs/pretty"
+]
+
 [linters]
 disable-all = true
 enable = [
   "bodyclose",
-  "deadcode",
   "depguard",
   "dogsled",
   "errcheck",
@@ -20,7 +26,6 @@ enable = [
   "goconst",
   "gocritic",
   "goimports",
-  "golint",
   "goprintffuncname",
   "gosec",
   "gosimple",
@@ -31,12 +36,10 @@ enable = [
   "rowserrcheck",
   "exportloopref",
   "staticcheck",
-  "structcheck",
   "stylecheck",
   "typecheck",
   "unconvert",
   "unused",
-  "varcheck",
   "whitespace",
   "gocyclo",
   "unparam",

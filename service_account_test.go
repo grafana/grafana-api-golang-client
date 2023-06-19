@@ -74,7 +74,7 @@ const (
 			"secondsUntilExpiration": 0,
 			"hasExpired": false
 		}
-	]`  //#nosec
+	]` //#nosec;nolint:goimports
 )
 
 func TestCreateServiceAccountToken(t *testing.T) {
