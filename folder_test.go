@@ -57,6 +57,15 @@ const (
   "version": 1
 }
 `
+	createdSubfolderJSON = `
+{
+    "id": 2,
+    "uid": "b7adb34f-08d9-4812-ae23-0b66612e44cb",
+    "title": "Department ABC subfolder",
+    "url": "/dashboards/f/b7adb34f-08d9-4812-ae23-0b66612e44cb/department-abc-subfolder",
+    "parentUid": "nErXDvCkzz"
+}
+`
 	updatedFolderJSON = `
 {
   "id":1,
@@ -145,17 +154,50 @@ func TestFolderByUid(t *testing.T) {
 }
 
 func TestNewFolder(t *testing.T) {
-	client := gapiTestTools(t, 200, createdFolderJSON)
-
-	resp, err := client.NewFolder("test-folder")
-	if err != nil {
-		t.Fatal(err)
+	testCases := []struct {
+		desc      string
+		subfolder bool
+	}{
+		{
+			desc:      "creating a parent folder only",
+			subfolder: false,
+		},
+		{
+			desc:      "creating a subfolder that contains the ParentUID",
+			subfolder: true,
+		},
 	}
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			client := gapiTestTools(t, 200, createdFolderJSON)
 
-	t.Log(pretty.PrettyFormat(resp))
+			resp, err := client.NewFolder("test-folder", "")
+			if err != nil {
+				t.Fatal(err)
+			}
 
-	if resp.UID != "nErXDvCkzz" {
-		t.Error("Not correctly parsing returned creation message.")
+			parentUID := "nErXDvCkzz"
+			if resp.UID != parentUID {
+				t.Error("Not correctly parsing returned creation message.")
+			}
+
+			if tc.subfolder {
+				client := gapiTestTools(t, 200, createdSubfolderJSON)
+
+				resp, err := client.NewFolder("subfolder", parentUID)
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				if resp.UID != "b7adb34f-08d9-4812-ae23-0b66612e44cb" {
+					t.Error("Subfolder's UID does not match expected UID")
+				}
+
+				if resp.ParentUID != parentUID {
+					t.Error("Failed to create subfolder with ParentUID")
+				}
+			}
+		})
 	}
 }
 

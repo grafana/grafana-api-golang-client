@@ -8,15 +8,17 @@ import (
 
 // Folder represents a Grafana folder.
 type Folder struct {
-	ID    int64  `json:"id"`
-	UID   string `json:"uid"`
-	Title string `json:"title"`
-	URL   string `json:"url"`
+	ID        int64  `json:"id"`
+	UID       string `json:"uid"`
+	ParentUID string `json:"parentUid"`
+	Title     string `json:"title"`
+	URL       string `json:"url"`
 }
 
 type FolderPayload struct {
 	Title     string `json:"title"`
 	UID       string `json:"uid,omitempty"`
+	ParentUID string `json:"parentUid"`
 	Overwrite bool   `json:"overwrite,omitempty"`
 }
 
@@ -69,14 +71,15 @@ func (c *Client) FolderByUID(uid string) (*Folder, error) {
 }
 
 // NewFolder creates a new Grafana folder.
-func (c *Client) NewFolder(title string, uid ...string) (Folder, error) {
+func (c *Client) NewFolder(title string, parentUID string, uid ...string) (Folder, error) {
 	if len(uid) > 1 {
 		return Folder{}, fmt.Errorf("too many arguments. Expected 1 or 2")
 	}
 
 	folder := Folder{}
 	payload := FolderPayload{
-		Title: title,
+		Title:     title,
+		ParentUID: parentUID,
 	}
 	if len(uid) == 1 {
 		payload.UID = uid[0]
