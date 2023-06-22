@@ -23,7 +23,7 @@ type FolderPayload struct {
 }
 
 // Folders fetches and returns Grafana folders.
-func (c *Client) Folders() ([]Folder, error) {
+func (c *Client) Folders(parentUID string) ([]Folder, error) {
 	const limit = 1000
 	var (
 		page       = 0
@@ -35,6 +35,7 @@ func (c *Client) Folders() ([]Folder, error) {
 	for {
 		page++
 		query.Set("page", fmt.Sprint(page))
+		query.Set("parentUID", parentUID)
 
 		if err := c.request("GET", "/api/folders/", query, nil, &newFolders); err != nil {
 			return nil, err

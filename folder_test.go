@@ -8,6 +8,7 @@ import (
 )
 
 const (
+	parentUID      = "nErXDvCkzz"
 	getFoldersJSON = `{
     "id":1,
     "uid": "nErXDvCkzz",
@@ -57,7 +58,7 @@ const (
   "version": 1
 }
 `
-	createdSubfolderJSON = `
+	subfolderJSON = `
 {
     "id": 2,
     "uid": "b7adb34f-08d9-4812-ae23-0b66612e44cb",
@@ -91,33 +92,77 @@ const (
 )
 
 func TestFolders(t *testing.T) {
-	mockData := strings.Repeat(getFoldersJSON+",", 1000) // make 1000 folders.
-	mockData = "[" + mockData[:len(mockData)-1] + "]"    // remove trailing comma; make a json list.
-
-	// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of folders.
-	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, mockData},
-		{200, mockData},
-		{200, "[" + getFolderJSON + "]"},
-	})
-
-	const dashCount = 2001
-
-	folders, err := client.Folders()
-	if err != nil {
-		t.Fatal(err)
+	testCases := []struct {
+		desc      string
+		subfolder bool
+	}{
+		{
+			desc:      "listing all top-level folders",
+			subfolder: false,
+		},
+		{
+			desc:      "listing all subfolders of a given parent folder",
+			subfolder: true,
+		},
 	}
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			mockData := strings.Repeat(getFoldersJSON+",", 1000) // make 1000 folders.
+			mockData = "[" + mockData[:len(mockData)-1] + "]"    // remove trailing comma; make a json list.
 
-	t.Log(pretty.PrettyFormat(folders))
+			// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of folders.
+			client := gapiTestToolsFromCalls(t, []mockServerCall{
+				{200, mockData},
+				{200, mockData},
+				{200, "[" + getFolderJSON + "]"},
+			})
 
-	if len(folders) != dashCount {
-		t.Errorf("Length of returned folders should be %d", dashCount)
-	}
-	if folders[0].ID != 1 || folders[0].Title != "Departmenet ABC" {
-		t.Error("Not correctly parsing returned folders.")
-	}
-	if folders[dashCount-1].ID != 1 || folders[dashCount-1].Title != "Departmenet ABC" {
-		t.Error("Not correctly parsing returned folders.")
+			const dashCount = 2001
+
+			folders, err := client.Folders("")
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			t.Log(pretty.PrettyFormat(folders))
+
+			if len(folders) != dashCount {
+				t.Errorf("Length of returned folders should be %d", dashCount)
+			}
+			if folders[0].ID != 1 || folders[0].Title != "Departmenet ABC" {
+				t.Error("Not correctly parsing returned folders.")
+			}
+			if folders[dashCount-1].ID != 1 || folders[dashCount-1].Title != "Departmenet ABC" {
+				t.Error("Not correctly parsing returned folders.")
+			}
+
+			if tc.subfolder {
+				const subfolderLen = 2
+				subfoldeMockData := strings.Repeat(subfolderJSON+",", subfolderLen)       // make 2 subfolders.
+				subfoldeMockData = "[" + subfoldeMockData[:len(subfoldeMockData)-1] + "]" // remove trailing comma; make a json list.
+
+				// This returns 2 subfolders.
+				client := gapiTestTools(t, 200, subfoldeMockData)
+
+				subfolders, err := client.Folders(parentUID)
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				if len(subfolders) != subfolderLen {
+					t.Errorf("Length of returned subfolders should be %d", subfolderLen)
+				}
+				if subfolders[0].ID != 2 || subfolders[0].Title != "Department ABC subfolder" {
+					t.Error("Not correctly parsing returned subfolders.")
+				}
+				if subfolders[subfolderLen-1].ID != 2 || subfolders[subfolderLen-1].Title != "Department ABC subfolder" {
+					t.Error("Not correctly parsing returned subfolders.")
+				}
+				if subfolders[0].ParentUID != parentUID || subfolders[1].ParentUID != parentUID {
+					t.Error("Subfolder should contain parentUID")
+				}
+			}
+		})
 	}
 }
 
@@ -176,13 +221,12 @@ func TestNewFolder(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			parentUID := "nErXDvCkzz"
 			if resp.UID != parentUID {
 				t.Error("Not correctly parsing returned creation message.")
 			}
 
 			if tc.subfolder {
-				client := gapiTestTools(t, 200, createdSubfolderJSON)
+				client := gapiTestTools(t, 200, subfolderJSON)
 
 				resp, err := client.NewFolder("subfolder", parentUID)
 				if err != nil {
