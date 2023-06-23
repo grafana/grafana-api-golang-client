@@ -12,3 +12,15 @@ To run the tests:
 ```
 make test
 ```
+
+## Generate the client
+
+First, install bingo locally. Bingo helps with having consistent tool versioning across dev environments.
+```bash
+go install github.com/bwplotka/bingo@latest
+```
+
+Finally, generate the client using the `make` step. This step will also install swagger through bingo.
+```bash
+make generate
+```
