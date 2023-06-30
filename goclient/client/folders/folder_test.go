@@ -7,6 +7,8 @@ import (
 )
 
 const (
+	testUID        = "nErXDvCkzz"
+	testTitle      = "test-folder"
 	getFoldersJSON = `{
     "id":1,
     "uid": "nErXDvCkzz",
@@ -111,70 +113,78 @@ const (
 // 	}
 // }
 
-// func TestGetFolder(t *testing.T) {
-// 	client := client.GetClient(t, 200, getFolderJSON)
+func TestGetFolder(t *testing.T) {
+	client := GetClient(t, 200, getFolderJSON)
 
-// 	folder := int64(1)
-// 	resp, err := client.Folders.GetFolderByID(folder)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+	folder := int64(1)
+	params := NewGetFolderByIDParams().WithFolderID(folder)
+	resp, err := client.GetFolderByID(params, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	t.Log(pretty.PrettyFormat(resp))
+	if resp.Payload.ID != folder || resp.Payload.Title != "Departmenet ABC" {
+		t.Error("Not correctly parsing returned folder.")
+	}
+}
 
-// 	if resp.ID != folder || resp.Title != "Departmenet ABC" {
-// 		t.Error("Not correctly parsing returned folder.")
-// 	}
-// }
+func TestGetFolderByUid(t *testing.T) {
+	client := GetClient(t, 200, getFolderJSON)
 
-// func TestGetFolderByUid(t *testing.T) {
-// 	client := client.GetClient(t, 200, getFolderJSON)
+	params := NewGetFolderByUIDParams().WithFolderUID(testUID)
+	resp, err := client.GetFolderByUID(params, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	folder := "nErXDvCkzz"
-// 	resp, err := client.Folders.GetFolderByUID(folder)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-
-// 	t.Log(pretty.PrettyFormat(resp))
-
-// 	if resp.UID != folder || resp.Title != "Departmenet ABC" {
-// 		t.Error("Not correctly parsing returned folder.")
-// 	}
-// }
+	if resp.Payload.UID != testUID || resp.Payload.Title != "Departmenet ABC" {
+		t.Error("Not correctly parsing returned folder.")
+	}
+}
 
 func TestCreateFolder(t *testing.T) {
-	client := GetClient(t, 200, createdFolderJSON, nil)
+	client := GetClient(t, 200, createdFolderJSON)
 
-	const UID = "nErXDvCkzz"
 	params := NewCreateFolderParams().
-		WithDefaults().
-		WithBody(&models.CreateFolderCommand{UID: UID})
+		WithBody(&models.CreateFolderCommand{UID: testUID})
 
 	ok, err := client.CreateFolder(params, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if ok.Payload.UID != UID {
-		t.Errorf("UID does not match expected value; expected: %s, got: %s", UID, ok.Payload.UID)
+	if ok.Payload.UID != testUID {
+		t.Errorf("UID does not match expected value; expected: %s, got: %s", testUID, ok.Payload.UID)
 	}
 }
 
-// func TestUpdateFolder(t *testing.T) {
-// 	client := client.GetClient(t, 200, updatedFolderJSON)
+func TestUpdateFolder(t *testing.T) {
+	client := GetClient(t, 200, updatedFolderJSON)
 
-// 	err := client.UpdateFolder("nErXDvCkzz", "test-folder")
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-// }
+	params := NewUpdateFolderParams().
+		WithBody(&models.UpdateFolderCommand{
+			UID:   testUID,
+			Title: testTitle,
+		})
+	ok, err := client.UpdateFolder(params, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ok.Payload.Title != "Departmenet DEF" || ok.Payload.UID != testUID {
+		t.Errorf("expected Title %s and UID %s, got Title %s and UID %s", "Departmenet DEF", testUID, ok.Payload.Title, ok.Payload.UID)
+	}
+}
 
-// func TestDeleteFolder(t *testing.T) {
-// 	client := client.GetClient(t, 200, deletedFolderJSON)
+func TestDeleteFolder(t *testing.T) {
+	client := GetClient(t, 200, deletedFolderJSON)
 
-// 	err := client.DeleteFolder("nErXDvCkzz")
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-// }
+	params := NewDeleteFolderParams().WithFolderUID(testUID)
+	ok, err := client.DeleteFolder(params, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	msg := "Folder deleted"
+	if *ok.Payload.Message != msg {
+		t.Errorf("expected message '%s', got: %s", msg, *ok.Payload.Message)
+	}
+}

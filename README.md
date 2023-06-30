@@ -27,4 +27,4 @@ make generate
 
 ### Linter
 
-THe linter (speficially, `depguard`) complains if an import has not been added to the list of allowed imports. Ensure to add any new imports to `.golangci.toml` under `[linters-settings.depguard.rules.main]`.
+The linter (speficially, `depguard`) complains if an import has not been added to the list of allowed imports. Ensure to add any new imports to `.golangci.toml` under `[linters-settings.depguard.rules.main]`.

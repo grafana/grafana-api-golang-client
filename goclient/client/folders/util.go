@@ -22,7 +22,7 @@ type mockServer struct {
 	server        *httptest.Server
 }
 
-func GetClient(t *testing.T, code int, body string, calls []mockServerCall) ClientService {
+func GetClient(t *testing.T, code int, body string) ClientService {
 	t.Helper()
 	return getClientFromCalls(t, []mockServerCall{{code, body}})
 }
