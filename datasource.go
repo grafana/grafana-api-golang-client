@@ -8,12 +8,13 @@ import (
 
 // DataSource represents a Grafana data source.
 type DataSource struct {
-	ID     int64  `json:"id,omitempty"`
-	UID    string `json:"uid,omitempty"`
-	Name   string `json:"name"`
-	Type   string `json:"type"`
-	URL    string `json:"url"`
-	Access string `json:"access"`
+	ID      int64  `json:"id,omitempty"`
+	UID     string `json:"uid,omitempty"`
+	Name    string `json:"name"`
+	Type    string `json:"type"`
+	URL     string `json:"url"`
+	Access  string `json:"access"`
+	Version int64  `json:"version,omitempty"`
 
 	// This is only returned by the API. It can only be set through the `editable` attribute of provisioned data sources.
 	ReadOnly bool `json:"readOnly"`
