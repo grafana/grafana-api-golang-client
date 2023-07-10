@@ -15,22 +15,16 @@ const (
 func TestNewDataSource(t *testing.T) {
 	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
-	jd, err := JSONData{
-		AssumeRoleArn:           "arn:aws:iam::123:role/some-role",
-		AuthType:                "keys",
-		CustomMetricsNamespaces: "SomeNamespace",
-		DefaultRegion:           "us-east-1",
-		TLSSkipVerify:           true,
-	}.Map()
-	if err != nil {
-		t.Fatal(err)
+	jd := map[string]interface{}{
+		"assumeRoleArn":           "arn:aws:iam::123:role/some-role",
+		"authType":                "keys",
+		"customMetricsNamespaces": "SomeNamespace",
+		"defaultRegion":           "us-east-1",
+		"tlsSkipVerify":           true,
 	}
-	sjd, err := SecureJSONData{
-		AccessKey: "123",
-		SecretKey: "456",
-	}.Map()
-	if err != nil {
-		t.Fatal(err)
+	sjd := map[string]interface{}{
+		"accessKey": "123",
+		"secretKey": "456",
 	}
 
 	ds := &DataSource{
@@ -58,13 +52,10 @@ func TestNewDataSource(t *testing.T) {
 func TestNewPrometheusDataSource(t *testing.T) {
 	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
-	jd, err := JSONData{
-		HTTPMethod:   "POST",
-		QueryTimeout: "60s",
-		TimeInterval: "1m",
-	}.Map()
-	if err != nil {
-		t.Fatal(err)
+	jd := map[string]interface{}{
+		"httpMethod":   "POST",
+		"queryTimeout": "60s",
+		"timeInterval": "1m",
 	}
 
 	ds := &DataSource{
@@ -91,21 +82,15 @@ func TestNewPrometheusDataSource(t *testing.T) {
 func TestNewPrometheusSigV4DataSource(t *testing.T) {
 	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
-	jd, err := JSONData{
-		HTTPMethod:    "POST",
-		SigV4Auth:     true,
-		SigV4AuthType: "keys",
-		SigV4Region:   "us-east-1",
-	}.Map()
-	if err != nil {
-		t.Fatal(err)
+	jd := map[string]interface{}{
+		"httpMethod":    "POST",
+		"sigV4Auth":     true,
+		"sigV4AuthType": "keys",
+		"sigV4Region":   "us-east-1",
 	}
-	sjd, err := SecureJSONData{
-		SigV4AccessKey: "123",
-		SigV4SecretKey: "456",
-	}.Map()
-	if err != nil {
-		t.Fatal(err)
+	sjd := map[string]interface{}{
+		"sigV4AccessKey": "123",
+		"sigV4SecretKey": "456",
 	}
 
 	ds := &DataSource{
@@ -133,16 +118,13 @@ func TestNewPrometheusSigV4DataSource(t *testing.T) {
 func TestNewElasticsearchDataSource(t *testing.T) {
 	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
-	jd, err := JSONData{
-		EsVersion:                  "7.0.0",
-		TimeField:                  "time",
-		Interval:                   "1m",
-		LogMessageField:            "message",
-		LogLevelField:              "field",
-		MaxConcurrentShardRequests: 8,
-	}.Map()
-	if err != nil {
-		t.Fatal(err)
+	jd := map[string]interface{}{
+		"esVersion":                  "7.0.0",
+		"timeField":                  "time",
+		"interval":                   "1m",
+		"logMessageField":            "message",
+		"logLevelField":              "field",
+		"maxConcurrentShardRequests": 8,
 	}
 
 	ds := &DataSource{
@@ -168,21 +150,16 @@ func TestNewElasticsearchDataSource(t *testing.T) {
 func TestNewInfluxDBDataSource(t *testing.T) {
 	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
-	jd, err := JSONData{
-		DefaultBucket: "telegraf",
-		Organization:  "acme",
-		Version:       "Flux",
-	}.Map()
-	if err != nil {
-		t.Fatal(err)
-	}
-	sjd, err := SecureJSONData{}.Map()
-	if err != nil {
-		t.Fatal(err)
-	}
-	jd, sjd = JSONDataWithHeaders(jd, sjd, map[string]string{
-		"Authorization": "Token alksdjaslkdjkslajdkj.asdlkjaksdjlkajsdlkjsaldj==",
-	})
+	jd, sjd := JSONDataWithHeaders(
+		map[string]interface{}{
+			"defaultBucket": "telegraf",
+			"organization":  "acme",
+			"version":       "Flux",
+		},
+		map[string]interface{}{},
+		map[string]string{
+			"Authorization": "Token alksdjaslkdjkslajdkj.asdlkjaksdjlkajsdlkjsaldj==",
+		})
 
 	ds := &DataSource{
 		Name:           "foo_influxdb",
@@ -208,12 +185,9 @@ func TestNewInfluxDBDataSource(t *testing.T) {
 func TestNewOpenTSDBDataSource(t *testing.T) {
 	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
-	jd, err := JSONData{
-		TsdbResolution: 1,
-		TsdbVersion:    3,
-	}.Map()
-	if err != nil {
-		t.Fatal(err)
+	jd := map[string]interface{}{
+		"tsdbResolution": 1,
+		"tsdbVersion":    3,
 	}
 
 	ds := &DataSource{
@@ -240,20 +214,14 @@ func TestNewOpenTSDBDataSource(t *testing.T) {
 func TestNewAzureDataSource(t *testing.T) {
 	client := gapiTestTools(t, 200, createdDataSourceJSON)
 
-	jd, err := JSONData{
-		ClientID:       "lorem-ipsum",
-		CloudName:      "azuremonitor",
-		SubscriptionID: "lorem-ipsum",
-		TenantID:       "lorem-ipsum",
-	}.Map()
-	if err != nil {
-		t.Fatal(err)
+	jd := map[string]interface{}{
+		"clientId":       "lorem-ipsum",
+		"cloudName":      "azuremonitor",
+		"subscriptionId": "lorem-ipsum",
+		"tenantId":       "lorem-ipsum",
 	}
-	sjd, err := SecureJSONData{
-		ClientSecret: "alksdjaslkdjkslajdkj.asdlkjaksdjlkajsdlkjsaldj==",
-	}.Map()
-	if err != nil {
-		t.Fatal(err)
+	sjd := map[string]interface{}{
+		"clientSecret": "alksdjaslkdjkslajdkj.asdlkjaksdjlkajsdlkjsaldj==",
 	}
 
 	ds := &DataSource{
