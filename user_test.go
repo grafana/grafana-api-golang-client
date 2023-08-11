@@ -56,6 +56,23 @@ func TestUser(t *testing.T) {
 	}
 }
 
+func TestCurrentUser(t *testing.T) {
+	client := gapiTestTools(t, 200, getUserJSON)
+
+	user, err := client.CurrentUser()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Log(pretty.PrettyFormat(user))
+
+	if user.Email != "user@localhost" ||
+		user.ID != 2 ||
+		user.IsAdmin != false {
+		t.Error("Not correctly parsing returned user.")
+	}
+}
+
 func TestUserByEmail(t *testing.T) {
 	client := gapiTestTools(t, 200, getUserByEmailJSON)
 

@@ -68,6 +68,12 @@ func (c *Client) User(id int64) (user User, err error) {
 	return
 }
 
+// CurrentUser fetches details of the currently logged user
+func (c *Client) CurrentUser() (user User, err error) {
+	err = c.request("GET", "/api/user", nil, nil, &user)
+	return
+}
+
 // UserByEmail fetches a user by email address.
 func (c *Client) UserByEmail(email string) (user User, err error) {
 	query := url.Values{}
