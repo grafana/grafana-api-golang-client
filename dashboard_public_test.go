@@ -18,7 +18,7 @@ const (
     "isEnabled": true,
     "annotationsEnabled": true
 }`
-	publicDashboardByUid = `{
+	publicDashboardByUID = `{
     "uid": "cd56d9fd-f3d4-486d-afba-a21760e2acbe",
     "dashboardUid": "xCpsVuc4z",
     "accessToken": "5c948bf96e6a4b13bd91975f9a2028b7",
@@ -55,37 +55,39 @@ const (
 )
 
 func TestNewPublicDashboard(t *testing.T) {
+	const dashboardUID = "nErXDvCkzz"
+
 	isEnabled := true
 
 	client := gapiTestTools(t, 200, createPublicDashboard)
 
 	publicDashboard := PublicDashboardPayload{
-		Uid:         "fdc8b8fd-72cb-45d2-927a-75900e4f6e70",
+		UID:         "fdc8b8fd-72cb-45d2-927a-75900e4f6e70",
 		AccessToken: "b1d5f3f534d84375a897f3969b6157f3",
 		IsEnabled:   &isEnabled,
 		Share:       "public",
 	}
 
-	resp, err := client.NewPublicDashboard("nErXDvCkzz", publicDashboard)
+	resp, err := client.NewPublicDashboard(dashboardUID, publicDashboard)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.Uid != "fdc8b8fd-72cb-45d2-927a-75900e4f6e70" {
-		t.Errorf("Invalid uid - %s, Expected %s", resp.Uid, "fdc8b8fd-72cb-45d2-927a-75900e4f6e70")
+	if resp.UID != "fdc8b8fd-72cb-45d2-927a-75900e4f6e70" {
+		t.Errorf("Invalid uid - %s, Expected %s", resp.UID, "fdc8b8fd-72cb-45d2-927a-75900e4f6e70")
 	}
 
-	if resp.DashboardUid != "nErXDvCkzz" {
-		t.Errorf("Invalid dashboard uid - %s, Expected %s", resp.DashboardUid, "nErXDvCkzz")
+	if resp.DashboardUID != dashboardUID {
+		t.Errorf("Invalid dashboard uid - %s, Expected %s", resp.DashboardUID, dashboardUID)
 	}
 }
 
 func TestDeletePublicDashboard(t *testing.T) {
 	client := gapiTestTools(t, 200, "")
 
-	err := client.DeletePublicDashboard("nErXDvCkzz", "fdc8b8fd-72cb-45d2-927a-75900e4f6e70")
+	err := client.DeletePublicDashboard("nErXDvCkza", "fdc8b8fd-72cb-45d2-927a-75900e4f6e70")
 	if err != nil {
 		t.Error(err)
 	}
@@ -104,27 +106,27 @@ func TestPublicDashboards(t *testing.T) {
 	if len(resp.PublicDashboards) != 2 || resp.TotalCount != 2 {
 		t.Error("Length of returned public dashboards should be 2")
 	}
-	if resp.PublicDashboards[0].Uid != "e9f29a3c-fcc3-4fc5-a690-ae39c97d24ba" || resp.PublicDashboards[0].AccessToken != "6c13ec1997ba48c5af8c9c5079049692" {
+	if resp.PublicDashboards[0].UID != "e9f29a3c-fcc3-4fc5-a690-ae39c97d24ba" || resp.PublicDashboards[0].AccessToken != "6c13ec1997ba48c5af8c9c5079049692" {
 		t.Error("Not correctly parsing returned public dashboards.")
 	}
 }
 
-func TestPublicDashboardByUid(t *testing.T) {
-	client := gapiTestTools(t, 200, publicDashboardByUid)
+func TestPublicDashboardByUID(t *testing.T) {
+	client := gapiTestTools(t, 200, publicDashboardByUID)
 
-	resp, err := client.PublicDashboardbyUid("xCpsVuc4z")
+	resp, err := client.PublicDashboardbyUID("xCpsVuc4z")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	t.Log(pretty.PrettyFormat(resp))
 
-	if resp.Uid != "cd56d9fd-f3d4-486d-afba-a21760e2acbe" {
-		t.Errorf("Invalid uid - %s, Expected %s", resp.Uid, "cd56d9fd-f3d4-486d-afba-a21760e2acbe")
+	if resp.UID != "cd56d9fd-f3d4-486d-afba-a21760e2acbe" {
+		t.Errorf("Invalid uid - %s, Expected %s", resp.UID, "cd56d9fd-f3d4-486d-afba-a21760e2acbe")
 	}
 
-	if resp.DashboardUid != "xCpsVuc4z" {
-		t.Errorf("Invalid dashboard uid - %s, Expected %s", resp.DashboardUid, "xCpsVuc4z")
+	if resp.DashboardUID != "xCpsVuc4z" {
+		t.Errorf("Invalid dashboard uid - %s, Expected %s", resp.DashboardUID, "xCpsVuc4z")
 	}
 }
 

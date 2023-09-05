@@ -8,7 +8,7 @@ import (
 
 // PublicDashboardPayload represents a public dashboard payload.
 type PublicDashboardPayload struct {
-	Uid                  string `json:"uid"`
+	UID                  string `json:"uid"`
 	AccessToken          string `json:"accessToken"`
 	TimeSelectionEnabled *bool  `json:"timeSelectionEnabled"`
 	IsEnabled            *bool  `json:"isEnabled"`
@@ -18,8 +18,8 @@ type PublicDashboardPayload struct {
 
 // PublicDashboard represents a public dashboard.
 type PublicDashboard struct {
-	Uid                  string    `json:"uid"`
-	DashboardUid         string    `json:"dashboardUid"`
+	UID                  string    `json:"uid"`
+	DashboardUID         string    `json:"dashboardUid"`
 	AccessToken          string    `json:"accessToken"`
 	TimeSelectionEnabled bool      `json:"timeSelectionEnabled"`
 	IsEnabled            bool      `json:"isEnabled"`
@@ -39,22 +39,22 @@ type PublicDashboardListResponseWithPagination struct {
 }
 
 type PublicDashboardListResponse struct {
-	Uid          string `json:"uid"`
+	UID          string `json:"uid"`
 	AccessToken  string `json:"accessToken"`
 	Title        string `json:"title"`
-	DashboardUid string `json:"dashboardUid"`
+	DashboardUID string `json:"dashboardUid"`
 	IsEnabled    bool   `json:"isEnabled"`
 }
 
 // NewPublicDashboard creates a new Grafana public dashboard.
-func (c *Client) NewPublicDashboard(dashboardUid string, publicDashboard PublicDashboardPayload) (*PublicDashboard, error) {
+func (c *Client) NewPublicDashboard(dashboardUID string, publicDashboard PublicDashboardPayload) (*PublicDashboard, error) {
 	data, err := json.Marshal(publicDashboard)
 	if err != nil {
 		return nil, err
 	}
 
 	result := &PublicDashboard{}
-	err = c.request("POST", fmt.Sprintf("/api/dashboards/uid/%s/public-dashboards", dashboardUid), nil, data, &result)
+	err = c.request("POST", fmt.Sprintf("/api/dashboards/uid/%s/public-dashboards", dashboardUID), nil, data, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +63,8 @@ func (c *Client) NewPublicDashboard(dashboardUid string, publicDashboard PublicD
 }
 
 // DeletePublicDashboard deletes a Grafana public dashboard.
-func (c *Client) DeletePublicDashboard(dashboardUid string, publicDashboardUid string) error {
-	return c.request("DELETE", fmt.Sprintf("/api/dashboards/uid/%s/public-dashboards/%s", dashboardUid, publicDashboardUid), nil, nil, nil)
+func (c *Client) DeletePublicDashboard(dashboardUID string, publicDashboardUID string) error {
+	return c.request("DELETE", fmt.Sprintf("/api/dashboards/uid/%s/public-dashboards/%s", dashboardUID, publicDashboardUID), nil, nil, nil)
 }
 
 // PublicDashboards fetches and returns the Grafana public dashboards.
@@ -78,10 +78,10 @@ func (c *Client) PublicDashboards() (*PublicDashboardListResponseWithPagination,
 	return publicdashboards, err
 }
 
-// PublicDashboardbyUid fetches and returns a Grafana public dashboard by uid.
-func (c *Client) PublicDashboardbyUid(dashboardUid string) (*PublicDashboard, error) {
+// PublicDashboardbyUID fetches and returns a Grafana public dashboard by uid.
+func (c *Client) PublicDashboardbyUID(dashboardUID string) (*PublicDashboard, error) {
 	publicDashboard := &PublicDashboard{}
-	err := c.request("GET", fmt.Sprintf("/api/dashboards/uid/%s/public-dashboards", dashboardUid), nil, nil, &publicDashboard)
+	err := c.request("GET", fmt.Sprintf("/api/dashboards/uid/%s/public-dashboards", dashboardUID), nil, nil, &publicDashboard)
 	if err != nil {
 		return publicDashboard, err
 	}
@@ -90,14 +90,14 @@ func (c *Client) PublicDashboardbyUid(dashboardUid string) (*PublicDashboard, er
 }
 
 // UpdatePublicDashboard updates a Grafana public dashboard.
-func (c *Client) UpdatePublicDashboard(dashboardUid string, publicDashboardUid string, publicDashboard PublicDashboardPayload) (*PublicDashboard, error) {
+func (c *Client) UpdatePublicDashboard(dashboardUID string, publicDashboardUID string, publicDashboard PublicDashboardPayload) (*PublicDashboard, error) {
 	data, err := json.Marshal(publicDashboard)
 	if err != nil {
 		return nil, err
 	}
 
 	result := &PublicDashboard{}
-	err = c.request("PATCH", fmt.Sprintf("/api/dashboards/uid/%s/public-dashboards/%s", dashboardUid, publicDashboardUid), nil, data, &result)
+	err = c.request("PATCH", fmt.Sprintf("/api/dashboards/uid/%s/public-dashboards/%s", dashboardUID, publicDashboardUID), nil, data, &result)
 	if err != nil {
 		return nil, err
 	}
