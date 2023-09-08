@@ -57,14 +57,12 @@ const (
 func TestNewPublicDashboard(t *testing.T) {
 	const dashboardUID = "nErXDvCkzz"
 
-	isEnabled := true
-
 	client := gapiTestTools(t, 200, createPublicDashboard)
 
 	publicDashboard := PublicDashboardPayload{
 		UID:         "fdc8b8fd-72cb-45d2-927a-75900e4f6e70",
 		AccessToken: "b1d5f3f534d84375a897f3969b6157f3",
-		IsEnabled:   &isEnabled,
+		IsEnabled:   true,
 		Share:       "public",
 	}
 
@@ -132,12 +130,11 @@ func TestPublicDashboardByUID(t *testing.T) {
 
 func TestUpdatePublicDashboard(t *testing.T) {
 	client := gapiTestTools(t, 200, updatePublicDashboard)
-	trueVal := true
 
 	publicDashboard := PublicDashboardPayload{
-		IsEnabled:            &trueVal,
-		TimeSelectionEnabled: &trueVal,
-		AnnotationsEnabled:   &trueVal,
+		IsEnabled:            true,
+		TimeSelectionEnabled: true,
+		AnnotationsEnabled:   true,
 	}
 
 	resp, err := client.UpdatePublicDashboard("xCpsVuc4z", "cd56d9fd-f3d4-486d-afba-a21760e2acbe", publicDashboard)
@@ -148,14 +145,14 @@ func TestUpdatePublicDashboard(t *testing.T) {
 	t.Log(pretty.PrettyFormat(resp))
 
 	if !resp.IsEnabled {
-		t.Errorf("Invalid IsEnabled - %t, Expected %t", resp.IsEnabled, trueVal)
+		t.Errorf("Invalid IsEnabled - %t, Expected %t", resp.IsEnabled, true)
 	}
 
 	if !resp.TimeSelectionEnabled {
-		t.Errorf("Invalid TimeSelectionEnabled - %t, Expected %t", resp.TimeSelectionEnabled, trueVal)
+		t.Errorf("Invalid TimeSelectionEnabled - %t, Expected %t", resp.TimeSelectionEnabled, true)
 	}
 
 	if !resp.AnnotationsEnabled {
-		t.Errorf("Invalid AnnotationsEnabled - %t, Expected %t", resp.AnnotationsEnabled, trueVal)
+		t.Errorf("Invalid AnnotationsEnabled - %t, Expected %t", resp.AnnotationsEnabled, true)
 	}
 }
