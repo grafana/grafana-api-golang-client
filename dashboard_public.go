@@ -10,9 +10,9 @@ import (
 type PublicDashboardPayload struct {
 	UID                  string `json:"uid"`
 	AccessToken          string `json:"accessToken"`
-	TimeSelectionEnabled bool  `json:"timeSelectionEnabled"`
-	IsEnabled            bool  `json:"isEnabled"`
-	AnnotationsEnabled   bool  `json:"annotationsEnabled"`
+	TimeSelectionEnabled bool   `json:"timeSelectionEnabled"`
+	IsEnabled            bool   `json:"isEnabled"`
+	AnnotationsEnabled   bool   `json:"annotationsEnabled"`
 	Share                string `json:"share"`
 }
 
