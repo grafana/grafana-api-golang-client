@@ -138,7 +138,12 @@ func (c *Client) request(method, requestPath string, query url.Values, body []by
 	}
 
 	// check status code.
-	if resp.StatusCode >= 400 {
+	switch {
+	case resp.StatusCode == http.StatusNotFound:
+		return ErrNotFound{
+			BodyContents: bodyContents,
+		}
+	case resp.StatusCode >= 400:
 		return fmt.Errorf("status: %d, body: %v", resp.StatusCode, string(bodyContents))
 	}
 
