@@ -111,10 +111,9 @@ func (c *Client) request(method, requestPath string, query url.Values, body []by
 			continue
 		}
 
-		defer resp.Body.Close()
-
 		// read the body (even on non-successful HTTP status codes), as that's what the unit tests expect
 		bodyContents, err = ioutil.ReadAll(resp.Body)
+		resp.Body.Close() //nolint:errcheck
 
 		// if there was an error reading the body, try again
 		if err != nil {
