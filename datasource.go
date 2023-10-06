@@ -95,6 +95,18 @@ func (c *Client) DataSourceByUID(uid string) (*DataSource, error) {
 	return result, err
 }
 
+// DataSourceByName fetches and returns the Grafana data source whose name is passed.
+func (c *Client) DataSourceByName(name string) (*DataSource, error) {
+	path := fmt.Sprintf("/api/datasources/name/%s", name)
+	result := &DataSource{}
+	err := c.request("GET", path, nil, nil, result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, err
+}
+
 // DataSourceIDByName returns the Grafana data source ID by name.
 func (c *Client) DataSourceIDByName(name string) (int64, error) {
 	path := fmt.Sprintf("/api/datasources/id/%s", name)
