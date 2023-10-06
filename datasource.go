@@ -8,10 +8,14 @@ import (
 
 // DataSource represents a Grafana data source.
 type DataSource struct {
-	ID     int64  `json:"id,omitempty"`
-	UID    string `json:"uid,omitempty"`
-	Name   string `json:"name"`
-	Type   string `json:"type"`
+	ID   int64  `json:"id,omitempty"`
+	UID  string `json:"uid,omitempty"`
+	Name string `json:"name"`
+
+	Type string `json:"type"`
+	// This is only returned by the API. It depends on the Type.
+	TypeLogoUrl string `json:"typeLogoUrl,omitempty"`
+
 	URL    string `json:"url"`
 	Access string `json:"access"`
 
@@ -27,8 +31,12 @@ type DataSource struct {
 	BasicAuth     bool   `json:"basicAuth"`
 	BasicAuthUser string `json:"basicAuthUser,omitempty"`
 
+	WithCredentials bool `json:"withCredentials,omitempty"`
+
 	JSONData       map[string]interface{} `json:"jsonData,omitempty"`
 	SecureJSONData map[string]interface{} `json:"secureJsonData,omitempty"`
+
+	Version int `json:"version,omitempty"`
 }
 
 // NewDataSource creates a new Grafana data source.
