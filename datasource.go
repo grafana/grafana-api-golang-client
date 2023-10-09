@@ -14,7 +14,7 @@ type DataSource struct {
 
 	Type string `json:"type"`
 	// This is only returned by the API. It depends on the Type.
-	TypeLogoUrl string `json:"typeLogoUrl,omitempty"`
+	TypeLogoURL string `json:"typeLogoUrl,omitempty"`
 
 	URL    string `json:"url"`
 	Access string `json:"access"`
