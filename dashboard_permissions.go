@@ -58,3 +58,56 @@ func (c *Client) UpdateDashboardPermissionsByUID(uid string, items *PermissionIt
 
 	return c.request("POST", path, nil, data, nil)
 }
+
+func (c *Client) ListDashboardResourcePermissions(ident ResourceIdent) ([]*ResourcePermission, error) {
+	return c.listResourcePermissions("dashboards", ident)
+}
+
+func (c *Client) SetDashboardResourcePermissions(ident ResourceIdent, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissions("dashboards", ident, body)
+}
+
+func (c *Client) SetUserDashboardResourcePermissions(ident ResourceIdent, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"dashboards",
+		ident,
+		"users",
+		ResourceID(userID),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				UserID:     userID,
+				Permission: permission,
+			},
+		},
+	)
+}
+
+func (c *Client) SetTeamDashboardResourcePermissions(ident ResourceIdent, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"dashboards",
+		ident,
+		"teams",
+		ResourceID(teamID),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				TeamID:     teamID,
+				Permission: permission,
+			},
+		},
+	)
+}
+
+func (c *Client) SetBuiltInRoleDashboardResourcePermissions(ident ResourceIdent, builtInRole string, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"dashboards",
+		ident,
+		"builtInRoles",
+		ResourceUID(builtInRole),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				BuiltinRole: builtInRole,
+				Permission:  permission,
+			},
+		},
+	)
+}

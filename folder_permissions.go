@@ -62,3 +62,56 @@ func (c *Client) UpdateFolderPermissions(fid string, items *PermissionItems) err
 
 	return c.request("POST", path, nil, data, nil)
 }
+
+func (c *Client) ListFolderResourcePermissions(ident ResourceIdent) ([]*ResourcePermission, error) {
+	return c.listResourcePermissions("folders", ident)
+}
+
+func (c *Client) SetFolderResourcePermissions(ident ResourceIdent, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissions("folders", ident, body)
+}
+
+func (c *Client) SetUserFolderResourcePermissions(ident ResourceIdent, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"folders",
+		ident,
+		"users",
+		ResourceID(userID),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				UserID:     userID,
+				Permission: permission,
+			},
+		},
+	)
+}
+
+func (c *Client) SetTeamFolderResourcePermissions(ident ResourceIdent, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"folders",
+		ident,
+		"teams",
+		ResourceID(teamID),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				TeamID:     teamID,
+				Permission: permission,
+			},
+		},
+	)
+}
+
+func (c *Client) SetBuiltInRoleFolderResourcePermissions(ident ResourceIdent, builtInRole string, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"folders",
+		ident,
+		"builtInRoles",
+		ResourceUID(builtInRole),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				BuiltinRole: builtInRole,
+				Permission:  permission,
+			},
+		},
+	)
+}

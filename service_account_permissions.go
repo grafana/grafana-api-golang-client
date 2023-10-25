@@ -1,49 +1,39 @@
 package gapi
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
-// ServiceAccountPermission represents a service account permission for a user or a team.
-type ServiceAccountPermission struct {
-	ID         int64  `json:"id"`
-	TeamID     int64  `json:"teamId,omitempty"`
-	UserID     int64  `json:"userId,omitempty"`
-	IsManaged  bool   `json:"isManaged"`
-	Permission string `json:"permission"`
+func (c *Client) ListServiceAccountResourcePermissions(ident ResourceIdent) ([]*ResourcePermission, error) {
+	return c.listResourcePermissions("serviceaccounts", ident)
 }
 
-// ServiceAccountPermissionItems represents Grafana service account permission items used for permission updates.
-type ServiceAccountPermissionItems struct {
-	Permissions []*ServiceAccountPermissionItem `json:"permissions"`
+func (c *Client) SetServiceAccountResourcePermissions(ident ResourceIdent, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissions("serviceaccounts", ident, body)
 }
 
-// ServiceAccountPermissionItem represents a Grafana service account permission item.
-type ServiceAccountPermissionItem struct {
-	TeamID     int64  `json:"teamId,omitempty"`
-	UserID     int64  `json:"userId,omitempty"`
-	Permission string `json:"permission"`
+func (c *Client) SetUserServiceAccountResourcePermissions(ident ResourceIdent, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"serviceaccounts",
+		ident,
+		"users",
+		ResourceID(userID),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				UserID:     userID,
+				Permission: permission,
+			},
+		},
+	)
 }
 
-// GetServiceAccountPermissions fetches and returns the permissions for the service account whose ID it's passed in.
-func (c *Client) GetServiceAccountPermissions(id int64) ([]*ServiceAccountPermission, error) {
-	permissions := make([]*ServiceAccountPermission, 0)
-	err := c.request("GET", fmt.Sprintf("/api/access-control/serviceaccounts/%d", id), nil, nil, &permissions)
-	if err != nil {
-		return permissions, err
-	}
-
-	return permissions, nil
-}
-
-// UpdateServiceAccountPermissions updates service account permissions for teams and users included in the request.
-func (c *Client) UpdateServiceAccountPermissions(id int64, items *ServiceAccountPermissionItems) error {
-	path := fmt.Sprintf("/api/access-control/serviceaccounts/%d", id)
-	data, err := json.Marshal(items)
-	if err != nil {
-		return err
-	}
-
-	return c.request("POST", path, nil, data, nil)
+func (c *Client) SetTeamServiceAccountResourcePermissions(ident ResourceIdent, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"serviceaccounts",
+		ident,
+		"teams",
+		ResourceID(teamID),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				TeamID:     teamID,
+				Permission: permission,
+			},
+		},
+	)
 }

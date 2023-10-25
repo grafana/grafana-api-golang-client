@@ -96,3 +96,56 @@ func (c *Client) RemoveDatasourcePermission(id, permissionID int64) error {
 
 	return nil
 }
+
+func (c *Client) ListDatasourceResourcePermissions(ident ResourceIdent) ([]*ResourcePermission, error) {
+	return c.listResourcePermissions("datasources", ident)
+}
+
+func (c *Client) SetDatasourceResourcePermissions(ident ResourceIdent, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissions("datasources", ident, body)
+}
+
+func (c *Client) SetUserDatasourceResourcePermissions(ident ResourceIdent, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"datasources",
+		ident,
+		"users",
+		ResourceID(userID),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				UserID:     userID,
+				Permission: permission,
+			},
+		},
+	)
+}
+
+func (c *Client) SetTeamDatasourceResourcePermissions(ident ResourceIdent, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"datasources",
+		ident,
+		"teams",
+		ResourceID(teamID),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				TeamID:     teamID,
+				Permission: permission,
+			},
+		},
+	)
+}
+
+func (c *Client) SetBuiltInRoleDatasourceResourcePermissions(ident ResourceIdent, builtInRole string, permission string) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissionByAssignment(
+		"datasources",
+		ident,
+		"builtInRoles",
+		ResourceUID(builtInRole),
+		SetResourcePermissionBody{
+			Permission: SetResourcePermissionItem{
+				BuiltinRole: builtInRole,
+				Permission:  permission,
+			},
+		},
+	)
+}
