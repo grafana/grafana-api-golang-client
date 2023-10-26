@@ -13,10 +13,8 @@ type ResourcePermission struct {
 	IsServiceAccount bool     `json:"isServiceAccount"`
 	UserID           int64    `json:"userId,omitempty"`
 	UserLogin        string   `json:"userLogin,omitempty"`
-	UserAvatarURL    string   `json:"userAvatarUrl,omitempty"`
 	Team             string   `json:"team,omitempty"`
 	TeamID           int64    `json:"teamId,omitempty"`
-	TeamAvatarUrl    string   `json:"teamAvatarUrl,omitempty"`
 	BuiltInRole      string   `json:"builtInRole,omitempty"`
 	Actions          []string `json:"actions"`
 	Permission       string   `json:"permission"`
