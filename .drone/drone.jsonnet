@@ -1,4 +1,4 @@
-local image = 'grafana/build-container:1.2.27';
+local image = 'grafana/build-container:1.7.7';
 
 local pipeline(name, trigger) = {
   kind: 'pipeline',
