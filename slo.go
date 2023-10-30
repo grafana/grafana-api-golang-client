@@ -62,7 +62,7 @@ type DashboardRef struct {
 // DestinationDatasource defines model for DestinationDatasource.
 type DestinationDatasource struct {
 	Type *string `json:"type,omitempty"`
-	Uid  *string `json:"uid,omitempty"`
+	UID  *string `json:"uid,omitempty"`
 }
 
 // FreeformQuery defines model for FreeformQuery.
@@ -132,7 +132,7 @@ type Slo struct {
 	Objectives            []Objective            `json:"objectives"`
 	Query                 Query                  `json:"query"`
 	ReadOnly              *ReadOnly              `json:"readOnly,omitempty"`
-	Uuid                  string                 `json:"uuid"`
+	UUID                  string                 `json:"uuid"`
 }
 
 // Status defines model for Status.

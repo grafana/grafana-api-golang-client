@@ -35,8 +35,8 @@ func TestSLOs(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if slo.Uuid != "qkkrknp12w6tmsdcrfkdf" {
-			t.Errorf("incorrect UID - expected qkkrknp12w6tmsdcrfkdf, got %s", slo.Uuid)
+		if slo.UUID != "qkkrknp12w6tmsdcrfkdf" {
+			t.Errorf("incorrect UID - expected qkkrknp12w6tmsdcrfkdf, got %s", slo.UUID)
 		}
 	})
 
@@ -70,7 +70,7 @@ func TestSLOs(t *testing.T) {
 		slo := generateSlo()
 		slo.Description = "Updated Description"
 
-		err := client.UpdateSlo(slo.Uuid, slo)
+		err := client.UpdateSlo(slo.UUID, slo)
 
 		if err != nil {
 			t.Error(err)
