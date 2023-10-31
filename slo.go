@@ -20,17 +20,6 @@ const (
 	QueryTypeThreshold QueryType = "threshold"
 )
 
-// Defines values for StatusType.
-const (
-	StatusTypeCreated  StatusType = "created"
-	StatusTypeCreating StatusType = "creating"
-	StatusTypeDeleting StatusType = "deleting"
-	StatusTypeError    StatusType = "error"
-	StatusTypeUnknown  StatusType = "unknown"
-	StatusTypeUpdated  StatusType = "updated"
-	StatusTypeUpdating StatusType = "updating"
-)
-
 // Defines values for ThresholdOperator.
 const (
 	ThresholdOperatorEmpty      ThresholdOperator = "<"
@@ -61,8 +50,8 @@ type DashboardRef struct {
 
 // DestinationDatasource defines model for DestinationDatasource.
 type DestinationDatasource struct {
-	Type *string `json:"type,omitempty"`
-	UID  *string `json:"uid,omitempty"`
+	Type string `json:"type,omitempty"`
+	UID  string `json:"uid,omitempty"`
 }
 
 // FreeformQuery defines model for FreeformQuery.
@@ -86,8 +75,8 @@ type Label struct {
 
 // MetricDef defines model for MetricDef.
 type MetricDef struct {
-	PrometheusMetric string  `json:"prometheusMetric"`
-	Type             *string `json:"type,omitempty"`
+	PrometheusMetric string `json:"prometheusMetric"`
+	Type             string `json:"type,omitempty"`
 }
 
 // Objective defines model for Objective.
@@ -118,7 +107,7 @@ type RatioQuery struct {
 // ReadOnly defines model for ReadOnly.
 type ReadOnly struct {
 	DrillDownDashboardRef *DashboardRef `json:"drillDownDashboardRef,omitempty"`
-	Provenance            *string       `json:"provenance,omitempty"`
+	Provenance            string        `json:"provenance,omitempty"`
 	Status                *Status       `json:"status,omitempty"`
 }
 
@@ -137,12 +126,9 @@ type Slo struct {
 
 // Status defines model for Status.
 type Status struct {
-	Message *string    `json:"message,omitempty"`
-	Type    StatusType `json:"type"`
+	Message string `json:"message,omitempty"`
+	Type    string `json:"type"`
 }
-
-// StatusType defines model for Status.Type.
-type StatusType string
 
 // Threshold defines model for Threshold.
 type Threshold struct {
