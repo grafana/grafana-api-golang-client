@@ -97,18 +97,18 @@ func (c *Client) RemoveDatasourcePermission(id, permissionID int64) error {
 	return nil
 }
 
-func (c *Client) ListDatasourceResourcePermissions(ident ResourceIdent) ([]*ResourcePermission, error) {
-	return c.listResourcePermissions(DatasourcesResource, ident)
+func (c *Client) ListDatasourceResourcePermissions(uid string) ([]*ResourcePermission, error) {
+	return c.listResourcePermissions(DatasourcesResource, ResourceUID(uid))
 }
 
-func (c *Client) SetDatasourceResourcePermissions(ident ResourceIdent, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
-	return c.setResourcePermissions(DatasourcesResource, ident, body)
+func (c *Client) SetDatasourceResourcePermissions(uid string, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissions(DatasourcesResource, ResourceUID(uid), body)
 }
 
-func (c *Client) SetUserDatasourceResourcePermissions(ident ResourceIdent, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
+func (c *Client) SetUserDatasourceResourcePermissions(datasourceUID string, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
 		DatasourcesResource,
-		ident,
+		ResourceUID(datasourceUID),
 		UsersResource,
 		ResourceID(userID),
 		SetResourcePermissionBody{
@@ -120,10 +120,10 @@ func (c *Client) SetUserDatasourceResourcePermissions(ident ResourceIdent, userI
 	)
 }
 
-func (c *Client) SetTeamDatasourceResourcePermissions(ident ResourceIdent, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
+func (c *Client) SetTeamDatasourceResourcePermissions(datasourceUID string, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
 		DatasourcesResource,
-		ident,
+		ResourceUID(datasourceUID),
 		TeamsResource,
 		ResourceID(teamID),
 		SetResourcePermissionBody{
@@ -135,10 +135,10 @@ func (c *Client) SetTeamDatasourceResourcePermissions(ident ResourceIdent, teamI
 	)
 }
 
-func (c *Client) SetBuiltInRoleDatasourceResourcePermissions(ident ResourceIdent, builtInRole string, permission string) (*SetResourcePermissionsResponse, error) {
+func (c *Client) SetBuiltInRoleDatasourceResourcePermissions(datasourceUID string, builtInRole string, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
 		DatasourcesResource,
-		ident,
+		ResourceUID(datasourceUID),
 		BuiltInRolesResource,
 		ResourceUID(builtInRole),
 		SetResourcePermissionBody{

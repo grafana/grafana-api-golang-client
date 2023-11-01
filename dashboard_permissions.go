@@ -59,18 +59,18 @@ func (c *Client) UpdateDashboardPermissionsByUID(uid string, items *PermissionIt
 	return c.request("POST", path, nil, data, nil)
 }
 
-func (c *Client) ListDashboardResourcePermissions(ident ResourceIdent) ([]*ResourcePermission, error) {
-	return c.listResourcePermissions(DashboardsResource, ident)
+func (c *Client) ListDashboardResourcePermissions(uid string) ([]*ResourcePermission, error) {
+	return c.listResourcePermissions(DashboardsResource, ResourceUID(uid))
 }
 
-func (c *Client) SetDashboardResourcePermissions(ident ResourceIdent, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
-	return c.setResourcePermissions(DashboardsResource, ident, body)
+func (c *Client) SetDashboardResourcePermissions(uid string, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissions(DashboardsResource, ResourceUID(uid), body)
 }
 
-func (c *Client) SetUserDashboardResourcePermissions(ident ResourceIdent, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
+func (c *Client) SetUserDashboardResourcePermissions(dashboardUID string, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
 		DashboardsResource,
-		ident,
+		ResourceUID(dashboardUID),
 		UsersResource,
 		ResourceID(userID),
 		SetResourcePermissionBody{
@@ -82,10 +82,10 @@ func (c *Client) SetUserDashboardResourcePermissions(ident ResourceIdent, userID
 	)
 }
 
-func (c *Client) SetTeamDashboardResourcePermissions(ident ResourceIdent, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
+func (c *Client) SetTeamDashboardResourcePermissions(dashboardUID string, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
 		DashboardsResource,
-		ident,
+		ResourceUID(dashboardUID),
 		TeamsResource,
 		ResourceID(teamID),
 		SetResourcePermissionBody{
@@ -97,10 +97,10 @@ func (c *Client) SetTeamDashboardResourcePermissions(ident ResourceIdent, teamID
 	)
 }
 
-func (c *Client) SetBuiltInRoleDashboardResourcePermissions(ident ResourceIdent, builtInRole string, permission string) (*SetResourcePermissionsResponse, error) {
+func (c *Client) SetBuiltInRoleDashboardResourcePermissions(dashboardUID string, builtInRole string, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
 		DashboardsResource,
-		ident,
+		ResourceUID(dashboardUID),
 		BuiltInRolesResource,
 		ResourceUID(builtInRole),
 		SetResourcePermissionBody{

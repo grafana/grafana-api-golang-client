@@ -1,17 +1,17 @@
 package gapi
 
-func (c *Client) ListServiceAccountResourcePermissions(ident ResourceIdent) ([]*ResourcePermission, error) {
-	return c.listResourcePermissions(ServiceAccountsResource, ident)
+func (c *Client) ListServiceAccountResourcePermissions(uid string) ([]*ResourcePermission, error) {
+	return c.listResourcePermissions(ServiceAccountsResource, ResourceUID(uid))
 }
 
-func (c *Client) SetServiceAccountResourcePermissions(ident ResourceIdent, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
-	return c.setResourcePermissions(ServiceAccountsResource, ident, body)
+func (c *Client) SetServiceAccountResourcePermissions(uid string, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
+	return c.setResourcePermissions(ServiceAccountsResource, ResourceUID(uid), body)
 }
 
-func (c *Client) SetUserServiceAccountResourcePermissions(ident ResourceIdent, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
+func (c *Client) SetUserServiceAccountResourcePermissions(serviceAccountUID string, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
 		ServiceAccountsResource,
-		ident,
+		ResourceUID(serviceAccountUID),
 		UsersResource,
 		ResourceID(userID),
 		SetResourcePermissionBody{
@@ -23,10 +23,10 @@ func (c *Client) SetUserServiceAccountResourcePermissions(ident ResourceIdent, u
 	)
 }
 
-func (c *Client) SetTeamServiceAccountResourcePermissions(ident ResourceIdent, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
+func (c *Client) SetTeamServiceAccountResourcePermissions(serviceAccountUID string, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
 		ServiceAccountsResource,
-		ident,
+		ResourceUID(serviceAccountUID),
 		TeamsResource,
 		ResourceID(teamID),
 		SetResourcePermissionBody{
