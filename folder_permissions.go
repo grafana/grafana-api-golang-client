@@ -64,18 +64,18 @@ func (c *Client) UpdateFolderPermissions(fid string, items *PermissionItems) err
 }
 
 func (c *Client) ListFolderResourcePermissions(ident ResourceIdent) ([]*ResourcePermission, error) {
-	return c.listResourcePermissions("folders", ident)
+	return c.listResourcePermissions(FoldersResource, ident)
 }
 
 func (c *Client) SetFolderResourcePermissions(ident ResourceIdent, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
-	return c.setResourcePermissions("folders", ident, body)
+	return c.setResourcePermissions(FoldersResource, ident, body)
 }
 
 func (c *Client) SetUserFolderResourcePermissions(ident ResourceIdent, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
-		"folders",
+		FoldersResource,
 		ident,
-		"users",
+		UsersResource,
 		ResourceID(userID),
 		SetResourcePermissionBody{
 			Permission: SetResourcePermissionItem{
@@ -88,9 +88,9 @@ func (c *Client) SetUserFolderResourcePermissions(ident ResourceIdent, userID in
 
 func (c *Client) SetTeamFolderResourcePermissions(ident ResourceIdent, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
-		"folders",
+		FoldersResource,
 		ident,
-		"teams",
+		TeamsResource,
 		ResourceID(teamID),
 		SetResourcePermissionBody{
 			Permission: SetResourcePermissionItem{
@@ -103,9 +103,9 @@ func (c *Client) SetTeamFolderResourcePermissions(ident ResourceIdent, teamID in
 
 func (c *Client) SetBuiltInRoleFolderResourcePermissions(ident ResourceIdent, builtInRole string, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
-		"folders",
+		FoldersResource,
 		ident,
-		"builtInRoles",
+		BuiltInRolesResource,
 		ResourceUID(builtInRole),
 		SetResourcePermissionBody{
 			Permission: SetResourcePermissionItem{

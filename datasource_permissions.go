@@ -98,18 +98,18 @@ func (c *Client) RemoveDatasourcePermission(id, permissionID int64) error {
 }
 
 func (c *Client) ListDatasourceResourcePermissions(ident ResourceIdent) ([]*ResourcePermission, error) {
-	return c.listResourcePermissions("datasources", ident)
+	return c.listResourcePermissions(DatasourcesResource, ident)
 }
 
 func (c *Client) SetDatasourceResourcePermissions(ident ResourceIdent, body SetResourcePermissionsBody) (*SetResourcePermissionsResponse, error) {
-	return c.setResourcePermissions("datasources", ident, body)
+	return c.setResourcePermissions(DatasourcesResource, ident, body)
 }
 
 func (c *Client) SetUserDatasourceResourcePermissions(ident ResourceIdent, userID int64, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
-		"datasources",
+		DatasourcesResource,
 		ident,
-		"users",
+		UsersResource,
 		ResourceID(userID),
 		SetResourcePermissionBody{
 			Permission: SetResourcePermissionItem{
@@ -122,9 +122,9 @@ func (c *Client) SetUserDatasourceResourcePermissions(ident ResourceIdent, userI
 
 func (c *Client) SetTeamDatasourceResourcePermissions(ident ResourceIdent, teamID int64, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
-		"datasources",
+		DatasourcesResource,
 		ident,
-		"teams",
+		TeamsResource,
 		ResourceID(teamID),
 		SetResourcePermissionBody{
 			Permission: SetResourcePermissionItem{
@@ -137,9 +137,9 @@ func (c *Client) SetTeamDatasourceResourcePermissions(ident ResourceIdent, teamI
 
 func (c *Client) SetBuiltInRoleDatasourceResourcePermissions(ident ResourceIdent, builtInRole string, permission string) (*SetResourcePermissionsResponse, error) {
 	return c.setResourcePermissionByAssignment(
-		"datasources",
+		DatasourcesResource,
 		ident,
-		"builtInRoles",
+		BuiltInRolesResource,
 		ResourceUID(builtInRole),
 		SetResourcePermissionBody{
 			Permission: SetResourcePermissionItem{

@@ -5,6 +5,16 @@ import (
 	"strconv"
 )
 
+const (
+	DashboardsResource      = "dashboards"
+	DatasourcesResource     = "datasources"
+	FoldersResource         = "folders"
+	ServiceAccountsResource = "serviceaccounts"
+	TeamsResource           = "teams"
+	UsersResource           = "users"
+	BuiltInRolesResource    = "builtInRoles"
+)
+
 // ResourceIdent represents anything that can be considered a resource identifier.
 type ResourceIdent interface {
 	fmt.Stringer
