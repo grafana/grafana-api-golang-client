@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-var sloPath string = "/api/plugins/grafana-slo-app/resources/v1/slo"
+var sloPath = "/api/plugins/grafana-slo-app/resources/v1/slo"
 
 type Slos struct {
 	Slos []Slo `json:"slos"`
@@ -205,9 +205,5 @@ func (c *Client) UpdateSlo(uuid string, slo Slo) error {
 		return err
 	}
 
-	if err := c.request("PUT", path, nil, data, nil); err != nil {
-		return err
-	}
-
-	return nil
+	return c.request("PUT", path, nil, data, nil)
 }

@@ -173,7 +173,7 @@ func JSONDataWithHeaders(jsonData, secureJSONData map[string]interface{}, header
 	for name, value := range headers {
 		jsonData[fmt.Sprintf("httpHeaderName%d", idx)] = name
 		secureJSONData[fmt.Sprintf("httpHeaderValue%d", idx)] = value
-		idx += 1
+		idx++
 	}
 
 	return jsonData, secureJSONData
