@@ -84,3 +84,7 @@ func (c *Client) UserUpdate(u User) error {
 	}
 	return c.request("PUT", fmt.Sprintf("/api/users/%d", u.ID), nil, data, nil)
 }
+
+func (c *Client) SwitchSignedUser(orgID int64) error {
+	return c.request("POST", fmt.Sprintf("user/using/%d", orgID), nil, nil, nil)
+}
