@@ -1,10 +1,18 @@
 package gapi
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
+
+	jsonx "github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 )
+
+// Example: {From: "now-1h", To: "now"}
+type DashboardRelativeTimeRange struct {
+	From string `json:"from,omitempty"`
+	To   string `json:"to,omitempty"`
+}
 
 // DashboardMeta represents Grafana dashboard meta.
 type DashboardMeta struct {
@@ -24,10 +32,32 @@ type DashboardSaveResponse struct {
 	Version int64  `json:"version"`
 }
 
+type DashboardPanel struct {
+	Targets []struct {
+		Expr         string `json:"expr"`
+		Interval     string `json:"interval"`
+		LegendFormat string `json:"legendFormat"`
+		RefID        string `json:"refId"`
+	} `json:"targets"`
+	Title        string         `json:"title"`
+	Type         string         `json:"type"`
+	SnapshotData []SnapshotData `json:"snapshotData,omitempty"`
+	Unknown      jsontext.Value `json:",unknown"`
+}
+
+type DashboardModel struct {
+	ID      int              `json:"id"`
+	Panels  []DashboardPanel `json:"panels"`
+	Time    QueryTimeRange   `json:"time"`
+	Title   string           `json:"title"`
+	UID     string           `json:"uid"`
+	Unknown jsontext.Value   `json:",unknown"`
+}
+
 // Dashboard represents a Grafana dashboard.
 type Dashboard struct {
-	Model    map[string]interface{} `json:"dashboard"`
-	FolderID int64                  `json:"folderId"`
+	Model    DashboardModel `json:"dashboard"`
+	FolderID int64          `json:"folderId"`
 
 	// This field is read-only. It is not used when creating a new dashboard.
 	Meta DashboardMeta `json:"meta"`
@@ -45,7 +75,7 @@ func (c *Client) SaveDashboard(model map[string]interface{}, overwrite bool) (*D
 		"dashboard": model,
 		"overwrite": overwrite,
 	}
-	data, err := json.Marshal(wrapper)
+	data, err := jsonx.Marshal(wrapper, defaultJSONOptions()...)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +91,7 @@ func (c *Client) SaveDashboard(model map[string]interface{}, overwrite bool) (*D
 
 // NewDashboard creates a new Grafana dashboard.
 func (c *Client) NewDashboard(dashboard Dashboard) (*DashboardSaveResponse, error) {
-	data, err := json.Marshal(dashboard)
+	data, err := jsonx.Marshal(dashboard, defaultJSONOptions()...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +149,7 @@ func (c *Client) DashboardByUID(uid string) (*Dashboard, error) {
 // DashboardsByIDs uses the folder and dashboard search endpoint to find
 // dashboards by list of dashboard IDs.
 func (c *Client) DashboardsByIDs(ids []int64) ([]FolderDashboardSearchResponse, error) {
-	dashboardIdsJSON, err := json.Marshal(ids)
+	dashboardIdsJSON, err := jsonx.Marshal(ids, defaultJSONOptions()...)
 	if err != nil {
 		return nil, err
 	}

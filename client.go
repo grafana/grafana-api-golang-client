@@ -2,7 +2,6 @@ package gapi
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -13,6 +12,7 @@ import (
 	"strconv"
 	"time"
 
+	jsonx "github.com/go-json-experiment/json"
 	"github.com/hashicorp/go-cleanhttp"
 )
 
@@ -43,6 +43,10 @@ type Config struct {
 	RetryTimeout time.Duration
 	// RetryStatusCodes contains the list of status codes to retry, use "x" as a wildcard for a single digit (default: [429, 5xx])
 	RetryStatusCodes []string
+}
+
+func defaultJSONOptions() []jsonx.Options {
+	return []jsonx.Options{jsonx.DiscardUnknownMembers(false), jsonx.RejectUnknownMembers(false)}
 }
 
 // New creates a new Grafana client.
@@ -85,10 +89,11 @@ func (c *Client) request(method, requestPath string, query url.Values, body []by
 	if len(retryStatusCodes) == 0 {
 		retryStatusCodes = []string{"429", "5xx"}
 	}
+	b := bytes.NewReader(body)
 
 	// retry logic
 	for n := 0; n <= c.config.NumRetries; n++ {
-		req, err = c.newRequest(method, requestPath, query, bytes.NewReader(body))
+		req, err = c.newRequest(method, requestPath, query, b)
 		if err != nil {
 			return err
 		}
@@ -149,7 +154,7 @@ func (c *Client) request(method, requestPath string, query url.Values, body []by
 		return nil
 	}
 
-	err = json.Unmarshal(bodyContents, responseStruct)
+	err = jsonx.Unmarshal(bodyContents, responseStruct, defaultJSONOptions()...)
 	if err != nil {
 		return err
 	}
@@ -202,6 +207,11 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 
 	req.Header.Add("Content-Type", "application/json")
 	return req, err
+}
+
+// Returns the underlying http.Client.Jar's Cookies
+func (c *Client) Cookies() []*http.Cookie {
+	return c.client.Jar.Cookies(&c.baseURL)
 }
 
 // matchRetryCode checks if the status code matches any of the configured retry status codes.

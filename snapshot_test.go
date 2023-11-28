@@ -20,8 +20,8 @@ func TestSnapshotCreate(t *testing.T) {
 	client := gapiTestTools(t, 200, createdSnapshotResponse)
 
 	snapshot := Snapshot{
-		Model: map[string]interface{}{
-			"title": "test",
+		DashboardModel: DashboardModel{
+			Title: "test",
 		},
 		Expires: 3600,
 	}

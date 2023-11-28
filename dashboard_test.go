@@ -50,8 +50,8 @@ func TestDashboardCreateAndUpdate(t *testing.T) {
 	client := gapiTestTools(t, 200, createdAndUpdateDashboardResponse)
 
 	dashboard := Dashboard{
-		Model: map[string]interface{}{
-			"title": "test",
+		Model: DashboardModel{
+			Title: "test",
 		},
 		FolderID:  0,
 		FolderUID: "l3KqBxCMz",
@@ -86,8 +86,8 @@ func TestDashboardGet(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		uid, ok := resp.Model["uid"]
-		if !ok || uid != "cIBgcSjkk" {
+		uid := resp.Model.UID
+		if uid != "cIBgcSjkk" {
 			t.Errorf("Invalid uid - %s, Expected %s", uid, "cIBgcSjkk")
 		}
 	})
@@ -99,8 +99,8 @@ func TestDashboardGet(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		uid, ok := resp.Model["uid"]
-		if !ok || uid != "cIBgcSjkk" {
+		uid := resp.Model.UID
+		if uid != "cIBgcSjkk" {
 			t.Fatalf("Invalid UID - %s, Expected %s", uid, "cIBgcSjkk")
 		}
 	})

@@ -191,11 +191,12 @@ func TestClient_requestWithRetries(t *testing.T) {
 
 	// This is our actual test, checking that we do in fact receive a body.
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-
 		try++
 
+		// Must re-set request body on each retry because r.Body is io.ReadCloser which drains the contents after each read
+		r.Body = io.NopCloser(bytes.NewBuffer(body))
 		got, err := io.ReadAll(r.Body)
+
 		if err != nil {
 			t.Errorf("retry %d: unexpected error reading body: %v", try, err)
 		}
@@ -207,13 +208,10 @@ func TestClient_requestWithRetries(t *testing.T) {
 		switch try {
 		case 1:
 			http.Error(w, `{"error":"waiting for the right time"}`, http.StatusInternalServerError)
-
 		case 2:
 			http.Error(w, `{"error":"calm down"}`, http.StatusTooManyRequests)
-
 		case 3:
 			w.Write([]byte(`{"foo":"bar"}`)) //nolint:errcheck
-
 		default:
 			t.Errorf("unexpected retry %d", try)
 		}
@@ -245,16 +243,16 @@ func TestClient_requestWithRetries(t *testing.T) {
 		Foo string `json:"foo"`
 	}
 
-	var got res
+	var resp res
 
-	if err := c.request(http.MethodPost, "/", nil, body, &got); err != nil {
+	if err := c.request(http.MethodPost, "/", nil, body, &resp); err != nil {
 		t.Fatalf("unexpected error sending request: %v", err)
 	}
 
 	exp := res{Foo: "bar"}
 
-	if exp != got {
-		t.Fatalf("response doesn't match\nexp: %#v\ngot: %#v", exp, got)
+	if exp != resp {
+		t.Fatalf("response doesn't match\nexp: %#v\ngot: %#v", exp, resp)
 	}
 
 	t.Logf("request successful after %d retries", try)
