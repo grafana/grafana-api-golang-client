@@ -89,3 +89,13 @@ func TestUserUpdate(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestSwitchSignedUser(t *testing.T) {
+	client := gapiTestToolsFromCalls(t, []mockServerCall{
+		{200, `{"message":"Active organization changed"}`},
+	})
+	err := client.SwitchSignedUser(0)
+	if err != nil {
+		t.Error(err)
+	}
+}

@@ -85,6 +85,7 @@ func (c *Client) UserUpdate(u User) error {
 	return c.request("PUT", fmt.Sprintf("/api/users/%d", u.ID), nil, data, nil)
 }
 
+// SwitchSignedUser switches signed user to the given organization.
 func (c *Client) SwitchSignedUser(orgID int64) error {
 	return c.request("POST", fmt.Sprintf("/api/user/using/%d", orgID), nil, nil, nil)
 }
