@@ -100,6 +100,7 @@ func createMuteTiming() MuteTiming {
 				Weekdays: []WeekdayRange{"monday", "wednesday"},
 				Months:   []MonthRange{"1:3", "4"},
 				Years:    []YearRange{"2022", "2023"},
+				Location: "America/New_York",
 			},
 		},
 	}
@@ -122,7 +123,8 @@ const getMuteTimingsJSON = `
 				],
 				"months": [
 					"1"
-				]
+				],
+                "location": "America/New_York"
 			}
 		]
 	},
