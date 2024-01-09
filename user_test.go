@@ -15,8 +15,8 @@ const (
 
 func TestUsers(t *testing.T) {
 	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, getUsersJSON},
-		{200, "null"},
+		{code: 200, body: getUsersJSON},
+		{code: 200, body: "null"},
 	})
 
 	resp, err := client.Users()
@@ -75,8 +75,8 @@ func TestUserByEmail(t *testing.T) {
 
 func TestUserUpdate(t *testing.T) {
 	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, getUserJSON},
-		{200, getUserUpdateJSON},
+		{code: 200, body: getUserJSON},
+		{code: 200, body: getUserUpdateJSON},
 	})
 
 	user, err := client.User(4)

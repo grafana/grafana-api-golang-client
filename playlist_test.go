@@ -39,8 +39,8 @@ const (
 
 func TestPlaylistCreateAndUpdate(t *testing.T) {
 	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, createAndUpdatePlaylistResponse},
-		{200, createAndUpdatePlaylistResponse},
+		{code: 200, body: createAndUpdatePlaylistResponse},
+		{code: 200, body: createAndUpdatePlaylistResponse},
 	})
 
 	playlist := Playlist{

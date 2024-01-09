@@ -58,7 +58,7 @@ func (c *Client) UninstallCloudPlugin(stackSlug string, pluginSlug string) error
 
 // IsCloudPluginInstalled returns a boolean if the specified plugin is installed on the stack.
 func (c *Client) IsCloudPluginInstalled(stackSlug string, pluginSlug string) (bool, error) {
-	req, err := c.newRequest("GET", fmt.Sprintf("/api/instances/%s/plugins/%s", stackSlug, pluginSlug), nil, nil)
+	req, err := c.newRequest("GET", fmt.Sprintf("/api/instances/%s/plugins/%s", stackSlug, pluginSlug), nil, nil, nil)
 	if err != nil {
 		return false, err
 	}

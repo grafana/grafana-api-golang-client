@@ -2,15 +2,22 @@ package gapi
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 type mockServerCall struct {
-	code int
-	body string
+	code   int
+	header http.Header
+	body   string
+
+	expectedReqHeader http.Header
+	expectedReqBody   []byte
 }
 
 type mockServer struct {
@@ -21,7 +28,7 @@ type mockServer struct {
 
 func gapiTestTools(t *testing.T, code int, body string) *Client {
 	t.Helper()
-	return gapiTestToolsFromCalls(t, []mockServerCall{{code, body}})
+	return gapiTestToolsFromCalls(t, []mockServerCall{{code: code, body: body}})
 }
 
 func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) *Client {
@@ -41,8 +48,28 @@ func gapiTestToolsFromCalls(t *testing.T, calls []mockServerCall) *Client {
 		} else {
 			mock.upcomingCalls = nil
 		}
-		w.WriteHeader(call.code)
+
+		if call.expectedReqHeader != nil {
+			// The client attaches other headers that we may not be interested in. Only
+			// check header names that are specified via expectedReqHeader.
+			for k := range call.expectedReqHeader {
+				require.Equal(t, call.expectedReqHeader.Values(k), r.Header.Values(k))
+			}
+		}
+		if call.expectedReqBody != nil {
+			reqBody, err := io.ReadAll(r.Body)
+			require.NoError(t, err)
+			require.Equal(t, call.expectedReqBody, reqBody)
+		}
+
 		w.Header().Set("Content-Type", "application/json")
+		for k, vals := range call.header {
+			for _, v := range vals {
+				w.Header().Add(k, v)
+			}
+		}
+		w.WriteHeader(call.code)
+
 		fmt.Fprint(w, call.body)
 		mock.executedCalls = append(mock.executedCalls, call)
 	}))

@@ -66,9 +66,9 @@ func TestRoles(t *testing.T) {
 
 	// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of roles.
 	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, mockData},
-		{200, mockData},
-		{200, "[" + getRoleResponse + "]"},
+		{code: 200, body: mockData},
+		{code: 200, body: mockData},
+		{code: 200, body: "[" + getRoleResponse + "]"},
 	})
 
 	const dashCount = 2001
@@ -93,9 +93,7 @@ func TestRoles(t *testing.T) {
 
 func TestRolesZeroResults(t *testing.T) {
 	// This return zero roles.
-	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, "[]"},
-	})
+	client := gapiTestTools(t, 200, "[]")
 
 	roles, err := client.GetRoles()
 	if err != nil {
@@ -112,9 +110,7 @@ func TestRolesSinglePage(t *testing.T) {
 	mockData = "[" + mockData[:len(mockData)-1] + "]"    // remove trailing comma; make a json list.
 
 	// This creates 999 worth of roles.
-	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, mockData},
-	})
+	client := gapiTestTools(t, 200, mockData)
 
 	const dashCount = 999
 

@@ -107,7 +107,7 @@ func TestDashboardGet(t *testing.T) {
 
 	for _, code := range []int{401, 403, 404} {
 		t.Run(fmt.Sprintf("Dashboard error: %d", code), func(t *testing.T) {
-			client := gapiTestToolsFromCalls(t, []mockServerCall{{code, "error"}, {code, "error"}})
+			client := gapiTestToolsFromCalls(t, []mockServerCall{{code: code, body: "error"}, {code: code, body: "error"}})
 			_, err := client.Dashboard("test")
 			if err == nil {
 				t.Errorf("%d not detected", code)
@@ -140,7 +140,7 @@ func TestDashboardDelete(t *testing.T) {
 
 	for _, code := range []int{401, 403, 404, 412} {
 		t.Run(fmt.Sprintf("Dashboard error: %d", code), func(t *testing.T) {
-			client := gapiTestToolsFromCalls(t, []mockServerCall{{code, "error"}, {code, "error"}})
+			client := gapiTestToolsFromCalls(t, []mockServerCall{{code: code, body: "error"}, {code: code, body: "error"}})
 
 			err := client.DeleteDashboard("test")
 			if err == nil {
@@ -161,9 +161,9 @@ func TestDashboards(t *testing.T) {
 
 	// This creates 1000 + 1000 + 1 (2001, 3 calls) worth of dashboards.
 	client := gapiTestToolsFromCalls(t, []mockServerCall{
-		{200, mockData},
-		{200, mockData},
-		{200, "[" + getDashboardsJSON + "]"},
+		{code: 200, body: mockData},
+		{code: 200, body: mockData},
+		{code: 200, body: "[" + getDashboardsJSON + "]"},
 	})
 
 	const dashCount = 2001

@@ -75,6 +75,11 @@ func (c Client) WithOrgID(orgID int64) *Client {
 }
 
 func (c *Client) request(method, requestPath string, query url.Values, body []byte, responseStruct interface{}) error {
+	_, err := c.requestWithHeaders(method, requestPath, query, nil, body, responseStruct)
+	return err
+}
+
+func (c *Client) requestWithHeaders(method, requestPath string, query url.Values, header http.Header, body []byte, responseStruct interface{}) (http.Header, error) {
 	var (
 		req          *http.Request
 		resp         *http.Response
@@ -88,9 +93,9 @@ func (c *Client) request(method, requestPath string, query url.Values, body []by
 
 	// retry logic
 	for n := 0; n <= c.config.NumRetries; n++ {
-		req, err = c.newRequest(method, requestPath, query, bytes.NewReader(body))
+		req, err = c.newRequest(method, requestPath, query, header, bytes.NewReader(body))
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		// Wait a bit if that's not the first request
@@ -121,14 +126,14 @@ func (c *Client) request(method, requestPath string, query url.Values, body []by
 
 		shouldRetry, err := matchRetryCode(resp.StatusCode, retryStatusCodes)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if !shouldRetry {
 			break
 		}
 	}
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if os.Getenv("GF_LOG") != "" {
@@ -138,26 +143,26 @@ func (c *Client) request(method, requestPath string, query url.Values, body []by
 	// check status code.
 	switch {
 	case resp.StatusCode == http.StatusNotFound:
-		return ErrNotFound{
+		return nil, ErrNotFound{
 			BodyContents: bodyContents,
 		}
 	case resp.StatusCode >= 400:
-		return fmt.Errorf("status: %d, body: %v", resp.StatusCode, string(bodyContents))
+		return nil, fmt.Errorf("status: %d, body: %v", resp.StatusCode, string(bodyContents))
 	}
 
 	if responseStruct == nil {
-		return nil
+		return resp.Header, nil
 	}
 
 	err = json.Unmarshal(bodyContents, responseStruct)
 	if err != nil {
-		return err
+		return resp.Header, err
 	}
 
-	return nil
+	return resp.Header, nil
 }
 
-func (c *Client) newRequest(method, requestPath string, query url.Values, body io.Reader) (*http.Request, error) {
+func (c *Client) newRequest(method, requestPath string, query url.Values, header http.Header, body io.Reader) (*http.Request, error) {
 	url := c.baseURL
 	url.Path = path.Join(url.Path, requestPath)
 	url.RawQuery = query.Encode()
@@ -176,6 +181,12 @@ func (c *Client) newRequest(method, requestPath string, query url.Values, body i
 
 	if c.config.HTTPHeaders != nil {
 		for k, v := range c.config.HTTPHeaders {
+			req.Header.Add(k, v)
+		}
+	}
+
+	for k, vals := range header {
+		for _, v := range vals {
 			req.Header.Add(k, v)
 		}
 	}
